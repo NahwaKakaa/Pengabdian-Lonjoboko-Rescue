@@ -1373,3 +1373,195 @@ a.fi-wi-stats-overview-stat:hover {
     width: 1.25rem;
     height: 1.25rem;
 }
+
+/* ===============================================================
+   12. Dialog "perubahan belum disimpan"
+   =============================================================== */
+.lr-dialog {
+    width: min(26rem, calc(100vw - 2rem));
+    max-width: none;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 1.1rem;
+    background: var(--lr-card);
+    color: var(--lr-ink);
+    box-shadow:
+        0 24px 60px -12px rgba(4, 20, 18, 0.45),
+        0 0 0 1px var(--lr-line);
+    overflow: visible;
+}
+
+.lr-dialog[open] {
+    animation: lr-dialog-in 0.28s var(--lr-ease) both;
+}
+
+.lr-dialog::backdrop {
+    background: rgba(6, 22, 21, 0.55);
+    backdrop-filter: blur(4px);
+    animation: lr-fade-in 0.2s ease both;
+}
+
+.lr-dialog__panel {
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+    padding: 1.75rem 1.5rem 1.4rem;
+    text-align: center;
+}
+
+.lr-dialog__icon {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: 0.25rem;
+    border-radius: 999px;
+    color: var(--lr-warn);
+    background: var(--lr-warn-soft);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--lr-warn-soft) 55%, transparent);
+}
+
+.lr-dialog__icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.lr-dialog__title {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--lr-ink);
+}
+
+.lr-dialog__text {
+    margin: 0;
+    max-width: 32ch;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--lr-ink-soft);
+}
+
+.lr-dialog__actions {
+    display: grid;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.9rem;
+}
+
+.lr-dialog__btn {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 0.75rem;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.15s var(--lr-ease);
+}
+
+.lr-dialog__btn:active {
+    transform: scale(0.98);
+}
+
+.lr-dialog__btn:focus-visible {
+    outline: 2px solid var(--lr-accent);
+    outline-offset: 2px;
+}
+
+.lr-dialog__btn--primary {
+    color: #ffffff;
+    background: #0e6b66;
+}
+
+.lr-dialog__btn--primary:hover {
+    background: #0b5551;
+}
+
+.dark .lr-dialog__btn--primary {
+    color: #062b28;
+    background: #5fd0b7;
+}
+
+.dark .lr-dialog__btn--primary:hover {
+    background: #7fdcc7;
+}
+
+.lr-dialog__btn--ghost {
+    color: var(--lr-danger);
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--lr-line-strong);
+}
+
+.lr-dialog__btn--ghost:hover {
+    background: var(--lr-danger-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lr-danger) 35%, transparent);
+}
+
+@media (min-width: 480px) {
+    .lr-dialog__actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .lr-dialog__actions .lr-dialog__btn--ghost {
+        order: -1;
+    }
+}
+
+@keyframes lr-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes lr-fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+/* ===============================================================
+   13. Modal & notifikasi bawaan Filament disamakan gayanya
+   =============================================================== */
+.fi-modal-window {
+    border-radius: 1.1rem !important;
+    box-shadow:
+        0 24px 60px -12px rgba(4, 20, 18, 0.45),
+        0 0 0 1px var(--lr-line) !important;
+}
+
+.fi-modal-close-overlay {
+    background-color: rgba(6, 22, 21, 0.55) !important;
+    backdrop-filter: blur(4px);
+}
+
+.fi-modal-heading {
+    font-weight: 800 !important;
+    letter-spacing: -0.01em;
+}
+
+.fi-modal-footer-actions .fi-btn {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    border-radius: 0.75rem;
+}
+
+.fi-no-notification {
+    border-radius: 0.9rem !important;
+    box-shadow:
+        0 16px 40px -14px rgba(4, 20, 18, 0.4),
+        0 0 0 1px var(--lr-line) !important;
+    overflow: hidden;
+}
+
+.fi-no-notification-title {
+    font-weight: 700 !important;
+}

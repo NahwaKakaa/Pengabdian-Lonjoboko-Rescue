@@ -93,6 +93,11 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::USER_MENU_BEFORE,
                 fn (): string => view('filament.topbar-status')->render(),
             )
+            // Dialog "perubahan belum disimpan" yang senada dengan tema.
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): string => view('filament.leave-dialog')->render(),
+            )
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn (): string => view('filament.sidebar-footer')->render(),
