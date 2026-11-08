@@ -163,11 +163,12 @@
     .hero-scenic-bg {
         position: relative;
         background-color: #062b29;
+        /* Pemandangan yang sama dengan versi malam (bukit, sawah), hanya pencahayaannya siang */
         background-image: 
-            linear-gradient(to right, rgba(6, 43, 41, 0.84) 0%, rgba(6, 43, 41, 0.65) 45%, rgba(6, 43, 41, 0.35) 100%),
-            url('/images/hero-mountains.jpg');
+            linear-gradient(to right, rgba(6, 43, 41, 0.82) 0%, rgba(6, 43, 41, 0.55) 42%, rgba(6, 43, 41, 0.06) 100%),
+            url('/images/hero-mountains-day.jpg');
         background-size: cover;
-        background-position: center;
+        background-position: center 20%;
         background-repeat: no-repeat;
     }
 
@@ -175,10 +176,10 @@
         position: relative;
         background-color: #062b29;
         background-image: 
-            linear-gradient(to right, rgba(6, 43, 41, 0.85) 0%, rgba(6, 43, 41, 0.65) 55%, rgba(6, 43, 41, 0.40) 100%),
-            url('/images/hero-mountains.jpg');
+            linear-gradient(to right, rgba(6, 43, 41, 0.86) 0%, rgba(6, 43, 41, 0.6) 50%, rgba(6, 43, 41, 0.12) 100%),
+            url('/images/hero-mountains-day.jpg');
         background-size: cover;
-        background-position: center 30%;
+        background-position: center 12%;
         background-repeat: no-repeat;
     }
 
