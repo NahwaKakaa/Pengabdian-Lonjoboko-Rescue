@@ -122,12 +122,15 @@ class PublicController extends Controller
     private function mapData(bool $withHazards, bool $withFacilities): array
     {
         $photo = fn (?string $path) => $path ? Storage::disk('public')->url($path) : null;
+        $boundaryFile = resource_path('data/lonjoboko-boundary.json');
+        $boundary = file_exists($boundaryFile) ? json_decode((string) file_get_contents($boundaryFile), true) : null;
 
         return [
             'center' => config('lonjoboko.map.center'),
             'zoom' => config('lonjoboko.map.zoom'),
             'tileUrl' => config('lonjoboko.map.tile_url'),
             'attribution' => config('lonjoboko.map.attribution'),
+            'boundary' => $boundary,
             'hazards' => $withHazards ? HazardZone::verified()->get()->filter->hasValidLocation()->map(fn (HazardZone $z) => [
                 'id' => $z->id,
                 'name' => $z->name,

@@ -41,10 +41,10 @@ return [
 
     'map' => [
         'center' => [
-            'lat' => (float) env('MAP_CENTER_LAT', -5.2830),
-            'lng' => (float) env('MAP_CENTER_LNG', 119.6150),
+            'lat' => (float) env('MAP_CENTER_LAT', -5.2641),
+            'lng' => (float) env('MAP_CENTER_LNG', 119.7366),
         ],
-        'zoom' => (int) env('MAP_ZOOM', 14),
+        'zoom' => (int) env('MAP_ZOOM', 13),
         'tile_url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     ],

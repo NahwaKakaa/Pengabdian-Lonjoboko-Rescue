@@ -15,6 +15,9 @@
 
     <section class="wrap py-8 grid gap-4">
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Tampilkan lapisan peta">
+            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-emerald-600 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-800">
+                <input type="checkbox" class="accent-emerald-600 size-4 rounded" data-layer-toggle="boundary" checked> Lingkup Area Lonjoboko
+            </label>
             <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-flood/50 has-[:checked]:border-flood has-[:checked]:bg-flood-soft has-[:checked]:text-flood">
                 <input type="checkbox" class="accent-flood size-4 rounded" data-layer-toggle="banjir" checked> Rawan banjir
             </label>
@@ -34,10 +37,16 @@
 
         <div class="map-frame">
             <div data-lr-map="risk" class="h-[62vh] min-h-[380px] max-h-[640px] w-full" role="region" aria-label="Peta risiko bencana Desa {{ $site['village'] }}"></div>
-            <button type="button" data-locate class="absolute bottom-4 left-4 z-[500] inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
-                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
-                Lokasi saya
-            </button>
+            <div class="absolute bottom-4 left-4 z-[500] flex flex-wrap items-center gap-2">
+                <button type="button" data-locate class="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
+                    <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+                    Lokasi saya
+                </button>
+                <button type="button" data-fit-village class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-emerald-50 text-emerald-900">
+                    <svg viewBox="0 0 24 24" class="size-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M3 18l7-10 4 5 3-4 4 9H3z"/></svg>
+                    Lingkup Desa
+                </button>
+            </div>
         </div>
         <p data-map-status class="text-sm text-ink-soft min-h-5" aria-live="polite"></p>
 

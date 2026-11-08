@@ -40,6 +40,7 @@ function initMap(element) {
     const map = createBaseMap(element, data);
 
     const layers = {
+        boundary: L.featureGroup(),
         banjir: L.featureGroup(),
         longsor: L.featureGroup(),
         points: L.featureGroup(),
@@ -47,6 +48,36 @@ function initMap(element) {
         facilities: L.featureGroup(),
     };
     const index = { hazard: {}, point: {}, route: {} };
+
+    // Lingkup area administratif Desa Lonjoboko (Polygon batas desa).
+    let boundaryLayer = null;
+    if (data.boundary) {
+        boundaryLayer = L.geoJSON(data.boundary, {
+            style: {
+                color: '#0e6b66',
+                weight: 2.5,
+                opacity: 0.95,
+                dashArray: '6, 6',
+                fillColor: '#10b981',
+                fillOpacity: 0.12,
+            },
+            onEachFeature: (feature, layer) => {
+                const p = feature.properties ?? {};
+                layer.bindPopup(
+                    popup(
+                        p.name ?? 'Desa Lonjoboko',
+                        [
+                            ['Kecamatan', p.district ?? 'Parangloe'],
+                            ['Kabupaten', p.regency ?? 'Gowa'],
+                            ['Provinsi', p.province ?? 'Sulawesi Selatan'],
+                            ['Keterangan', 'Lingkup Wilayah Administratif Desa'],
+                        ],
+                    ),
+                );
+            },
+        });
+        boundaryLayer.addTo(layers.boundary);
+    }
 
     // Lokasi rawan: lingkaran perkiraan area + titik tengah.
     (data.hazards ?? []).forEach((z) => {
@@ -126,19 +157,29 @@ function initMap(element) {
     });
 
     // Lapisan yang tampil saat pertama dibuka.
-    const initial = mode === 'evacuation' ? ['banjir', 'longsor', 'points', 'routes'] : ['banjir', 'longsor', 'points', 'facilities'];
+    const initial = mode === 'evacuation' 
+        ? ['boundary', 'banjir', 'longsor', 'points', 'routes'] 
+        : ['boundary', 'banjir', 'longsor', 'points', 'facilities'];
     initial.forEach((key) => layers[key].addTo(map));
 
-    // Arahkan peta ke seluruh data yang ada.
-    const visible = L.featureGroup(initial.map((key) => layers[key]));
-    if (visible.getLayers().some((group) => group.getLayers().length)) {
+    // Arahkan peta ke lingkup wilayah desa bila tersedia, atau ke seluruh data yang ada.
+    if (boundaryLayer && boundaryLayer.getLayers().length) {
         try {
-            map.fitBounds(visible.getBounds(), { padding: [30, 30], maxZoom: 16 });
+            map.fitBounds(boundaryLayer.getBounds(), { padding: [25, 25] });
         } catch {
-            /* tidak ada data dengan koordinat */
+            /* fallback */
         }
-    } else if (status) {
-        status.textContent = 'Belum ada data peta yang diverifikasi. Peta menampilkan wilayah sekitar desa.';
+    } else {
+        const visible = L.featureGroup(initial.map((key) => layers[key]));
+        if (visible.getLayers().some((group) => group.getLayers().length)) {
+            try {
+                map.fitBounds(visible.getBounds(), { padding: [30, 30], maxZoom: 16 });
+            } catch {
+                /* tidak ada data dengan koordinat */
+            }
+        } else if (status) {
+            status.textContent = 'Belum ada data peta yang diverifikasi. Peta menampilkan wilayah sekitar desa.';
+        }
     }
 
     // Tombol lapisan (Peta Risiko).
@@ -236,6 +277,18 @@ function initMap(element) {
                 },
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 },
             );
+        });
+    });
+
+    // Tombol "Lingkup Desa" untuk memusatkan kembali ke batas Desa Lonjoboko.
+    document.querySelectorAll('[data-fit-village]').forEach((button) => {
+        button.addEventListener('click', () => {
+            if (boundaryLayer && boundaryLayer.getLayers().length) {
+                map.fitBounds(boundaryLayer.getBounds(), { padding: [30, 30] });
+                if (status) status.textContent = 'Menampilkan seluruh lingkup wilayah Desa Lonjoboko.';
+            } else if (data.center) {
+                map.setView([data.center.lat, data.center.lng], data.zoom ?? 13);
+            }
         });
     });
 }
