@@ -77,7 +77,9 @@ cd lonjoboko-rescue
 php -v              # pastikan 8.2 atau lebih baru
 composer -V         # pastikan Composer tersedia
 
-composer install --no-dev --prefer-dist --optimize-autoloader
+composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts
+php artisan package:discover --ansi
+php artisan filament:upgrade
 cp .env.example .env
 php artisan key:generate
 nano .env           # isi sesuai bagian 2.1
@@ -204,4 +206,5 @@ Kalau hijau semua, buka https://lonjoboko-rescue.web.id.
 | Halaman putih / error 500 | Lihat log: `tail -n 50 ~/lonjoboko-rescue/storage/logs/laravel.log` |
 | Tampilan berantakan tanpa warna | Folder `public/build` belum terunggah. Jalankan ulang workflow deploy |
 | Foto yang diunggah tidak muncul | Jalankan `php artisan storage:link` di server |
+| `The Process class relies on proc_open` saat composer install | Hosting mematikan `proc_open`. Tambahkan `--no-scripts`, lalu jalankan `php artisan package:discover` dan `php artisan filament:upgrade` |
 | Web tertahan di mode pemeliharaan | Masuk SSH, jalankan `cd ~/lonjoboko-rescue && php artisan up` |
