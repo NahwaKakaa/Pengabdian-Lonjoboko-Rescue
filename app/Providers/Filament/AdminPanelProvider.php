@@ -32,10 +32,11 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('LONJOBOKO RESCUE')
             ->brandLogo(fn () => view('filament.brand'))
-            ->brandLogoHeight('2.75rem')
+            ->brandLogoHeight('2.5rem')
             ->darkMode(false)
             ->colors([
-                'primary' => Color::Emerald,
+                // Sama dengan warna aksen web publik (hijau sungai).
+                'primary' => Color::hex('#0e6b66'),
                 'success' => Color::Emerald,
                 'danger' => Color::Rose,
                 'warning' => Color::Amber,
@@ -57,7 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 VerificationOverview::class,
             ])
-            // Tema elegan hijau & putih + peta admin (Leaflet & Geoman).
+            // Tema admin (resources/css/admin.css) + peta admin (Leaflet & Geoman).
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): string => Blade::render("@vite(['resources/css/admin.css', 'resources/js/admin-map.js'])"),

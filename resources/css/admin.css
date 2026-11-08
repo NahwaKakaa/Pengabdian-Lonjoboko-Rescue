@@ -1,287 +1,337 @@
 /*
- * Tema Elegan Hijau & Putih Panel Admin LONJOBOKO RESCUE
- * Mengombinasikan nuansa hutan pinus/lembah perbukitan hijau khas Lonjoboko
- * dengan tampilan putih bersih, tajam, dan berwibawa.
+ * Tema panel admin LONJOBOKO RESCUE.
+ *
+ * Arah desain: sidebar hijau sungai yang tenang, area kerja putih bersih,
+ * satu warna aksen yang sama dengan web publik (#0e6b66). Warna tombol,
+ * tautan, fokus, dan centang diatur lewat palet "primary" di
+ * AdminPanelProvider, jadi file ini hanya mengatur yang tidak bisa diatur di sana.
+ *
+ * Catatan teknis: Filament memberi warna langsung pada teks dan ikon menu
+ * (kelas text-gray-*), jadi warna harus ditetapkan pada .fi-sidebar-item-label
+ * dan .fi-sidebar-item-icon, bukan hanya pada tombolnya.
  */
 
 :root {
-    --lr-forest-950: #022018;
-    --lr-forest-900: #032e23;
-    --lr-forest-800: #064e3b;
-    --lr-forest-700: #047857;
-    --lr-forest-600: #059669;
-    --lr-forest-500: #10b981;
-    --lr-forest-400: #34d399;
-    --lr-forest-200: #a7f3d0;
-    --lr-forest-100: #d1fae5;
-    --lr-forest-50:  #ecfdf5;
-    --lr-surface:    #f7faf8;
-    --lr-card-border: #e6f0eb;
+    --lr-side-bg: #0b3d38;
+    --lr-side-bg-deep: #082e2b;
+    --lr-side-text: #d5e8e4;
+    --lr-side-muted: #86b3ab;
+    --lr-side-icon: #9ccfc6;
+    --lr-side-hover: rgba(255, 255, 255, 0.06);
+    --lr-side-active: rgba(255, 255, 255, 0.11);
+    --lr-accent: #0e6b66;
+    --lr-accent-bright: #5fd0b7;
+    --lr-ink: #10201f;
+    --lr-ink-soft: #4b5f5c;
+    --lr-surface: #f4f7f6;
+    --lr-card: #ffffff;
+    --lr-line: #e1e9e7;
 }
 
-/* ==========================================================================
-   1. LATAR UTAMA (Background Elegan Sage-Putih)
-   ========================================================================== */
-body.fi-body,
+/* ---------------------------------------------------------------
+   Latar area kerja
+   --------------------------------------------------------------- */
+.fi-body,
 .fi-layout,
-.fi-main {
-    background-color: var(--lr-surface) !important;
+.fi-main-ctn {
+    background-color: var(--lr-surface);
 }
 
-/* ==========================================================================
-   2. SIDEBAR ELEGAN HIJAU HUTAN (Deep Forest Emerald Sidebar)
-   ========================================================================== */
+/* ---------------------------------------------------------------
+   Logo
+   --------------------------------------------------------------- */
+.lr-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+}
+
+.lr-brand__mark {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.65rem;
+    background: var(--lr-accent);
+    color: #ffffff;
+}
+
+.lr-brand__mark svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.lr-brand__text {
+    display: grid;
+    min-width: 0;
+    line-height: 1.15;
+}
+
+.lr-brand__title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--lr-ink);
+    white-space: nowrap;
+}
+
+.lr-brand__subtitle {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--lr-ink-soft);
+    white-space: nowrap;
+}
+
+/* Di sidebar gelap, teks logo menjadi terang. */
+.fi-sidebar .lr-brand__mark {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.fi-sidebar .lr-brand__title {
+    color: #ffffff;
+}
+
+.fi-sidebar .lr-brand__subtitle {
+    color: var(--lr-side-muted);
+}
+
+/* ---------------------------------------------------------------
+   Sidebar
+   --------------------------------------------------------------- */
 .fi-sidebar {
-    background: linear-gradient(180deg, #064e3b 0%, #032e23 100%) !important;
-    border-right: 1px solid rgba(16, 185, 129, 0.2) !important;
-    box-shadow: 4px 0 24px rgba(3, 46, 35, 0.12) !important;
+    background: linear-gradient(180deg, var(--lr-side-bg) 0%, var(--lr-side-bg-deep) 100%);
 }
 
-/* Header Sidebar / Brand */
 .fi-sidebar-header {
-    background: rgba(0, 0, 0, 0.12) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.fi-sidebar-header .fi-logo {
-    color: #ffffff !important;
+/* Tombol buka/tutup sidebar di header sidebar */
+.fi-sidebar-header .fi-icon-btn {
+    color: var(--lr-side-muted);
 }
 
-/* Label Kelompok Menu (Peta & Evakuasi, Informasi Publik, Pengaturan) */
-.fi-sidebar-group-button,
+.fi-sidebar-header .fi-icon-btn:hover {
+    color: #ffffff;
+    background: var(--lr-side-hover);
+}
+
+/* Judul kelompok menu */
+.fi-sidebar-group-button {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
 .fi-sidebar-group-label {
-    color: #a7f3d0 !important;
+    color: var(--lr-side-muted) !important;
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
-    font-size: 0.72rem !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
 }
 
-.fi-sidebar-group-collapse-button svg,
-.fi-sidebar-group-button svg {
-    color: #6ee7b7 !important;
+.fi-sidebar-group-icon,
+.fi-sidebar-group-collapse-button,
+.fi-sidebar-group-collapse-button svg {
+    color: var(--lr-side-muted) !important;
 }
 
-/* Item Menu Navigasi - Kondisi Normal */
+.fi-sidebar-group-collapse-button:hover {
+    background: var(--lr-side-hover) !important;
+}
+
+.fi-sidebar-nav-groups {
+    row-gap: 1.5rem;
+}
+
+/* Item menu */
 .fi-sidebar-item-button {
-    color: #e2e8f0 !important;
-    border-radius: 0.75rem !important;
-    margin: 2px 0 !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 0.6rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    transition: background-color 0.15s ease;
 }
 
-.fi-sidebar-item-button:hover {
-    background-color: rgba(255, 255, 255, 0.09) !important;
-    color: #ffffff !important;
-    transform: translateX(2px) !important;
+.fi-sidebar-item-button:hover,
+.fi-sidebar-item-button:focus-visible {
+    background-color: var(--lr-side-hover) !important;
 }
 
-/* Ikon Menu Navigasi */
+.fi-sidebar-item-label {
+    color: var(--lr-side-text) !important;
+    font-weight: 500;
+}
+
 .fi-sidebar-item-icon {
-    color: #6ee7b7 !important;
-    transition: color 0.2s ease !important;
+    color: var(--lr-side-icon) !important;
 }
 
-.fi-sidebar-item-button:hover .fi-sidebar-item-icon {
+.fi-sidebar-item-button:hover .fi-sidebar-item-label {
     color: #ffffff !important;
 }
 
-/* Item Menu Aktif (Highlight Hijau Zamrud Bercahaya) */
-.fi-sidebar-item-active .fi-sidebar-item-button {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+/* Item aktif: latar terang tipis + garis aksen di kiri */
+.fi-sidebar-item.fi-active .fi-sidebar-item-button {
+    background-color: var(--lr-side-active) !important;
+    box-shadow: inset 3px 0 0 var(--lr-accent-bright);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label {
     color: #ffffff !important;
-    font-weight: 700 !important;
-    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4) !important;
-    border: 1px solid rgba(110, 231, 183, 0.35) !important;
+    font-weight: 700;
 }
 
-.fi-sidebar-item-active .fi-sidebar-item-button .fi-sidebar-item-icon {
-    color: #ffffff !important;
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
+    color: var(--lr-accent-bright) !important;
 }
 
-.fi-sidebar-item-active .fi-sidebar-item-button .fi-sidebar-item-label {
-    color: #ffffff !important;
+/* Lencana jumlah "menunggu verifikasi" di sidebar */
+.fi-sidebar-item .fi-badge {
+    background-color: #fbbf24 !important;
+    color: #3d2a00 !important;
+    --tw-ring-color: transparent !important;
+    font-weight: 700;
+    min-width: 1.4rem;
+    justify-content: center;
 }
 
-/* ==========================================================================
-   3. TOPBAR BERSIH DENGAN AKSEN HIJAU (Clean Crisp Topbar)
-   ========================================================================== */
-.fi-topbar {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid #e2ece6 !important;
-    box-shadow: 0 1px 4px rgba(6, 78, 59, 0.04) !important;
+/* Tooltip & garis kecil untuk sub-menu */
+.fi-sidebar-item-grouped-border > div {
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-.fi-topbar-open-sidebar-btn,
-.fi-topbar-close-sidebar-btn,
-.fi-topbar button {
-    border-radius: 0.625rem !important;
-    transition: all 0.2s ease !important;
+/* ---------------------------------------------------------------
+   Topbar
+   --------------------------------------------------------------- */
+.fi-topbar nav {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    border-bottom: 1px solid var(--lr-line);
 }
 
-.fi-topbar-open-sidebar-btn:hover,
-.fi-topbar-close-sidebar-btn:hover,
-.fi-topbar button:hover {
-    background-color: var(--lr-forest-50) !important;
-    color: var(--lr-forest-600) !important;
-}
-
-/* User Avatar ring */
-.fi-user-avatar {
-    box-shadow: 0 0 0 2px #059669 !important;
-}
-
-/* ==========================================================================
-   4. JUDUL HALAMAN & HEADER (Page Headings)
-   ========================================================================== */
+/* ---------------------------------------------------------------
+   Judul halaman
+   --------------------------------------------------------------- */
 .fi-header-heading {
-    color: #064e3b !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.025em !important;
+    color: var(--lr-ink);
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .fi-header-subheading {
-    color: #475569 !important;
+    color: var(--lr-ink-soft);
 }
 
-/* ==========================================================================
-   5. KARTU STATISTIK & WIDGET (Stat Overview Cards)
-   ========================================================================== */
+.fi-breadcrumbs a,
+.fi-breadcrumbs span {
+    font-size: 0.8rem;
+}
+
+/* ---------------------------------------------------------------
+   Kartu ringkasan di Dasbor
+   --------------------------------------------------------------- */
 .fi-wi-stats-overview-stat {
-    background-color: #ffffff !important;
-    border: 1px solid var(--lr-card-border) !important;
-    border-top: 4px solid var(--lr-forest-600) !important;
-    border-radius: 1rem !important;
-    box-shadow: 0 2px 8px rgba(6, 78, 59, 0.04) !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    overflow: hidden !important;
+    border-radius: 0.9rem !important;
+    box-shadow: 0 1px 2px rgba(16, 32, 31, 0.04) !important;
+    --tw-ring-color: var(--lr-line) !important;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.fi-wi-stats-overview-stat:hover {
-    box-shadow: 0 8px 24px rgba(6, 78, 59, 0.09) !important;
-    transform: translateY(-2px) !important;
-    border-top-color: var(--lr-forest-700) !important;
+a.fi-wi-stats-overview-stat:hover,
+.fi-wi-stats-overview-stat:has(a):hover {
+    box-shadow: 0 8px 22px -8px rgba(14, 107, 102, 0.22) !important;
 }
 
-/* Angka Stat */
-.fi-wi-stats-overview-stat .text-3xl,
-.fi-wi-stats-overview-stat [class*="text-3xl"],
+.fi-wi-stats-overview-stat-icon {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    padding: 0.35rem;
+    border-radius: 0.5rem;
+    background-color: #e7f3f1;
+    color: var(--lr-accent) !important;
+}
+
+.fi-wi-stats-overview-stat-label {
+    color: var(--lr-ink-soft) !important;
+    font-weight: 600 !important;
+}
+
 .fi-wi-stats-overview-stat-value {
-    color: #064e3b !important;
+    color: var(--lr-ink) !important;
+    font-size: 1.6rem !important;
     font-weight: 800 !important;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
 }
 
-/* Ikon Stat */
-.fi-wi-stats-overview-stat svg.fi-wi-stats-overview-stat-icon {
-    color: var(--lr-forest-600) !important;
-    background-color: var(--lr-forest-50) !important;
-    padding: 0.35rem !important;
-    border-radius: 0.625rem !important;
-}
-
-/* Deskripsi status verifikasi */
-.fi-wi-stats-overview-stat .fi-color-success,
-.fi-wi-stats-overview-stat [class*="text-success"] {
-    color: #047857 !important;
-    font-weight: 600 !important;
-}
-
-/* ==========================================================================
-   6. KARTU KONTEN & SEKSI (Sections & Tables)
-   ========================================================================== */
+/* ---------------------------------------------------------------
+   Kartu formulir, tabel, dan seksi
+   --------------------------------------------------------------- */
 .fi-section,
-.fi-ta {
-    background-color: #ffffff !important;
-    border: 1px solid var(--lr-card-border) !important;
-    border-radius: 1rem !important;
-    box-shadow: 0 2px 10px rgba(6, 78, 59, 0.03) !important;
+.fi-ta-ctn,
+.fi-wi-widget > .fi-section {
+    border-radius: 0.9rem !important;
+    box-shadow: 0 1px 2px rgba(16, 32, 31, 0.04) !important;
+    --tw-ring-color: var(--lr-line) !important;
 }
 
-/* Header Tabel */
+.fi-section-header-heading {
+    color: var(--lr-ink);
+    font-weight: 700;
+}
+
 .fi-ta-header-cell {
-    background-color: #f8fbf9 !important;
-    color: #064e3b !important;
+    background-color: #f7faf9;
+}
+
+.fi-ta-header-cell-label {
+    color: var(--lr-ink-soft) !important;
+    font-size: 0.72rem;
     font-weight: 700 !important;
-    font-size: 0.75rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    border-bottom: 1px solid var(--lr-card-border) !important;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
-/* Baris Tabel saat Hover */
 .fi-ta-row:hover {
-    background-color: #f0fdf4 !important;
+    background-color: #f5faf9;
 }
 
-/* ==========================================================================
-   7. TOMBOL UTAMA (Primary Action Buttons)
-   ========================================================================== */
-.fi-btn-color-primary,
-button.fi-btn-primary {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    border-radius: 0.625rem !important;
-    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    transition: all 0.2s ease !important;
+/* Tombol: sudut sedikit lebih bulat, tanpa efek melompat */
+.fi-btn {
+    border-radius: 0.6rem;
 }
 
-.fi-btn-color-primary:hover,
-button.fi-btn-primary:hover {
-    background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
-    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35) !important;
-    transform: translateY(-1px) !important;
-}
-
-/* ==========================================================================
-   8. INPUT & FIELD FORMULIR (Inputs & Focus States)
-   ========================================================================== */
-.fi-input,
-.fi-select-input,
-textarea.fi-input {
-    border-radius: 0.625rem !important;
-    border-color: #d1e0d7 !important;
-    transition: all 0.2s ease !important;
-}
-
-.fi-input:focus,
-.fi-select-input:focus,
-textarea.fi-input:focus {
-    border-color: var(--lr-forest-600) !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
-}
-
-/* Checkbox & Radio */
-input[type="checkbox"]:checked,
-input[type="radio"]:checked {
-    background-color: var(--lr-forest-600) !important;
-    border-color: var(--lr-forest-600) !important;
-}
-
-/* ==========================================================================
-   9. LENCANA / BADGE (Badges & Pills)
-   ========================================================================== */
-.fi-badge-color-primary,
-.fi-badge-color-success {
-    background-color: var(--lr-forest-50) !important;
-    color: var(--lr-forest-700) !important;
-    border: 1px solid var(--lr-forest-200) !important;
-    font-weight: 600 !important;
-}
-
-/* ==========================================================================
-   10. HALAMAN LOGIN ADMIN (Admin Login Screen)
-   ========================================================================== */
+/* ---------------------------------------------------------------
+   Halaman login
+   --------------------------------------------------------------- */
 .fi-simple-layout {
-    background: radial-gradient(circle at 50% 15%, #e6f4ea 0%, #f4f8f5 55%, #edf4ef 100%) !important;
+    background:
+        radial-gradient(60rem 30rem at 50% -10%, #d9eeea 0%, transparent 70%),
+        var(--lr-surface);
 }
 
 .fi-simple-main {
-    background-color: #ffffff !important;
-    border: 1px solid #d9ebdff0 !important;
-    border-radius: 1.5rem !important;
-    box-shadow: 0 16px 40px rgba(6, 78, 59, 0.08) !important;
+    border-radius: 1.1rem !important;
+    box-shadow: 0 18px 40px -18px rgba(14, 107, 102, 0.25) !important;
+    --tw-ring-color: var(--lr-line) !important;
+}
+
+.fi-simple-header .fi-logo {
+    margin-bottom: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fi-sidebar-item-button,
+    .fi-wi-stats-overview-stat {
+        transition: none;
+    }
 }

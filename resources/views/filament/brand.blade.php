@@ -1,11 +1,17 @@
-<div class="flex items-center gap-3 min-w-0 py-1">
-    <div class="size-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white shadow-md shadow-emerald-950/20 shrink-0 border border-emerald-400/30">
-        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+{{--
+    Logo panel admin. Memakai kelas CSS sendiri (resources/css/admin.css),
+    karena kelas Tailwind buatan sendiri tidak tersedia di CSS bawaan Filament.
+    Warna teks menyesuaikan: putih di sidebar gelap, gelap di halaman login.
+--}}
+<div class="lr-brand">
+    <span class="lr-brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2-1.5 4.5-1.5S19 18 21 18"/>
+            <path d="M4 13l5-7 3 4 2-2 6 5"/>
         </svg>
-    </div>
-    <div class="min-w-0 leading-tight">
-        <span class="block font-black tracking-tight text-white text-base">LONJOBOKO RESCUE</span>
-        <span class="block text-[0.68rem] font-semibold text-emerald-200 tracking-wider uppercase">Panel Pengelola Desa</span>
-    </div>
+    </span>
+    <span class="lr-brand__text">
+        <span class="lr-brand__title">LONJOBOKO RESCUE</span>
+        <span class="lr-brand__subtitle">Panel Pengelola Desa</span>
+    </span>
 </div>
