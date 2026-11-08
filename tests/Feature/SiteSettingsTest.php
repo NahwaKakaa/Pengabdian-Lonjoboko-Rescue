@@ -100,4 +100,14 @@ class SiteSettingsTest extends TestCase
         $this->get(route('emergency'))->assertOk()->assertSee('BPBD Kabupaten Gowa')->assertDontSee('InaRISK BNPB');
         $this->assertSame(15, config('lonjoboko.map.zoom'));
     }
+
+    public function test_halaman_masuk_admin_memakai_tampilan_desa(): void
+    {
+        $this->get('/admin/login')
+            ->assertOk()
+            ->assertSee('Masuk ke panel desa')
+            ->assertSee('Kabar bencana desa, dikelola dari satu tempat.')
+            ->assertSee('Tidak ada peringatan berlaku')
+            ->assertSee('lr-auth-page');
+    }
 }

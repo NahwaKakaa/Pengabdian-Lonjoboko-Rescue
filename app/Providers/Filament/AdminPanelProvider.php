@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Widgets\ActiveAnnouncements;
 use App\Filament\Widgets\PendingReview;
 use App\Filament\Widgets\VerificationOverview;
@@ -32,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->brandName('LONJOBOKO RESCUE')
             ->brandLogo(fn () => view('filament.brand'))
             ->brandLogoHeight('2.5rem')
@@ -97,6 +98,17 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): string => view('filament.leave-dialog')->render(),
+            )
+            // Halaman masuk: panel bergambar desa di kiri dan catatan di bawah formulir.
+            ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn (): string => view('filament.auth.aside')->render(),
+                scopes: Login::class,
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => view('filament.auth.form-after')->render(),
+                scopes: Login::class,
             )
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_FOOTER,
