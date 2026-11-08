@@ -10,12 +10,20 @@
     >
         <nav aria-label="Saring jenis konten" class="flex flex-wrap gap-2 pt-2">
             <a href="{{ route('education') }}"
-               @class(['rounded-full border px-3 py-1.5 text-sm font-semibold', 'bg-river-800 border-river-800 text-white' => ! $activeCategory, 'border-line hover:bg-river-50' => $activeCategory])
+               @class([
+                   'rounded-full border px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all',
+                   'bg-emerald-600 text-white border-emerald-500 shadow-sm font-bold ring-2 ring-emerald-400/40' => ! $activeCategory,
+                   'bg-river-950/80 backdrop-blur-xs border-white/20 text-river-100 hover:bg-white/15 hover:text-white' => $activeCategory,
+               ])
                @if (! $activeCategory) aria-current="page" @endif>Semua</a>
             @foreach (\App\Enums\EducationCategory::cases() as $category)
                 @php $active = $activeCategory === $category; @endphp
                 <a href="{{ route('education', ['kategori' => $category->value]) }}"
-                   @class(['rounded-full border px-3 py-1.5 text-sm font-semibold', 'bg-river-800 border-river-800 text-white' => $active, 'border-line hover:bg-river-50' => ! $active])
+                   @class([
+                       'rounded-full border px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all',
+                       'bg-emerald-600 text-white border-emerald-500 shadow-sm font-bold ring-2 ring-emerald-400/40' => $active,
+                       'bg-river-950/80 backdrop-blur-xs border-white/20 text-river-100 hover:bg-white/15 hover:text-white' => ! $active,
+                   ])
                    @if ($active) aria-current="page" @endif>{{ $category->getLabel() }}</a>
             @endforeach
         </nav>

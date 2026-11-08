@@ -28,11 +28,27 @@
     font: inherit;
 }
 
+.leaflet-popup-content-wrapper {
+    border-radius: 1rem;
+    box-shadow: 0 14px 35px -8px rgba(9, 63, 60, 0.18), 0 4px 12px -2px rgba(9, 63, 60, 0.08);
+    border: 1px solid rgba(216, 226, 224, 0.8);
+    padding: 2px;
+}
+
+.leaflet-popup-tip {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
 .leaflet-container a.leaflet-popup-close-button {
-    padding: 6px 6px 0 0;
+    padding: 8px 8px 0 0;
+    color: #64748b;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+    color: #0f172a;
 }
 
 .leaflet-popup-content {
-    margin: 12px 14px;
-    line-height: 1.45;
+    margin: 14px 16px;
+    line-height: 1.5;
 }

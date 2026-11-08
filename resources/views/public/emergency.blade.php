@@ -48,9 +48,9 @@
                         @endif
                     </a>
                 @empty
-                    <div class="rounded-2xl border border-line bg-card p-5 flex items-start gap-3">
-                        <span class="mt-1 size-3 shrink-0 rounded-full bg-safe" aria-hidden="true"></span>
-                        <p class="text-ink-soft">Tidak ada peringatan dari pemerintah desa saat ini. Tetap pantau informasi cuaca dari BMKG, terutama saat hujan deras berlangsung lama.</p>
+                    <div class="elevation-card rounded-2xl p-6 flex items-start gap-3.5">
+                        <span class="mt-1 size-3 shrink-0 rounded-full bg-safe ring-4 ring-safe/20" aria-hidden="true"></span>
+                        <p class="text-ink-soft leading-relaxed text-sm">Tidak ada peringatan darurat aktif dari pemerintah desa saat ini. Tetap pantau informasi cuaca resmi dari BMKG, terutama saat intensitas hujan lebat terjadi terus-menerus.</p>
                     </div>
                 @endforelse
             </section>
@@ -74,29 +74,38 @@
         </div>
 
         <aside class="grid gap-6 content-start">
-            <section class="rounded-2xl bg-river-800 text-white p-6 grid gap-4" aria-labelledby="lapor">
-                <h2 id="lapor" class="text-xl font-extrabold">Cara melaporkan kejadian</h2>
-                <ol class="grid gap-3">
+            <section class="elevation-card rounded-3xl bg-gradient-to-br from-river-900 via-river-800 to-river-900 text-white p-6 sm:p-7 grid gap-4 border border-river-700/60 shadow-xl" aria-labelledby="lapor">
+                <h2 id="lapor" class="text-xl font-extrabold flex items-center gap-2">
+                    <svg viewBox="0 0 24 24" class="size-5 text-amber-300" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Cara Melaporkan Kejadian
+                </h2>
+                <ol class="grid gap-3.5">
                     @foreach ($steps as $i => $step)
-                        <li class="grid grid-cols-[auto_1fr] gap-3">
-                            <span class="grid place-items-center size-7 rounded-full bg-white text-river-900 text-sm font-extrabold num" aria-hidden="true">{{ $i + 1 }}</span>
-                            <span class="text-river-50 leading-relaxed">{{ $step }}</span>
+                        <li class="grid grid-cols-[auto_1fr] gap-3 items-start">
+                            <span class="grid place-items-center size-7 rounded-xl bg-white text-river-900 text-xs font-black shadow-xs num shrink-0 mt-0.5" aria-hidden="true">{{ $i + 1 }}</span>
+                            <span class="text-river-100/90 leading-relaxed text-sm">{{ $step }}</span>
                         </li>
                     @endforeach
                 </ol>
                 @if ($site['office_phone'])
-                    <p class="text-sm text-river-100 border-t border-white/15 pt-3">Kantor desa: <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['office_phone']) }}" class="font-bold text-white num">{{ $site['office_phone'] }}</a></p>
+                    <p class="text-sm text-river-100/90 border-t border-white/15 pt-3 flex items-center gap-2">
+                        <span>Kantor Desa:</span>
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['office_phone']) }}" class="font-bold text-white num underline underline-offset-4">{{ $site['office_phone'] }}</a>
+                    </p>
                 @endif
             </section>
 
-            <section class="rounded-2xl border border-line bg-card p-6 grid gap-3" aria-labelledby="sumber">
-                <h2 id="sumber" class="text-lg font-extrabold">Sumber peringatan dini resmi</h2>
-                <p class="text-sm text-ink-soft">Web desa ini meneruskan informasi dan tidak membuat prakiraan sendiri. Untuk peringatan dini, rujuk instansi berikut.</p>
+            <section class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-4" aria-labelledby="sumber">
+                <h2 id="sumber" class="text-lg font-extrabold text-ink">Sumber Peringatan Dini Resmi</h2>
+                <p class="text-xs text-ink-soft leading-relaxed">Web desa ini meneruskan informasi dan panduan lapangan bagi warga. Untuk data meteorologi dan hidrometeorologi resmi, rujuk instansi berikut:</p>
                 <ul class="grid gap-3">
                     @foreach ($sources as $source)
-                        <li class="border-t border-line pt-3 first:border-0 first:pt-0">
-                            <a href="{{ $source['url'] }}" target="_blank" rel="noopener" class="font-semibold text-river-700 underline underline-offset-4">{{ $source['name'] }}</a>
-                            <p class="text-sm text-ink-soft">{{ $source['description'] }}</p>
+                        <li class="border-t border-line/60 pt-3 first:border-0 first:pt-0">
+                            <a href="{{ $source['url'] }}" target="_blank" rel="noopener" class="font-bold text-sm text-river-700 hover:text-river-900 underline underline-offset-4 inline-flex items-center gap-1">
+                                <span>{{ $source['name'] }}</span>
+                                <svg viewBox="0 0 24 24" class="size-3" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                            </a>
+                            <p class="text-xs text-ink-soft mt-0.5 leading-relaxed">{{ $source['description'] }}</p>
                         </li>
                     @endforeach
                 </ul>

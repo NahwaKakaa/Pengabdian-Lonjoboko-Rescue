@@ -15,20 +15,20 @@
 
     <section class="wrap py-8 grid gap-4">
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Tampilkan lapisan peta">
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold cursor-pointer has-[:checked]:border-flood has-[:checked]:bg-flood-soft">
-                <input type="checkbox" class="accent-flood" data-layer-toggle="banjir" checked> Rawan banjir
+            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-flood/50 has-[:checked]:border-flood has-[:checked]:bg-flood-soft has-[:checked]:text-flood">
+                <input type="checkbox" class="accent-flood size-4 rounded" data-layer-toggle="banjir" checked> Rawan banjir
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold cursor-pointer has-[:checked]:border-slide has-[:checked]:bg-slide-soft">
-                <input type="checkbox" class="accent-slide" data-layer-toggle="longsor" checked> Rawan longsor
+            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-slide/50 has-[:checked]:border-slide has-[:checked]:bg-slide-soft has-[:checked]:text-slide">
+                <input type="checkbox" class="accent-slide size-4 rounded" data-layer-toggle="longsor" checked> Rawan longsor
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold cursor-pointer has-[:checked]:border-safe has-[:checked]:bg-safe-soft">
-                <input type="checkbox" class="accent-safe" data-layer-toggle="points" checked> Titik kumpul
+            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-safe/50 has-[:checked]:border-safe has-[:checked]:bg-safe-soft has-[:checked]:text-safe">
+                <input type="checkbox" class="accent-safe size-4 rounded" data-layer-toggle="points" checked> Titik kumpul
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold cursor-pointer has-[:checked]:border-route">
-                <input type="checkbox" class="accent-route" data-layer-toggle="routes"> Jalur evakuasi
+            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-route/50 has-[:checked]:border-route has-[:checked]:bg-pink-50 has-[:checked]:text-route">
+                <input type="checkbox" class="accent-route size-4 rounded" data-layer-toggle="routes"> Jalur evakuasi
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold cursor-pointer has-[:checked]:border-ink-soft">
-                <input type="checkbox" data-layer-toggle="facilities" checked> Fasilitas umum
+            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-ink-soft has-[:checked]:border-ink-soft has-[:checked]:bg-river-50">
+                <input type="checkbox" class="size-4 rounded" data-layer-toggle="facilities" checked> Fasilitas umum
             </label>
         </div>
 
@@ -48,7 +48,7 @@
         <div class="grid gap-4 content-start">
             <h2 class="text-2xl font-extrabold tracking-tight">Daftar lokasi rawan</h2>
             @forelse ($hazards as $zone)
-                <article class="rounded-2xl border border-line bg-card p-5 grid gap-3 sm:grid-cols-[1fr_auto]">
+                <article class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3 sm:grid-cols-[1fr_auto]">
                     <div class="grid gap-2 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <x-hazard-badge :type="$zone->hazard_type" />
@@ -58,10 +58,13 @@
                         @if ($zone->description)
                             <p class="text-sm text-ink-soft leading-relaxed">{{ $zone->description }}</p>
                         @endif
-                        <button type="button" data-focus-hazard="{{ $zone->id }}" class="text-sm font-semibold text-river-700 underline underline-offset-4 w-fit">Tunjukkan di peta</button>
+                        <button type="button" data-focus-hazard="{{ $zone->id }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4 w-fit inline-flex items-center gap-1">
+                            <span>Tunjukkan di peta</span>
+                            <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
                     </div>
                     @if ($zone->photo)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($zone->photo) }}" alt="Foto {{ $zone->name }}" loading="lazy" class="w-full sm:w-36 aspect-[4/3] rounded-xl object-cover">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($zone->photo) }}" alt="Foto {{ $zone->name }}" loading="lazy" class="w-full sm:w-36 aspect-[4/3] rounded-xl object-cover shadow-xs">
                     @endif
                 </article>
             @empty
@@ -70,7 +73,7 @@
         </div>
 
         <aside class="grid gap-4 content-start">
-            <div class="rounded-2xl border border-line bg-card p-5 grid gap-3">
+            <div class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3">
                 <h2 class="font-extrabold text-lg">Arti warna di peta</h2>
                 <ul class="grid gap-2 text-sm">
                     <li class="flex items-center gap-3"><span class="size-4 rounded-full bg-flood/40 ring-2 ring-flood" aria-hidden="true"></span>Area rawan banjir</li>
@@ -82,7 +85,7 @@
                 <p class="text-xs text-ink-soft">Warna lingkaran makin pekat berarti tingkat kerawanan makin tinggi.</p>
             </div>
 
-            <div class="rounded-2xl border border-line bg-card p-5 grid gap-3">
+            <div class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3">
                 <h2 class="font-extrabold text-lg">Fasilitas umum & kesehatan</h2>
                 @forelse ($facilities as $facility)
                     <div class="border-t border-line pt-3 first:border-0 first:pt-0">
@@ -97,7 +100,7 @@
                 @endforelse
             </div>
 
-            <div class="rounded-2xl bg-river-50 border border-river-100 p-5 grid gap-2 text-sm">
+            <div class="elevation-card rounded-2xl bg-river-50 border border-river-100 p-5 sm:p-6 grid gap-2 text-sm">
                 <p class="font-bold">Ingin melihat peta risiko resmi?</p>
                 <p class="text-ink-soft">BNPB menyediakan peta potensi bencana per wilayah di InaRISK.</p>
                 <a href="https://inarisk.bnpb.go.id" target="_blank" rel="noopener" class="font-semibold text-river-700 underline underline-offset-4 w-fit">Buka InaRISK BNPB</a>

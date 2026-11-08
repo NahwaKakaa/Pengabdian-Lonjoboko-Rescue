@@ -16,4 +16,4 @@
     };
 @endphp
 
-<span {{ $attributes->class(['inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold', $classes]) }}>{{ $slot->isEmpty() ? $label : $slot }}</span>
+<span {{ $attributes->class(['inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border border-current/20 shadow-2xs', $classes]) }}>{{ $slot->isEmpty() ? $label : $slot }}</span>

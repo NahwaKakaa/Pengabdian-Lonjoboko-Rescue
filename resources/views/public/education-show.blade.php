@@ -5,19 +5,19 @@
 
 @section('content')
     <article>
-        <header class="border-b border-line bg-card">
-            <div class="wrap py-8 sm:py-10 grid gap-3">
-                <nav aria-label="Lokasi halaman" class="text-sm text-ink-soft">
-                    <a href="{{ route('education') }}" class="underline underline-offset-4 hover:text-ink">Edukasi</a>
-                    <span aria-hidden="true"> / </span>
-                    <a href="{{ route('education', ['kategori' => $content->category->value]) }}" class="underline underline-offset-4 hover:text-ink">{{ $content->category->getLabel() }}</a>
+        <header class="page-header-scenic text-white relative overflow-hidden border-b border-river-800 shadow-inner">
+            <div class="relative wrap py-10 sm:py-12 grid gap-3.5 z-10">
+                <nav aria-label="Lokasi halaman" class="text-xs font-semibold text-river-100 flex items-center gap-1.5">
+                    <a href="{{ route('education') }}" class="hover:text-white underline underline-offset-4 decoration-white/40">Edukasi</a>
+                    <span aria-hidden="true" class="text-river-100/60">/</span>
+                    <a href="{{ route('education', ['kategori' => $content->category->value]) }}" class="hover:text-white underline underline-offset-4 decoration-white/40">{{ $content->category->getLabel() }}</a>
                 </nav>
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight max-w-[30ch]">{{ $content->title }}</h1>
-                <div class="flex flex-wrap gap-2">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight max-w-[32ch]">{{ $content->title }}</h1>
+                <div class="flex flex-wrap gap-2 pt-1">
                     <x-hazard-badge :type="$content->topic->value === 'umum' ? 'umum' : $content->topic">{{ $content->topic->getLabel() }}</x-hazard-badge>
                 </div>
                 @if ($content->summary)
-                    <p class="text-lg text-ink-soft max-w-[65ch] leading-relaxed">{{ $content->summary }}</p>
+                    <p class="text-base sm:text-lg text-river-100/90 max-w-[65ch] leading-relaxed">{{ $content->summary }}</p>
                 @endif
             </div>
         </header>

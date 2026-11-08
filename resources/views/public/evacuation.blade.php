@@ -15,10 +15,10 @@
 
     <section class="wrap py-8 grid gap-4">
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Saring jalur menurut jenis bencana">
-            <span class="text-sm font-semibold text-ink-soft mr-1">Tampilkan jalur untuk:</span>
-            <button type="button" data-route-filter="all" aria-pressed="true" class="rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold aria-pressed:bg-river-800 aria-pressed:text-white aria-pressed:border-river-800">Semua</button>
-            <button type="button" data-route-filter="banjir" aria-pressed="false" class="rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold aria-pressed:bg-flood aria-pressed:text-white aria-pressed:border-flood">Banjir</button>
-            <button type="button" data-route-filter="longsor" aria-pressed="false" class="rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold aria-pressed:bg-slide aria-pressed:text-white aria-pressed:border-slide">Tanah longsor</button>
+            <span class="text-xs sm:text-sm font-bold text-ink-soft mr-1">Tampilkan jalur untuk:</span>
+            <button type="button" data-route-filter="all" aria-pressed="true" class="rounded-full border border-line/80 bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold shadow-xs hover:border-river-600 transition-all cursor-pointer aria-pressed:bg-river-800 aria-pressed:text-white aria-pressed:border-river-800 aria-pressed:shadow-sm">Semua</button>
+            <button type="button" data-route-filter="banjir" aria-pressed="false" class="rounded-full border border-line/80 bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold shadow-xs hover:border-flood transition-all cursor-pointer aria-pressed:bg-flood aria-pressed:text-white aria-pressed:border-flood aria-pressed:shadow-sm">Banjir</button>
+            <button type="button" data-route-filter="longsor" aria-pressed="false" class="rounded-full border border-line/80 bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold shadow-xs hover:border-slide transition-all cursor-pointer aria-pressed:bg-slide aria-pressed:text-white aria-pressed:border-slide aria-pressed:shadow-sm">Tanah longsor</button>
         </div>
 
         <div class="map-frame">
@@ -38,7 +38,7 @@
             <h2 class="text-2xl font-extrabold tracking-tight">Jalur evakuasi</h2>
             @forelse ($routes as $route)
                 @php $meters = $route->lengthInMeters(); @endphp
-                <article class="rounded-2xl border border-line bg-card p-5 grid gap-2" data-route-card="{{ $route->hazard_type->value }}">
+                <article class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-2" data-route-card="{{ $route->hazard_type->value }}">
                     <div class="flex flex-wrap items-center gap-2">
                         <x-hazard-badge :type="$route->hazard_type->value === 'semua' ? 'umum' : $route->hazard_type">{{ $route->hazard_type->getLabel() }}</x-hazard-badge>
                         <span class="text-sm text-ink-soft num">
@@ -53,7 +53,10 @@
                     @if ($route->description)
                         <p class="text-sm text-ink-soft leading-relaxed">{{ $route->description }}</p>
                     @endif
-                    <button type="button" data-focus-route="{{ $route->id }}" class="text-sm font-semibold text-river-700 underline underline-offset-4 w-fit">Tunjukkan di peta</button>
+                    <button type="button" data-focus-route="{{ $route->id }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4 w-fit inline-flex items-center gap-1">
+                        <span>Tunjukkan di peta</span>
+                        <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
                 </article>
             @empty
                 <p class="rounded-2xl border border-dashed border-line bg-card p-6 text-ink-soft">Belum ada jalur evakuasi yang diverifikasi.</p>
@@ -63,7 +66,7 @@
         <section class="grid gap-4 content-start">
             <h2 class="text-2xl font-extrabold tracking-tight">Titik kumpul & pengungsian</h2>
             @forelse ($points as $point)
-                <article class="rounded-2xl border border-line bg-card p-5 grid gap-3 sm:grid-cols-[1fr_auto]">
+                <article class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3 sm:grid-cols-[1fr_auto]">
                     <div class="grid gap-1.5 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <x-hazard-badge :type="$point->type" />
@@ -79,12 +82,12 @@
                             <p class="text-sm"><span class="text-ink-soft">Fasilitas:</span> {{ $point->facilities }}</p>
                         @endif
                         <div class="flex flex-wrap gap-x-4 gap-y-1 pt-1">
-                            <button type="button" data-focus-point="{{ $point->id }}" class="text-sm font-semibold text-river-700 underline underline-offset-4">Tunjukkan di peta</button>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $point->lat }},{{ $point->lng }}&travelmode=walking" target="_blank" rel="noopener" class="text-sm font-semibold text-river-700 underline underline-offset-4">Petunjuk arah</a>
+                            <button type="button" data-focus-point="{{ $point->id }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4">Tunjukkan di peta</button>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $point->lat }},{{ $point->lng }}&travelmode=walking" target="_blank" rel="noopener" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4">Petunjuk arah</a>
                         </div>
                     </div>
                     @if ($point->photo)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($point->photo) }}" alt="Foto {{ $point->name }}" loading="lazy" class="w-full sm:w-36 aspect-[4/3] rounded-xl object-cover">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($point->photo) }}" alt="Foto {{ $point->name }}" loading="lazy" class="w-full sm:w-36 aspect-[4/3] rounded-xl object-cover shadow-xs">
                     @endif
                 </article>
             @empty
