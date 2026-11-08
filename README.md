@@ -62,7 +62,7 @@ Buka:
 - Halaman publik: http://localhost:8000
 - Panel admin: http://localhost:8000/admin
 
-Akun admin awal diambil dari `.env` (`ADMIN_EMAIL`, `ADMIN_PASSWORD`). Bawaan: `admin@lonjoboko.test` / `ganti-password-ini`. **Ganti kata sandinya** setelah login pertama.
+Akun admin pertama dibuat seeder dari isian `ADMIN_EMAIL` dan `ADMIN_PASSWORD` di `.env`. **Isi keduanya dengan nilai sendiri sebelum menjalankan seeder.** Setelah akun dibuat, ubah email dan kata sandi lewat panel admin (menu Pengaturan → Akun Admin & Kader), bukan lewat `.env`.
 
 ### Data peta contoh (untuk latihan dan presentasi)
 
