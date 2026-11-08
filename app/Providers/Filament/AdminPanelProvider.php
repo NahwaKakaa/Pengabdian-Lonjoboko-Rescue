@@ -31,10 +31,16 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('LONJOBOKO RESCUE')
+            ->brandLogo(fn () => view('filament.brand'))
+            ->brandLogoHeight('2.75rem')
+            ->darkMode(false)
             ->colors([
-                'primary' => Color::Teal,
+                'primary' => Color::Emerald,
+                'success' => Color::Emerald,
                 'danger' => Color::Rose,
                 'warning' => Color::Amber,
+                'info' => Color::Teal,
+                'gray' => Color::Slate,
             ])
             ->font('Plus Jakarta Sans')
             ->sidebarCollapsibleOnDesktop()
@@ -51,10 +57,10 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 VerificationOverview::class,
             ])
-            // Leaflet + Geoman untuk input peta di form admin.
+            // Tema elegan hijau & putih + peta admin (Leaflet & Geoman).
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): string => Blade::render("@vite(['resources/js/admin-map.js'])"),
+                fn (): string => Blade::render("@vite(['resources/css/admin.css', 'resources/js/admin-map.js'])"),
             )
             ->middleware([
                 EncryptCookies::class,
