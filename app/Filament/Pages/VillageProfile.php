@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\EmergencyContactResource;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -12,6 +13,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\HtmlString;
 
 /**
  * Profil desa dan teks umum yang tampil di halaman publik.
@@ -81,7 +83,10 @@ class VillageProfile extends Page implements HasForms
                     ]),
 
                 Section::make('Kontak & lokasi di footer web')
-                    ->description('Tampil di bagian bawah setiap halaman publik.')
+                    ->description(new HtmlString(
+                        'Tampil di bagian bawah setiap halaman publik. Daftar nomor darurat di footer diatur di menu '
+                        .'<a href="'.EmergencyContactResource::getUrl().'" class="font-semibold text-primary-600 underline dark:text-primary-400">Kontak Darurat</a>.'
+                    ))
                     ->columns(2)
                     ->schema([
                         TextInput::make('whatsapp_number')

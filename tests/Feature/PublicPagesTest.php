@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Enums\VerificationStatus;
+use App\Enums\ContactCategory;
 use App\Models\EducationContent;
+use App\Models\EmergencyContact;
 use App\Models\HazardZone;
 use App\Models\Setting;
 use Database\Seeders\DatabaseSeeder;
@@ -53,6 +55,23 @@ class PublicPagesTest extends TestCase
             ->assertSee('Kontak Darurat')
             ->assertSee('tel:119', false)
             ->assertSee('maps.google.com/maps?q=', false);
+    }
+
+    public function test_admin_bisa_memilih_kontak_yang_tampil_di_footer(): void
+    {
+        EmergencyContact::create(['name' => 'Posko Kader Tangguh', 'category' => ContactCategory::Desa, 'phone' => '081200000001', 'is_active' => true, 'show_in_footer' => true]);
+        EmergencyContact::create(['name' => 'Kontak Khusus Info Darurat', 'category' => ContactCategory::Desa, 'phone' => '081200000002', 'is_active' => true, 'show_in_footer' => false]);
+        EmergencyContact::create(['name' => 'Kontak Nonaktif', 'category' => ContactCategory::Desa, 'phone' => '081200000003', 'is_active' => false, 'show_in_footer' => true]);
+
+        // Halaman Relawan tidak menampilkan daftar kontak, jadi yang terlihat hanya isi footer.
+        $this->get(route('volunteers'))
+            ->assertOk()
+            ->assertSee('Posko Kader Tangguh')
+            ->assertDontSee('Kontak Khusus Info Darurat')
+            ->assertDontSee('Kontak Nonaktif');
+
+        // Di halaman Info Darurat, kontak aktif tetap tampil walau tidak dipilih untuk footer.
+        $this->get(route('emergency'))->assertSee('Kontak Khusus Info Darurat');
     }
 
     public function test_hanya_data_terverifikasi_yang_tampil_di_peta(): void

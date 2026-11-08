@@ -102,7 +102,7 @@ class AppServiceProvider extends ServiceProvider
 
         return [
             'whatsapp' => $whatsapp,
-            'contacts' => $contacts->take(5),
+            'contacts' => $contacts->filter(fn (EmergencyContact $c) => $c->show_in_footer)->take(EmergencyContact::FOOTER_LIMIT)->values(),
             'contact_count' => $contacts->count(),
             'place' => $place,
             'map_embed' => "https://maps.google.com/maps?q={$mapsQuery}&z=13&hl=id&output=embed",

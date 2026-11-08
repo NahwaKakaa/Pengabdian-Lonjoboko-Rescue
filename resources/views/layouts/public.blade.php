@@ -213,7 +213,7 @@
                 @endif
 
                 <a href="{{ route('emergency') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 hover:text-white transition-colors w-fit">
-                    {{ $footer['contact_count'] > 5 ? 'Lihat semua '.$footer['contact_count'].' kontak' : 'Info darurat & cara melapor' }}
+                    {{ $footer['contact_count'] > $footer['contacts']->count() ? 'Lihat semua '.$footer['contact_count'].' kontak' : 'Info darurat & cara melapor' }}
                     <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>
             </section>

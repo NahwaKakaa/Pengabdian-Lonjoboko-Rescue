@@ -16,6 +16,7 @@ class EmergencyContact extends Model
         'is_whatsapp',
         'description',
         'is_active',
+        'show_in_footer',
         'sort_order',
     ];
 
@@ -25,9 +26,13 @@ class EmergencyContact extends Model
             'category' => ContactCategory::class,
             'is_whatsapp' => 'boolean',
             'is_active' => 'boolean',
+            'show_in_footer' => 'boolean',
             'sort_order' => 'integer',
         ];
     }
+
+    /** Jumlah maksimal kontak yang muat di footer web. */
+    public const FOOTER_LIMIT = 5;
 
     public function scopeActive(Builder $query): Builder
     {
