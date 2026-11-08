@@ -93,54 +93,24 @@ php artisan test
 
 Nama desa, profil, teks program, catatan kelompok rentan, dan cara melapor diubah lewat menu **Pengaturan → Profil Desa** di panel admin.
 
-## Deploy ke shared hosting (cPanel)
+## Deploy
 
-Syarat paket hosting: **PHP 8.2+, akses SSH, Composer, MySQL, bisa mengatur document root, cron job.**
+Web live: **https://lonjoboko-rescue.web.id** (Rumahweb, paket Unlimited M).
 
-1. Buat database MySQL dan user-nya di cPanel.
-2. Masuk lewat SSH, lalu:
-   ```bash
-   git clone https://github.com/NahwaKakaa/Pengabdian-Lonjoboko-Rescue.git lonjoboko-rescue
-   cd lonjoboko-rescue
-   composer install --no-dev --optimize-autoloader
-   cp .env.example .env
-   php artisan key:generate
-   ```
-3. Ubah `.env`:
-   ```
-   APP_ENV=production
-   APP_DEBUG=false
-   APP_URL=https://domain-anda
-   DB_CONNECTION=mysql
-   DB_HOST=localhost
-   DB_DATABASE=...
-   DB_USERNAME=...
-   DB_PASSWORD=...
-   ```
-4. Jalankan:
-   ```bash
-   php artisan migrate --seed --force
-   php artisan storage:link
-   php artisan optimize
-   ```
-5. Aset tampilan (`public/build`) tidak ikut di repo. Jalankan `npm install && npm run build` di laptop, lalu unggah folder `public/build` ke server (atau jalankan di server bila Node.js tersedia).
-6. Arahkan **document root** domain ke folder `lonjoboko-rescue/public`.
-7. Aktifkan SSL gratis (AutoSSL / Let's Encrypt) di cPanel. Fitur "Lokasi saya" dan "Gunakan lokasi saya" hanya berjalan lewat **https**.
-8. Tambahkan cron job (opsional, untuk fitur terjadwal ke depan):
-   ```
-   * * * * * cd /home/USER/lonjoboko-rescue && php artisan schedule:run >> /dev/null 2>&1
-   ```
+| Branch | Fungsi |
+|---|---|
+| `main` | Pengembangan sehari-hari, tidak memengaruhi web live |
+| `production` | Setiap push ke sini menjalankan tes lalu **deploy otomatis** lewat GitHub Actions |
 
-Untuk pembaruan berikutnya:
+Merilis perubahan:
 
 ```bash
-git pull
-composer install --no-dev --optimize-autoloader
-php artisan migrate --force
-php artisan optimize
+git checkout production && git merge main && git push origin production && git checkout main
 ```
 
-Serahkan akun hosting dan domain atas nama desa atau tim, bukan akun pribadi, supaya mudah diteruskan setelah program selesai.
+Setup server pertama kali, pengaturan GitHub Secrets, dan solusi masalah umum ada di **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+
+Serahkan akun hosting dan domain atas nama desa atau tim, bukan akun pribadi, supaya mudah diteruskan setelah program selesai. Hosting dan domain berlaku sampai **8 November 2027** dan perlu diperpanjang sebelum tanggal itu.
 
 ## Struktur penting
 

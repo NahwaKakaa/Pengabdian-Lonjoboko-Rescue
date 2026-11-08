@@ -1,0 +1,158 @@
+# Deploy otomatis ke hosting setiap ada push ke branch `production`.
+#
+# Alur:
+#   1. Tes   : menjalankan `php artisan test`. Kalau gagal, deploy dibatalkan.
+#   2. Deploy: build tampilan di GitHub, masuk ke server lewat SSH,
+#              tarik kode terbaru, pasang paket, migrasi, unggah tampilan.
+#
+# Pengaturan yang dibutuhkan (Settings → Secrets and variables → Actions):
+#   Secrets   : SSH_PRIVATE_KEY   isi file ~/.ssh/lonjoboko_deploy (kunci rahasia)
+#   Variables : SSH_HOST          alamat server SSH
+#               SSH_PORT          port SSH (Rumahweb biasanya bukan 22)
+#               SSH_USER          username cPanel
+#               APP_PATH          folder aplikasi di server, mis. /home/USER/lonjoboko-rescue
+#               PHP_BIN           (opsional) perintah PHP di server, bawaan: php
+#               COMPOSER_BIN      (opsional) perintah Composer di server, bawaan: composer
+#
+# Panduan lengkap: docs/DEPLOY.md
+
+name: Deploy ke hosting
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Tes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_sqlite, zip, gd, fileinfo
+          coverage: none
+
+      - name: Pasang paket Composer
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Siapkan .env tes
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Jalankan tes
+        run: php artisan test
+
+  deploy:
+    name: Deploy
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SSH_HOST: ${{ vars.SSH_HOST }}
+      SSH_PORT: ${{ vars.SSH_PORT || '22' }}
+      SSH_USER: ${{ vars.SSH_USER }}
+      APP_PATH: ${{ vars.APP_PATH }}
+      PHP_BIN: ${{ vars.PHP_BIN || 'php' }}
+      COMPOSER_BIN: ${{ vars.COMPOSER_BIN || 'composer' }}
+    steps:
+      - name: Periksa pengaturan
+        env:
+          HAS_KEY: ${{ secrets.SSH_PRIVATE_KEY != '' }}
+        run: |
+          missing=""
+          [ -z "$SSH_HOST" ] && missing="$missing SSH_HOST"
+          [ -z "$SSH_USER" ] && missing="$missing SSH_USER"
+          [ -z "$APP_PATH" ] && missing="$missing APP_PATH"
+          [ "$HAS_KEY" != "true" ] && missing="$missing SSH_PRIVATE_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Pengaturan belum diisi:$missing. Lihat docs/DEPLOY.md bagian 'Hubungkan GitHub ke server'."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Build tampilan
+        run: |
+          npm ci
+          npm run build
+
+      - name: Siapkan kunci SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          cat >> ~/.ssh/config <<EOF
+          Host server
+            HostName $SSH_HOST
+            Port $SSH_PORT
+            User $SSH_USER
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            ServerAliveInterval 30
+          EOF
+
+      - name: Tarik kode dan pasang paket di server
+        run: |
+          ssh server "APP_PATH='$APP_PATH' PHP_BIN='$PHP_BIN' COMPOSER_BIN='$COMPOSER_BIN' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_PATH"
+
+          echo "→ Mode pemeliharaan"
+          $PHP_BIN artisan down --retry=15 || true
+
+          echo "→ Tarik kode terbaru (branch production)"
+          git fetch --prune origin production
+          git reset --hard origin/production
+
+          echo "→ Pasang paket Composer"
+          $COMPOSER_BIN install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+          echo "→ Migrasi database"
+          $PHP_BIN artisan migrate --force
+          REMOTE
+
+      - name: Unggah hasil build tampilan
+        run: |
+          rsync -az --delete -e "ssh" public/build/ "server:$APP_PATH/public/build/"
+
+      - name: Optimasi dan buka kembali web
+        run: |
+          ssh server "APP_PATH='$APP_PATH' PHP_BIN='$PHP_BIN' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_PATH"
+
+          $PHP_BIN artisan storage:link 2>/dev/null || true
+          $PHP_BIN artisan optimize:clear
+          $PHP_BIN artisan optimize
+          $PHP_BIN artisan filament:optimize 2>/dev/null || true
+
+          echo "→ Web dibuka kembali"
+          $PHP_BIN artisan up
+          REMOTE
+
+      - name: Buka web kalau deploy gagal di tengah jalan
+        if: failure()
+        run: |
+          ssh server "cd '$APP_PATH' && $PHP_BIN artisan up" 2>/dev/null || true
+
+      - name: Hapus kunci SSH
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
