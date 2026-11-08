@@ -160,19 +160,17 @@
             <section class="p-steps" style="--c:#1d6fd1">
                 <h2>Saat banjir</h2>
                 <ol>
-                    <li>Matikan listrik dari sakelar utama.</li>
-                    <li>Bawa tas siaga, bantu lansia &amp; anak-anak.</li>
-                    <li>Jangan menyeberangi arus deras.</li>
-                    <li>Ikuti jalur evakuasi ke titik kumpul.</li>
+                    @foreach (array_slice(\App\Support\SafetyGuide::floodSteps(), 0, 4) as $line)
+                        <li><span class="p-clamp">{{ $line }}</span></li>
+                    @endforeach
                 </ol>
             </section>
             <section class="p-steps" style="--c:#c2620f">
                 <h2>Saat tanah longsor</h2>
                 <ol>
-                    <li>Waspadai retakan, pohon miring, air keruh.</li>
-                    <li>Segera tinggalkan rumah di bawah lereng.</li>
-                    <li>Menjauh ke arah samping jalur luncuran.</li>
-                    <li>Jangan kembali sebelum dinyatakan aman.</li>
+                    @foreach (array_slice(\App\Support\SafetyGuide::landslideSteps(), 0, 4) as $line)
+                        <li><span class="p-clamp">{{ $line }}</span></li>
+                    @endforeach
                 </ol>
             </section>
         </div>

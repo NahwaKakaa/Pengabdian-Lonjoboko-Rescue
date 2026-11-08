@@ -53,7 +53,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-scenic-ambient text-ink">
+@php $heroPhoto = \App\Support\SitePhotos::hero(); @endphp
+<body @class(['min-h-screen flex flex-col antialiased bg-scenic-ambient text-ink', 'has-hero-photo' => $heroPhoto['custom']])
+      @if ($heroPhoto['custom']) style="--hero-photo: url('{{ $heroPhoto['url'] }}')" @endif>
     <a href="#konten" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-river-900 focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:font-bold">Langsung ke konten</a>
 
     @php
@@ -93,7 +95,7 @@
                     <div class="flex shrink-0 items-center gap-3">
                         <span class="hidden items-center gap-1.5 text-river-200 lg:inline-flex">
                             <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-10 4 6 3-4 5 8z"/></svg>
-                            Lereng pegunungan &amp; persawahan {{ $site['district'] }}
+                            {{ $site['landscape_note'] }}
                         </span>
                         <span class="hidden h-3.5 w-px bg-white/15 lg:block" aria-hidden="true"></span>
                         <a href="https://www.bmkg.go.id" target="_blank" rel="noopener" class="site-weather-chip" title="Buka prakiraan cuaca di situs BMKG">
@@ -349,7 +351,7 @@
         <div class="site-footer-bar py-4 text-xs">
             <div class="wrap flex flex-wrap items-center justify-between gap-2">
                 <p class="font-semibold text-white">&copy; {{ date('Y') }} LONJOBOKO RESCUE · Pengabdian Masyarakat & Pemerintah Desa {{ $site['village'] }}</p>
-                <p class="text-river-100 font-medium">Kawasan Lereng Pegunungan Bawakaraeng & Pertanian Sawah {{ $site['village'] }}</p>
+                <p class="text-river-100 font-medium">{{ $site['landscape_note'] }}</p>
             </div>
         </div>
     </footer>

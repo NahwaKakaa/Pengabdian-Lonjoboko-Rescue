@@ -141,13 +141,14 @@
                     </div>
                 </div>
 
-                {{-- Visual Card: gambar ilustrasi. Ganti public/images/sawah-desa.jpg dengan foto asli desa bila sudah ada. --}}
+                {{-- Foto kartu profil: diunggah admin di Profil Desa > Foto desa (bawaan: ilustrasi) --}}
+                @php $photo = \App\Support\SitePhotos::profile(); @endphp
                 <div class="relative group rounded-2xl overflow-hidden border border-river-200/80 shadow-md bg-river-900 aspect-video lg:aspect-[4/3]">
-                    <img src="{{ asset('images/sawah-desa.jpg') }}" alt="Ilustrasi petak sawah berair di lereng bukit" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <img src="{{ $photo['url'] }}" alt="{{ $photo['alt'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
                     <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5 text-white">
-                        <p class="text-[0.7rem] font-bold text-amber-300 uppercase tracking-wider">Ilustrasi bentang alam</p>
-                        <p class="text-xs sm:text-sm font-semibold leading-snug drop-shadow-sm text-river-50">Persawahan di lereng perbukitan, ciri wilayah seperti Kec. Parangloe</p>
+                        <p class="text-[0.7rem] font-bold text-amber-300 uppercase tracking-wider">{{ $photo['custom'] ? 'Foto desa' : 'Ilustrasi bentang alam' }}</p>
+                        <p class="text-xs sm:text-sm font-semibold leading-snug drop-shadow-sm text-river-50">{{ $photo['caption'] }}</p>
                     </div>
                 </div>
             </div>
@@ -163,47 +164,47 @@
             </span>
             <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight">Tiga hal pertama yang harus dilakukan</h2>
         </div>
+        {{-- Isi langkah diatur admin di menu Profil Desa (bagian Panduan keselamatan) --}}
         <ol class="grid gap-5 md:grid-cols-3">
-            <li class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-3 content-start relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="grid place-items-center size-11 rounded-2xl bg-gradient-to-br from-alert to-amber-600 text-white font-black text-lg shadow-md shadow-alert/25 num" aria-hidden="true">1</span>
-                    <span class="text-xs font-bold text-alert uppercase tracking-wider">Langkah 1</span>
-                </div>
-                <h3 class="font-extrabold text-xl text-ink">Selamatkan diri, bukan barang</h3>
-                <p class="text-sm text-ink-soft leading-relaxed">Bawa tas siaga bencana, segera matikan listrik dari meteran utama bila aman, dan utamakan anak-anak, lansia, ibu hamil, serta penyandang disabilitas.</p>
-            </li>
-            <li class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-3 content-start relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="grid place-items-center size-11 rounded-2xl bg-gradient-to-br from-alert to-amber-600 text-white font-black text-lg shadow-md shadow-alert/25 num" aria-hidden="true">2</span>
-                    <span class="text-xs font-bold text-alert uppercase tracking-wider">Langkah 2</span>
-                </div>
-                <h3 class="font-extrabold text-xl text-ink">Ikuti jalur ke titik kumpul</h3>
-                <p class="text-sm text-ink-soft leading-relaxed">Jangan menyeberangi arus banjir deras dan jauhi lereng perbukitan yang retak atau longsor. Buka <a href="{{ route('evacuation') }}" class="font-bold text-river-700 underline underline-offset-2">jalur evakuasi</a> terdekat dari lokasi Anda.</p>
-            </li>
-            <li class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-3 content-start relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="grid place-items-center size-11 rounded-2xl bg-gradient-to-br from-alert to-amber-600 text-white font-black text-lg shadow-md shadow-alert/25 num" aria-hidden="true">3</span>
-                    <span class="text-xs font-bold text-alert uppercase tracking-wider">Langkah 3</span>
-                </div>
-                <h3 class="font-extrabold text-xl text-ink">Segera lapor aparat desa</h3>
-                <p class="text-sm text-ink-soft leading-relaxed">Segera laporkan status terkini, warga yang membutuhkan evakuasi, atau korban luka-luka melalui <a href="{{ route('emergency') }}" class="font-bold text-river-700 underline underline-offset-2">kontak darurat desa</a>.</p>
-            </li>
+            @foreach (\App\Support\SafetyGuide::firstSteps() as $step)
+                <li class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-3 content-start relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="grid place-items-center size-11 rounded-2xl bg-gradient-to-br from-alert to-amber-600 text-white font-black text-lg shadow-md shadow-alert/25 num" aria-hidden="true">{{ $loop->iteration }}</span>
+                        <span class="text-xs font-bold text-alert uppercase tracking-wider">Langkah {{ $loop->iteration }}</span>
+                    </div>
+                    <h3 class="font-extrabold text-xl text-ink">{{ $step['title'] }}</h3>
+                    @if ($step['body'])
+                        <p class="text-sm text-ink-soft leading-relaxed">{{ $step['body'] }}</p>
+                    @endif
+                </li>
+            @endforeach
         </ol>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('evacuation') }}" class="action-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3.5 3.5 0 000-7H9a3.5 3.5 0 010-7h7"/></svg>
+                <span>Lihat jalur evakuasi</span>
+            </a>
+            <a href="{{ route('emergency') }}" class="action-link action-link--ghost">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+                <span>Kontak darurat desa</span>
+            </a>
+        </div>
     </section>
 
     {{-- Showcase Wilayah & Lanskap Pedesaan Lonjoboko --}}
     <section class="wrap pb-8">
         <div class="relative rounded-3xl overflow-hidden elevation-card border border-river-100">
             <div class="grid lg:grid-cols-[1.1fr_1fr] items-stretch">
+                @php $landscape = \App\Support\SitePhotos::landscape(); @endphp
                 <div class="relative min-h-[300px] lg:min-h-full">
-                    <img src="{{ asset('images/hero-mountains.jpg') }}" alt="Ilustrasi sawah terasering di lereng perbukitan" class="absolute inset-0 w-full h-full object-cover">
+                    <img src="{{ $landscape['url'] }}" alt="{{ $landscape['alt'] }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-black/30"></div>
                     <div class="absolute bottom-4 left-4 right-4 text-white">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-white border border-white/30">
                             <span class="size-1.5 rounded-full bg-emerald-400"></span>
-                            Ilustrasi bentang alam
+                            {{ $landscape['custom'] ? 'Foto desa' : 'Ilustrasi bentang alam' }}
                         </span>
-                        <p class="mt-2 text-sm font-semibold text-white/90 drop-shadow-sm">Sawah terasering di lereng perbukitan</p>
+                        <p class="mt-2 text-sm font-semibold text-white/90 drop-shadow-sm">{{ $landscape['caption'] }}</p>
                     </div>
                 </div>
                 <div class="p-8 sm:p-10 flex flex-col justify-center gap-5 bg-card">

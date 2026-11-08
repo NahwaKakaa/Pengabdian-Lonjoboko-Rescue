@@ -1578,3 +1578,32 @@ html.lr-theme-fade *::after {
         transition: none;
     }
 }
+
+/* ==================================================================
+   Foto latar dari admin (Profil Desa > Foto desa). Siang: foto asli.
+   Malam: foto yang sama digelapkan kebiruan + bintang berkelip.
+   ================================================================== */
+.has-hero-photo .hero-scenic-bg,
+.has-hero-photo .page-header-scenic {
+    background-image:
+        linear-gradient(to right, rgba(6, 43, 41, 0.82) 0%, rgba(6, 43, 41, 0.55) 45%, rgba(6, 43, 41, 0.15) 100%),
+        var(--hero-photo);
+    background-position: center;
+}
+
+.has-hero-photo .hero-scenic-bg::before,
+.has-hero-photo .page-header-scenic::before {
+    /* Foto yang sama diberi warna cahaya bulan (biru) lalu digelapkan */
+    background-image:
+        linear-gradient(to right, rgba(3, 9, 22, 0.75) 0%, rgba(3, 9, 22, 0.35) 50%, rgba(3, 9, 22, 0.05) 100%),
+        linear-gradient(rgba(40, 70, 140, 1), rgba(25, 45, 95, 1)),
+        var(--hero-photo);
+    background-blend-mode: normal, color, normal;
+    background-position: center;
+    filter: brightness(0.5) contrast(1.08);
+}
+
+.dark .has-hero-photo .hero-scenic-bg::after,
+.dark .has-hero-photo .page-header-scenic::after {
+    inset: 0 0 60% 0;
+}

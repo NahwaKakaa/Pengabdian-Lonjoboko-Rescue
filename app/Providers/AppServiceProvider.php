@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Carbon::setLocale(config('app.locale'));
 
+        // Pengaturan peta & sumber resmi dari admin (menu Pengaturan Peta & Sumber)
+        // menimpa nilai bawaan di config/lonjoboko.php.
+        self::applyMapSettings();
+
         // Data identitas desa dan peringatan aktif untuk semua halaman publik.
         View::composer('layouts.public', function ($view) {
             $site = self::siteInfo();
@@ -38,6 +42,29 @@ class AppServiceProvider extends ServiceProvider
         View::composer('public.*', function ($view) {
             $view->with('site', self::siteInfo());
         });
+    }
+
+    public static function applyMapSettings(): void
+    {
+        $settings = self::safely(fn () => Setting::allValues(), []);
+
+        if (is_numeric($settings['map_center_lat'] ?? null) && is_numeric($settings['map_center_lng'] ?? null)) {
+            config(['lonjoboko.map.center' => [
+                'lat' => (float) $settings['map_center_lat'],
+                'lng' => (float) $settings['map_center_lng'],
+            ]]);
+        }
+
+        if (is_numeric($settings['map_zoom'] ?? null)) {
+            config(['lonjoboko.map.zoom' => max(10, min(18, (int) $settings['map_zoom']))]);
+        }
+
+        $sources = json_decode((string) ($settings['official_sources'] ?? ''), true);
+
+        if (is_array($sources)) {
+            $sources = array_values(array_filter($sources, fn ($s) => is_array($s) && filled($s['name'] ?? null) && filled($s['url'] ?? null)));
+            config(['lonjoboko.official_sources' => $sources]);
+        }
     }
 
     /** @return array<string, string|null> */
@@ -58,6 +85,8 @@ class AppServiceProvider extends ServiceProvider
             'whatsapp' => $settings['whatsapp_number'] ?? null,
             'whatsapp_label' => $settings['whatsapp_label'] ?? null,
             'maps_url' => $settings['maps_url'] ?? null,
+            'landscape_note' => ($settings['landscape_note'] ?? null)
+                ?: 'Lereng perbukitan & persawahan '.($settings['district'] ?? config('lonjoboko.district')),
         ];
     }
 

@@ -15,6 +15,7 @@ use App\Models\HazardZone;
 use App\Models\Setting;
 use App\Models\Volunteer;
 use App\Support\PosterMap;
+use App\Support\VillageBoundary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -119,8 +120,7 @@ class PublicController extends Controller
     /** Poster A4 siap cetak: peta skematis, titik kumpul, jalur, nomor darurat, QR. */
     public function poster(): View
     {
-        $boundaryFile = resource_path('data/lonjoboko-boundary.json');
-        $boundary = file_exists($boundaryFile) ? json_decode((string) file_get_contents($boundaryFile), true) : null;
+        $boundary = VillageBoundary::geojson();
 
         $points = AssemblyPoint::verified()->orderBy('name')->get()->filter->hasValidLocation()->values();
         $routes = EvacuationRoute::verified()->with('assemblyPoint')->orderBy('name')->get()
@@ -146,8 +146,7 @@ class PublicController extends Controller
     private function mapData(bool $withHazards, bool $withFacilities): array
     {
         $photo = fn (?string $path) => $path ? Storage::disk('public')->url($path) : null;
-        $boundaryFile = resource_path('data/lonjoboko-boundary.json');
-        $boundary = file_exists($boundaryFile) ? json_decode((string) file_get_contents($boundaryFile), true) : null;
+        $boundary = VillageBoundary::geojson();
 
         return [
             'center' => config('lonjoboko.map.center'),

@@ -152,19 +152,17 @@
             <div class="rounded-2xl border-2 border-flood/30 bg-flood-soft p-5 grid gap-3 content-start">
                 <h3 class="font-extrabold text-lg text-flood">Saat banjir</h3>
                 <ul class="grid gap-2 text-sm leading-relaxed list-disc pl-5">
-                    <li>Jangan berjalan atau berkendara melewati arus banjir. Air setinggi lutut yang mengalir sudah bisa menyeret orang dewasa.</li>
-                    <li>Matikan listrik dari meteran sebelum air masuk rumah, bila masih aman dilakukan.</li>
-                    <li>Jauhi tepi sungai, selokan besar, dan jembatan yang tergenang.</li>
-                    <li>Pindahkan dokumen penting ke tempat tinggi atau bawa dalam tas siaga.</li>
+                    @foreach (\App\Support\SafetyGuide::floodSteps() as $line)
+                        <li>{{ $line }}</li>
+                    @endforeach
                 </ul>
             </div>
             <div class="rounded-2xl border-2 border-slide/30 bg-slide-soft p-5 grid gap-3 content-start">
                 <h3 class="font-extrabold text-lg text-slide">Saat tanah longsor</h3>
                 <ul class="grid gap-2 text-sm leading-relaxed list-disc pl-5">
-                    <li>Segera menjauh dari lereng bila muncul retakan baru, pohon atau tiang miring, atau suara gemuruh.</li>
-                    <li>Bergerak ke samping menjauhi arah luncuran, jangan searah aliran longsor.</li>
-                    <li>Waspadai longsor susulan, terutama saat hujan masih turun. Jangan kembali mengambil barang.</li>
-                    <li>Hindari jalan di kaki tebing selama dan sesudah hujan deras.</li>
+                    @foreach (\App\Support\SafetyGuide::landslideSteps() as $line)
+                        <li>{{ $line }}</li>
+                    @endforeach
                 </ul>
             </div>
         </div>

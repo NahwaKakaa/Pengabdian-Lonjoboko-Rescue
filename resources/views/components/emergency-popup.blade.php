@@ -63,7 +63,7 @@
 
             <div class="flex items-start gap-3 rounded-2xl border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-ink">
                 <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-danger" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-                <p><strong>Tetap tenang.</strong> Ikuti arahan aparat desa dan petugas. Jika diminta mengungsi, segera menuju titik kumpul terdekat.</p>
+                <p>{{ \App\Support\SafetyGuide::popupMessage() }}</p>
             </div>
 
             @if ($alert->source || $emergencies->count() > 1)

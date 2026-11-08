@@ -3,6 +3,7 @@
  *
  * - lrLocationPicker: memilih satu titik (lokasi rawan, titik kumpul, fasilitas)
  * - lrRoutePicker: menggambar jalur evakuasi
+ * - lrBoundaryPicker: menggambar/merapikan batas wilayah desa
  *
  * Objek Leaflet sengaja disimpan di luar data Alpine. Kalau dibungkus
  * reaktivitas Alpine, Leaflet berhenti bekerja dengan benar.
@@ -353,7 +354,193 @@ function routePicker(config) {
     };
 }
 
+function boundaryPicker(config) {
+    let map = null;
+    let shape = null;
+
+    return {
+        state: config.state,
+        drawing: false,
+        editing: false,
+        message: '',
+        summary: '',
+        ignoreNextWatch: false,
+
+        init() {
+            map = createBaseMap(this.$refs.map, config);
+
+            // Batas yang tersimpan; kalau kosong, tampilkan batas bawaan.
+            if (!this.ringOk(this.state) && this.ringOk(config.defaultRing)) {
+                this.writeState(config.defaultRing);
+            }
+            this.render(true);
+
+            if (!config.disabled) {
+                map.pm.setLang('id');
+                map.pm.setGlobalOptions({
+                    pathOptions: this.style(),
+                    templineStyle: { color: COLORS.safe, dashArray: '6 6' },
+                    hintlineStyle: { color: COLORS.safe, dashArray: '2 6' },
+                });
+
+                map.on('pm:create', (event) => {
+                    if (event.shape !== 'Polygon') {
+                        return;
+                    }
+                    if (shape) {
+                        map.removeLayer(shape);
+                    }
+                    shape = event.layer;
+                    this.drawing = false;
+                    this.watchEdits();
+                    this.save();
+                    this.message = 'Batas baru tersimpan di form. Rapikan bila perlu, lalu tekan Simpan.';
+                });
+            }
+
+            this.message = config.disabled
+                ? ''
+                : 'Tekan "Geser titik batas" untuk merapikan garis, atau "Gambar ulang dari awal" lalu ketuk peta mengelilingi wilayah desa.';
+
+            this.$watch('state', () => {
+                if (this.ignoreNextWatch) {
+                    this.ignoreNextWatch = false;
+                    return;
+                }
+                this.render(false);
+            });
+        },
+
+        style() {
+            return { color: COLORS.safe, weight: 3, dashArray: '8 6', fillColor: COLORS.safe, fillOpacity: 0.08 };
+        },
+
+        ringOk(ring) {
+            return Array.isArray(ring) && ring.filter((p) => Array.isArray(p) && p.length >= 2).length >= 3;
+        },
+
+        hasShape() {
+            return this.ringOk(this.state);
+        },
+
+        render(fit) {
+            if (shape) {
+                map.removeLayer(shape);
+                shape = null;
+            }
+            if (this.hasShape()) {
+                shape = L.polygon(this.state, this.style()).addTo(map);
+                this.watchEdits();
+                if (fit) {
+                    map.fitBounds(shape.getBounds(), { padding: [20, 20] });
+                }
+            }
+            this.updateSummary();
+        },
+
+        watchEdits() {
+            if (!shape || config.disabled) {
+                return;
+            }
+            shape.on('pm:edit', () => this.save());
+        },
+
+        toggleEdit() {
+            if (!shape) {
+                return;
+            }
+            this.editing = !this.editing;
+            if (this.editing) {
+                shape.pm.enable({ allowSelfIntersection: false });
+                this.message = 'Geser titik putih untuk merapikan batas. Titik samar di tengah garis bisa ditarik untuk menambah titik.';
+            } else {
+                shape.pm.disable();
+                this.save();
+                this.message = 'Perubahan batas tersimpan di form. Jangan lupa tekan Simpan.';
+            }
+        },
+
+        startDraw() {
+            if (this.editing) {
+                this.toggleEdit();
+            }
+            if (shape) {
+                map.removeLayer(shape);
+                shape = null;
+            }
+            this.writeState([]);
+            this.updateSummary();
+            map.pm.enableDraw('Polygon', { finishOn: null });
+            this.drawing = true;
+            this.message = 'Ketuk peta titik demi titik mengelilingi wilayah desa. Ketuk titik pertama lagi atau tekan "Selesai menggambar".';
+        },
+
+        finishDraw() {
+            const drawer = map.pm.Draw.Polygon;
+
+            if (drawer && typeof drawer._finishShape === 'function' && drawer._layer && drawer._layer.getLatLngs().length >= 3) {
+                drawer._finishShape();
+                return;
+            }
+
+            map.pm.disableDraw();
+            this.drawing = false;
+            this.message = 'Batas belum tersimpan karena kurang dari tiga titik. Coba gambar lagi atau kembalikan batas bawaan.';
+        },
+
+        resetDefault() {
+            if (this.editing) {
+                this.toggleEdit();
+            }
+            this.writeState(config.defaultRing || []);
+            this.render(true);
+            this.message = 'Batas bawaan dipasang kembali. Tekan Simpan untuk memakainya.';
+        },
+
+        save() {
+            if (!shape) {
+                return;
+            }
+            const latlngs = shape.getLatLngs().flat(Infinity);
+            this.writeState(latlngs.map((p) => [round6(p.lat), round6(p.lng)]));
+            this.updateSummary();
+        },
+
+        writeState(value) {
+            this.ignoreNextWatch = true;
+            this.state = value;
+        },
+
+        updateSummary() {
+            if (!this.hasShape()) {
+                this.summary = '';
+                return;
+            }
+            const ring = this.state;
+            const perimeter = polylineLength([...ring, ring[0]]);
+            this.summary = `${ring.length} titik · keliling sekitar ${formatDistance(perimeter)} · luas sekitar ${formatArea(ringArea(ring))}`;
+        },
+    };
+}
+
+// Luas poligon (m²) dengan pendekatan bola, cukup untuk keterangan.
+function ringArea(ring) {
+    const R = 6378137;
+    let area = 0;
+    for (let i = 0; i < ring.length; i++) {
+        const [lat1, lng1] = ring[i];
+        const [lat2, lng2] = ring[(i + 1) % ring.length];
+        area += ((lng2 - lng1) * Math.PI) / 180 * (2 + Math.sin((lat1 * Math.PI) / 180) + Math.sin((lat2 * Math.PI) / 180));
+    }
+    return Math.abs((area * R * R) / 2);
+}
+
+function formatArea(m2) {
+    return m2 >= 1_000_000 ? `${(m2 / 1_000_000).toFixed(2).replace('.', ',')} km²` : `${Math.round(m2 / 10_000)} ha`;
+}
+
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('lrLocationPicker', locationPicker);
     window.Alpine.data('lrRoutePicker', routePicker);
+    window.Alpine.data('lrBoundaryPicker', boundaryPicker);
 });
