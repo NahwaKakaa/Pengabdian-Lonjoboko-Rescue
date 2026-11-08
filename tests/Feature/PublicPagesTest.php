@@ -109,4 +109,25 @@ class PublicPagesTest extends TestCase
 
         $this->get(route('education.show', $content))->assertNotFound();
     }
+
+    public function test_isian_yang_tidak_dipakai_jenis_konten_dikosongkan(): void
+    {
+        $content = EducationContent::create([
+            'title' => 'Simulasi evakuasi',
+            'category' => 'video',
+            'topic' => 'umum',
+            'video_url' => 'https://youtu.be/dQw4w9WgXcQ',
+            'image' => 'edukasi/sampul.jpg',
+        ]);
+
+        // Video tidak memakai gambar.
+        $this->assertNull($content->fresh()->image);
+        $this->assertSame('https://youtu.be/dQw4w9WgXcQ', $content->fresh()->video_url);
+
+        // Diganti menjadi infografis: tautan video ikut dihapus.
+        $content->update(['category' => 'infografis', 'image' => 'edukasi/poster.png']);
+
+        $this->assertNull($content->fresh()->video_url);
+        $this->assertSame('edukasi/poster.png', $content->fresh()->image);
+    }
 }

@@ -38,6 +38,23 @@ class EducationContent extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        // Kosongkan isian yang tidak dipakai jenis kontennya, misalnya tautan
+        // video yang tertinggal setelah jenisnya diganti menjadi Infografis.
+        static::saving(function (self $content) {
+            if (! $content->category instanceof EducationCategory) {
+                return;
+            }
+
+            foreach (['video_url', 'image', 'attachment'] as $field) {
+                if (! $content->category->uses($field)) {
+                    $content->{$field} = null;
+                }
+            }
+        });
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);
