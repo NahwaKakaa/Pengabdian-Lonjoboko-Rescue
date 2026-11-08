@@ -82,6 +82,78 @@
         </div>
     </section>
 
+    {{-- Profil Singkat Desa Lonjoboko di Bagian Atas --}}
+    <section class="wrap pt-10 sm:pt-14 pb-2 grid gap-6">
+        <div class="elevation-card rounded-3xl p-6 sm:p-8 lg:p-10 border border-river-200/70 bg-gradient-to-br from-white via-white to-river-50/60 shadow-lg relative overflow-hidden">
+            {{-- Elemen ornamen latar lembut --}}
+            <div class="absolute -right-20 -top-20 size-72 rounded-full bg-emerald-100/40 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+            <div class="relative grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:items-center">
+                <div class="grid gap-4">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full shadow-2xs">
+                            <svg viewBox="0 0 24 24" class="size-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Profil Singkat Desa
+                        </span>
+                        <span class="text-xs font-semibold text-ink-soft">Kecamatan {{ $site['district'] }} · Kabupaten {{ $site['regency'] }}</span>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-ink">
+                        Mengenal Desa {{ $site['village'] }}
+                    </h2>
+
+                    <div class="text-ink-soft text-sm sm:text-base leading-relaxed grid gap-2.5">
+                        @if ($site['profile'])
+                            <p class="whitespace-pre-line">{{ $site['profile'] }}</p>
+                        @else
+                            <p>
+                                <strong>Desa {{ $site['village'] }}</strong> terletak di Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}, Sulawesi Selatan. Wilayah desa ini berada pada bentang alam lereng pegunungan dan perbukitan yang subur, berhiaskan hamparan persawahan terasering yang asri serta dialiri oleh aliran sungai alami.
+                            </p>
+                            <p class="text-xs sm:text-sm text-ink-soft/90">
+                                Topografi dataran tinggi berlereng ini selain menjadi pusat kehidupan pertanian warga, juga membutuhkan kesiapsiagaan bersama dalam mitigasi potensi bencana alam hidrometeorologi, khususnya tanah longsor pada tebing curam dan genangan banjir luapan sungai saat curah hujan tinggi.
+                            </p>
+                        @endif
+                    </div>
+
+                    @if ($site['population_note'])
+                        <div class="mt-1 flex items-start gap-2.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 p-3.5 text-xs text-amber-950">
+                            <svg viewBox="0 0 24 24" class="size-4 shrink-0 text-amber-600 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <div>
+                                <span class="font-bold">Perhatian Kependudukan & Kelompok Rentan:</span>
+                                <span class="block mt-0.5 whitespace-pre-line text-amber-900/90">{{ $site['population_note'] }}</span>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="flex flex-wrap gap-2 pt-1 text-xs">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-river-50 border border-river-100 font-semibold text-river-800">
+                            <svg viewBox="0 0 24 24" class="size-3.5 text-river-600" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18l7-10 4 5 3-4 4 9H3z"/></svg>
+                            Kawasan Lereng Pegunungan
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-river-50 border border-river-100 font-semibold text-river-800">
+                            <svg viewBox="0 0 24 24" class="size-3.5 text-river-600" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                            Persawahan Terasering & Sungai
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-100 font-semibold text-emerald-800">
+                            <svg viewBox="0 0 24 24" class="size-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            Kader Tangguh Bencana
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Visual Card: Foto Pemandangan Alam Desa Lonjoboko --}}
+                <div class="relative group rounded-2xl overflow-hidden border border-river-200/80 shadow-md bg-river-900 aspect-video lg:aspect-[4/3]">
+                    <img src="{{ asset('images/hero-mountains-dusk.jpg') }}" alt="Pemandangan perbukitan dan persawahan Desa Lonjoboko" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+                    <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5 text-white">
+                        <p class="text-[0.7rem] font-bold text-amber-300 uppercase tracking-wider">Bentang Alam Desa</p>
+                        <p class="text-xs sm:text-sm font-semibold leading-snug drop-shadow-sm text-river-50">Kawasan lereng pegunungan & persawahan Desa Lonjoboko, Kec. Parangloe</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Langkah saat bencana --}}
     <section class="wrap py-14 grid gap-8">
         <div class="grid gap-2">
@@ -239,28 +311,37 @@
         </section>
     @endif
 
-    {{-- Profil desa & program --}}
+    {{-- Program & Kolaborasi Kesiapsiagaan Desa --}}
     <section class="wrap pt-14 pb-8 grid gap-6 md:grid-cols-2">
-        <div class="elevation-card rounded-3xl p-7 grid gap-3 content-start">
+        <div class="elevation-card rounded-3xl p-7 grid gap-3.5 content-start">
             <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-river-600 bg-river-50 border border-river-100 px-3 py-0.5 rounded-full w-fit">
                 Tentang Program
             </span>
             <h2 class="text-xl font-extrabold text-ink">LONJOBOKO-RESCUE</h2>
             <p class="text-ink-soft leading-relaxed text-sm whitespace-pre-line">{{ $site['program'] ?: 'LONJOBOKO-RESCUE adalah inovasi teknologi informasi berbasis web yang menjadi media informasi, edukasi, dan komunikasi kebencanaan bagi masyarakat Desa '.$site['village'].', sebagai upaya mewujudkan desa tangguh bencana banjir dan tanah longsor.' }}</p>
+            <div class="pt-1 flex items-center gap-2 text-xs text-river-700 font-semibold">
+                <svg viewBox="0 0 24 24" class="size-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Program Pengabdian Kepada Masyarakat & Pemerintah Desa</span>
+            </div>
         </div>
-        <div class="elevation-card rounded-3xl p-7 grid gap-3 content-start">
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-river-600 bg-river-50 border border-river-100 px-3 py-0.5 rounded-full w-fit">
-                Profil Desa
+        <div class="elevation-card rounded-3xl p-7 grid gap-3.5 content-start">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-0.5 rounded-full w-fit">
+                Komitmen Bersama
             </span>
-            <h2 class="text-xl font-extrabold text-ink">Desa {{ $site['village'] }}</h2>
-            @if ($site['profile'])
-                <p class="text-ink-soft leading-relaxed text-sm whitespace-pre-line">{{ $site['profile'] }}</p>
-            @else
-                <p class="text-ink-soft leading-relaxed text-sm">Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}, Sulawesi Selatan.</p>
-            @endif
-            @if ($site['population_note'])
-                <p class="text-xs text-ink-soft leading-relaxed whitespace-pre-line border-t border-line pt-3 mt-1"><span class="font-bold text-ink">Kelompok rentan desa:</span> {{ $site['population_note'] }}</p>
-            @endif
+            <h2 class="text-xl font-extrabold text-ink">Mewujudkan Desa Tangguh Bencana</h2>
+            <p class="text-ink-soft leading-relaxed text-sm">
+                Partisipasi aktif warga dan kader desa merupakan kunci keselamatan utama. Akses informasi jalur evakuasi, kenali titik kumpul aman, dan mari bergabung menjadi relawan siaga bencana.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+                <a href="{{ route('volunteers') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-colors">
+                    <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>Kader Relawan Desa</span>
+                </a>
+                <a href="{{ route('risk-map') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-river-50 hover:bg-river-100 text-river-900 border border-river-200 font-bold text-xs transition-colors">
+                    <span>Lihat Peta Risiko</span>
+                    <svg viewBox="0 0 24 24" class="size-3.5 text-river-700" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
         </div>
     </section>
 @endsection
