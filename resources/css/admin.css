@@ -1086,6 +1086,142 @@ a.fi-wi-stats-overview-stat:hover {
     transform: scale(0.98);
 }
 
+/* ---------------------------------------------------------------
+   Tombol aksi di baris tabel (Verifikasi, Tolak, Ubah, Hapus)
+   Bawaan Filament berupa tautan berwarna; di sini dijadikan tombol
+   kecil. Hanya aksi utama yang berwarna penuh; aksi yang merusak
+   (Tolak, Hapus) dibuat tenang dan baru memerah saat disorot,
+   supaya baris tabel tidak ramai warna merah.
+   --------------------------------------------------------------- */
+.fi-ta-actions {
+    gap: 0.375rem !important;
+}
+
+.fi-ta-actions .fi-link {
+    --lr-btn-fg: var(--lr-ink-soft);
+    --lr-btn-icon: var(--lr-ink-faint);
+    --lr-btn-bg: transparent;
+    --lr-btn-ring: var(--lr-line-strong);
+    --lr-btn-hover-fg: var(--lr-ink);
+    --lr-btn-hover-bg: var(--lr-surface);
+    --lr-btn-hover-ring: var(--lr-line-strong);
+
+    gap: 0.4rem !important;
+    height: 2rem;
+    padding: 0 0.75rem 0 0.6rem;
+    border-radius: 0.6rem;
+    background-color: var(--lr-btn-bg);
+    box-shadow: inset 0 0 0 1px var(--lr-btn-ring);
+    transition:
+        background-color 0.18s ease,
+        box-shadow 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s var(--lr-ease);
+}
+
+.fi-ta-actions .fi-link > span {
+    color: var(--lr-btn-fg) !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    letter-spacing: 0.005em;
+    transition: color 0.18s ease;
+}
+
+.fi-ta-actions .fi-link .fi-link-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+    color: var(--lr-btn-icon) !important;
+    transition: color 0.18s ease, transform 0.25s var(--lr-ease);
+}
+
+.fi-ta-actions .fi-link:hover,
+.fi-ta-actions .fi-link:focus-visible {
+    background-color: var(--lr-btn-hover-bg);
+    box-shadow: inset 0 0 0 1px var(--lr-btn-hover-ring);
+    transform: translateY(-1px);
+}
+
+.fi-ta-actions .fi-link:hover > span,
+.fi-ta-actions .fi-link:focus-visible > span {
+    color: var(--lr-btn-hover-fg) !important;
+}
+
+.fi-ta-actions .fi-link:hover .fi-link-icon {
+    color: var(--lr-btn-hover-fg) !important;
+    transform: scale(1.1);
+}
+
+.fi-ta-actions .fi-link:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.fi-ta-actions .fi-link:focus-visible {
+    outline: 2px solid var(--lr-accent);
+    outline-offset: 2px;
+}
+
+/* Aksi utama: Ubah */
+.fi-ta-actions .fi-link.fi-color-primary {
+    --lr-btn-fg: var(--lr-accent);
+    --lr-btn-icon: var(--lr-accent);
+    --lr-btn-bg: var(--lr-accent-soft);
+    --lr-btn-ring: transparent;
+    --lr-btn-hover-fg: #ffffff;
+    --lr-btn-hover-bg: #0e6b66;
+    --lr-btn-hover-ring: transparent;
+}
+
+/* Setujui: Verifikasi */
+.fi-ta-actions .fi-link.fi-color-success {
+    --lr-btn-fg: var(--lr-ok);
+    --lr-btn-icon: var(--lr-ok);
+    --lr-btn-bg: var(--lr-ok-soft);
+    --lr-btn-ring: transparent;
+    --lr-btn-hover-fg: #ffffff;
+    --lr-btn-hover-bg: #16825d;
+    --lr-btn-hover-ring: transparent;
+}
+
+/* Tolak & Hapus: tenang, memerah saat disorot */
+.fi-ta-actions .fi-link.fi-color-danger {
+    --lr-btn-icon: var(--lr-danger);
+    --lr-btn-hover-fg: var(--lr-danger);
+    --lr-btn-hover-bg: var(--lr-danger-soft);
+    --lr-btn-hover-ring: color-mix(in srgb, var(--lr-danger) 35%, transparent);
+}
+
+.fi-ta-actions .fi-link.fi-color-warning {
+    --lr-btn-icon: var(--lr-warn);
+    --lr-btn-hover-fg: var(--lr-warn);
+    --lr-btn-hover-bg: var(--lr-warn-soft);
+    --lr-btn-hover-ring: color-mix(in srgb, var(--lr-warn) 35%, transparent);
+}
+
+.dark .fi-ta-actions .fi-link.fi-color-primary {
+    --lr-btn-hover-fg: #062b28;
+    --lr-btn-hover-bg: #5fd0b7;
+}
+
+.dark .fi-ta-actions .fi-link.fi-color-success {
+    --lr-btn-hover-fg: #04261a;
+    --lr-btn-hover-bg: #4fd1a1;
+}
+
+/* Kalau label disembunyikan (hanya ikon), tombol jadi kotak */
+.fi-ta-actions .fi-link:has(> .sr-only) {
+    width: 2rem;
+    padding: 0;
+}
+
+/* Tombol "..." (grup aksi) disamakan bentuknya */
+.fi-ta-actions .fi-icon-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+    box-shadow: inset 0 0 0 1px var(--lr-line-strong);
+}
+
 /* Field peta di formulir mengikuti mode gelap */
 .dark .lr-field__map {
     border-color: var(--lr-line) !important;
