@@ -102,8 +102,8 @@ function initMap(element) {
                 ],
                 z.photo,
                 [
-                    `<button type="button" class="popup-btn popup-btn-primary" data-action="evac-from" data-lat="${z.lat}" data-lng="${z.lng}" data-name="${escapeHtml(z.name)}">🚨 Evakuasi ke Titik Aman</button>`,
-                    `<a href="https://www.google.com/maps/search/?api=1&query=${z.lat},${z.lng}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps">📍 Buka Google Maps</a>`,
+                    `<button type="button" class="popup-btn popup-btn-primary" data-action="evac-from" data-lat="${z.lat}" data-lng="${z.lng}" data-name="${escapeHtml(z.name)}"><svg viewBox="0 0 24 24" style="width:14px;height:14px" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg> Evakuasi ke Titik Aman</button>`,
+                    `<a href="https://www.google.com/maps/search/?api=1&query=${z.lat},${z.lng}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps"><svg viewBox="0 0 24 24" style="width:13px;height:13px" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps</a>`,
                 ],
             ),
         );
@@ -113,7 +113,11 @@ function initMap(element) {
 
     // Titik kumpul.
     (data.points ?? []).forEach((p) => {
-        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(COLORS.safe, '✓'), title: p.name, riseOnHover: true }).bindPopup(
+        const marker = L.marker([p.lat, p.lng], {
+            icon: pinIcon(COLORS.safe, '<svg viewBox="0 0 24 24" style="width:14px;height:14px;display:block" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'),
+            title: p.name,
+            riseOnHover: true,
+        }).bindPopup(
             popup(
                 p.name,
                 [
@@ -124,8 +128,8 @@ function initMap(element) {
                 ],
                 p.photo,
                 [
-                    `<button type="button" class="popup-btn popup-btn-primary" data-action="route-to" data-lat="${p.lat}" data-lng="${p.lng}" data-name="${escapeHtml(p.name)}">🧭 Petunjuk Jalur</button>`,
-                    `<a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps">📍 Buka Google Maps</a>`,
+                    `<button type="button" class="popup-btn popup-btn-primary" data-action="route-to" data-lat="${p.lat}" data-lng="${p.lng}" data-name="${escapeHtml(p.name)}"><svg viewBox="0 0 24 24" style="width:14px;height:14px" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Petunjuk Jalur</button>`,
+                    `<a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps"><svg viewBox="0 0 24 24" style="width:13px;height:13px" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps</a>`,
                 ],
             ),
         );
@@ -148,8 +152,8 @@ function initMap(element) {
                 ],
                 null,
                 [
-                    `<button type="button" class="popup-btn popup-btn-primary" data-action="focus-route" data-route-id="${r.id}">🔍 Sorot Jalur Ini</button>`,
-                    `<a href="https://www.google.com/maps/dir/?api=1&destination=${end[0]},${end[1]}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps">📍 Buka Google Maps</a>`,
+                    `<button type="button" class="popup-btn popup-btn-primary" data-action="focus-route" data-route-id="${r.id}"><svg viewBox="0 0 24 24" style="width:14px;height:14px" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Sorot Jalur Ini</button>`,
+                    `<a href="https://www.google.com/maps/dir/?api=1&destination=${end[0]},${end[1]}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps"><svg viewBox="0 0 24 24" style="width:13px;height:13px" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps</a>`,
                 ],
             ),
         );
@@ -175,8 +179,8 @@ function initMap(element) {
                     ],
                     null,
                     [
-                        `<button type="button" class="popup-btn popup-btn-primary" data-action="route-to" data-lat="${f.lat}" data-lng="${f.lng}" data-name="${escapeHtml(f.name)}">🧭 Petunjuk Arah</button>`,
-                        `<a href="https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps">📍 Buka Google Maps</a>`,
+                        `<button type="button" class="popup-btn popup-btn-primary" data-action="route-to" data-lat="${f.lat}" data-lng="${f.lng}" data-name="${escapeHtml(f.name)}"><svg viewBox="0 0 24 24" style="width:14px;height:14px" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Petunjuk Arah</button>`,
+                        `<a href="https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lng}" target="_blank" rel="noopener" class="popup-btn popup-btn-gmaps"><svg viewBox="0 0 24 24" style="width:13px;height:13px" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps</a>`,
                     ],
                 ),
             )

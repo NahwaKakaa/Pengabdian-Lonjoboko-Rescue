@@ -18,7 +18,7 @@
     <meta name="theme-color" content="#093f3c">
     <meta name="description" content="@yield('description', 'Sistem informasi dan edukasi mitigasi bencana banjir dan tanah longsor Desa '.$site['village'].'.')">
     @php $pageTitle = trim($__env->yieldContent('title')); @endphp
-    <title>{{ $pageTitle !== '' ? $pageTitle.' · ' : '' }}LONJOBOKO-RESCUE</title>
+    <title>{{ $pageTitle !== '' ? $pageTitle.' · ' : '' }}LONJOBOKO RESCUE</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,7 +71,7 @@
 
     <header class="sticky top-0 z-40 site-header shadow-lg" style="top: env(safe-area-inset-top, 0px)">
         <div class="wrap flex items-center justify-between gap-4 py-3.5">
-            <a href="{{ route('home') }}" class="group flex items-center gap-3 min-w-0" aria-label="LONJOBOKO-RESCUE, ke beranda">
+            <a href="{{ route('home') }}" class="group flex items-center gap-3 min-w-0" aria-label="LONJOBOKO RESCUE, ke beranda">
                 <span class="grid place-items-center size-10 shrink-0 rounded-xl bg-gradient-to-br from-emerald-600 to-river-800 text-white shadow-md shadow-black/30 group-hover:scale-105 transition-transform" aria-hidden="true">
                     <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2-1.5 4.5-1.5S19 18 21 18"/>
@@ -79,7 +79,7 @@
                     </svg>
                 </span>
                 <span class="min-w-0 leading-tight">
-                    <span class="block font-black tracking-tight text-white text-base">LONJOBOKO<span class="text-amber-400">-</span>RESCUE</span>
+                    <span class="block font-black tracking-tight text-white text-base">LONJOBOKO RESCUE</span>
                     <span class="block text-xs text-river-100 truncate font-semibold">Desa {{ $site['village'] }} Tangguh Bencana</span>
                 </span>
             </a>
@@ -140,7 +140,7 @@
                             <path d="M4 13l5-7 3 4 2-2 6 5"/>
                         </svg>
                     </span>
-                    <p class="font-black text-white text-lg tracking-tight">LONJOBOKO<span class="text-amber-400">-</span>RESCUE</p>
+                    <p class="font-black text-white text-lg tracking-tight">LONJOBOKO RESCUE</p>
                 </div>
                 <p class="text-river-100 leading-relaxed font-normal">Sistem Informasi dan Edukasi Mitigasi Bencana Desa {{ $site['village'] }}, Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}, Sulawesi Selatan.</p>
                 @if ($site['office_address'])
@@ -170,7 +170,7 @@
         </div>
         <div class="site-footer-bar py-4 text-xs">
             <div class="wrap flex flex-wrap items-center justify-between gap-2">
-                <p class="font-semibold text-white">&copy; {{ date('Y') }} LONJOBOKO-RESCUE · Pengabdian Masyarakat & Pemerintah Desa Lonjoboko</p>
+                <p class="font-semibold text-white">&copy; {{ date('Y') }} LONJOBOKO RESCUE · Pengabdian Masyarakat & Pemerintah Desa Lonjoboko</p>
                 <p class="text-river-100 font-medium">Kawasan Lereng Pegunungan Bawakaraeng & Pertanian Sawah Lonjoboko</p>
             </div>
         </div>

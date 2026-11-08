@@ -218,15 +218,21 @@
                     </p>
                     <div class="grid gap-3 pt-2">
                         <div class="flex items-start gap-3">
-                            <span class="size-6 shrink-0 rounded-full bg-flood-soft text-flood grid place-items-center font-bold text-xs mt-0.5">✓</span>
+                            <span class="size-6 shrink-0 rounded-full bg-flood-soft text-flood grid place-items-center mt-0.5">
+                                <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            </span>
                             <p class="text-xs sm:text-sm text-ink-soft"><strong class="text-ink">Kawasan Sawah & Aliran Sungai:</strong> Pemantauan kenaikan debit air dan antisipasi genangan banjir kiriman.</p>
                         </div>
                         <div class="flex items-start gap-3">
-                            <span class="size-6 shrink-0 rounded-full bg-slide-soft text-slide grid place-items-center font-bold text-xs mt-0.5">✓</span>
+                            <span class="size-6 shrink-0 rounded-full bg-slide-soft text-slide grid place-items-center mt-0.5">
+                                <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            </span>
                             <p class="text-xs sm:text-sm text-ink-soft"><strong class="text-ink">Lereng Pegunungan:</strong> Identifikasi dini retakan tanah pada tebing dan perbukitan rawan longsor.</p>
                         </div>
                         <div class="flex items-start gap-3">
-                            <span class="size-6 shrink-0 rounded-full bg-safe-soft text-safe grid place-items-center font-bold text-xs mt-0.5">✓</span>
+                            <span class="size-6 shrink-0 rounded-full bg-safe-soft text-safe grid place-items-center mt-0.5">
+                                <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            </span>
                             <p class="text-xs sm:text-sm text-ink-soft"><strong class="text-ink">Titik Evakuasi Strategis:</strong> Penempatan titik kumpul di dataran aman dan mudah dijangkau dari pemukiman warga.</p>
                         </div>
                     </div>
@@ -317,8 +323,8 @@
             <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-river-600 bg-river-50 border border-river-100 px-3 py-0.5 rounded-full w-fit">
                 Tentang Program
             </span>
-            <h2 class="text-xl font-extrabold text-ink">LONJOBOKO-RESCUE</h2>
-            <p class="text-ink-soft leading-relaxed text-sm whitespace-pre-line">{{ $site['program'] ?: 'LONJOBOKO-RESCUE adalah inovasi teknologi informasi berbasis web yang menjadi media informasi, edukasi, dan komunikasi kebencanaan bagi masyarakat Desa '.$site['village'].', sebagai upaya mewujudkan desa tangguh bencana banjir dan tanah longsor.' }}</p>
+            <h2 class="text-xl font-extrabold text-ink">LONJOBOKO RESCUE</h2>
+            <p class="text-ink-soft leading-relaxed text-sm whitespace-pre-line">{{ $site['program'] ?: 'LONJOBOKO RESCUE adalah inovasi teknologi informasi berbasis web yang menjadi media informasi, edukasi, dan komunikasi kebencanaan bagi masyarakat Desa '.$site['village'].', sebagai upaya mewujudkan desa tangguh bencana banjir dan tanah longsor.' }}</p>
             <div class="pt-1 flex items-center gap-2 text-xs text-river-700 font-semibold">
                 <svg viewBox="0 0 24 24" class="size-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span>Program Pengabdian Kepada Masyarakat & Pemerintah Desa</span>

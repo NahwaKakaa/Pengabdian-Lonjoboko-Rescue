@@ -58,8 +58,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    padding: 6px 11px;
+    gap: 6px;
+    padding: 6.5px 12px;
     font-size: 11.5px;
     font-weight: 700;
     border-radius: 9px;
@@ -67,6 +67,10 @@
     text-decoration: none !important;
     cursor: pointer;
     line-height: 1.25;
+}
+
+.popup-btn svg {
+    flex-shrink: 0;
 }
 
 .popup-btn-primary {
