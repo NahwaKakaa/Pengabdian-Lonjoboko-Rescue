@@ -99,6 +99,162 @@ function initNavHover() {
 }
 
 /* ------------------------------------------------------------------
+ * Klik menu: respons langsung tanpa menunggu server.
+ * Kotak hijau langsung meluncur ke menu yang diklik dan garis memuat
+ * muncul kalau halaman tujuan lambat datang. Saat halaman baru tiba,
+ * kotaknya sudah di tempat, jadi View Transitions tinggal merapikan.
+ * ------------------------------------------------------------------ */
+function initNavClick() {
+    const header = document.getElementById('site-header');
+    const nav = document.querySelector('.site-nav');
+    const menu = document.querySelector('.site-menu');
+
+    if (!header) {
+        return;
+    }
+
+    const INACTIVE = ['text-river-100', 'hover:text-white'];
+    const INACTIVE_MOBILE = ['text-river-100', 'hover:bg-white/10', 'hover:text-white'];
+    const ACTIVE_MOBILE = ['bg-emerald-600', 'text-white'];
+
+    // Simpan keadaan awal untuk dipulihkan kalau warga kembali lewat tombol Back.
+    const initialDesktop = nav?.querySelector('.site-nav__link.is-active') ?? null;
+    const initialMobile = menu?.querySelector('.site-menu__link.is-active') ?? null;
+
+    const isPlainClick = (event, link) =>
+        !event.defaultPrevented &&
+        event.button === 0 &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.shiftKey &&
+        !event.altKey &&
+        link.target !== '_blank' &&
+        link.origin === location.origin &&
+        link.pathname !== location.pathname;
+
+    const setDesktopActive = (link, active) => {
+        link.classList.toggle('is-active', active);
+        link.classList.toggle('text-white', active);
+        INACTIVE.forEach((c) => link.classList.toggle(c, !active));
+        active ? link.setAttribute('aria-current', 'page') : link.removeAttribute('aria-current');
+    };
+
+    const setMobileActive = (link, active) => {
+        link.classList.toggle('is-active', active);
+        ACTIVE_MOBILE.forEach((c) => link.classList.toggle(c, active));
+        INACTIVE_MOBILE.forEach((c) => link.classList.toggle(c, !active));
+    };
+
+    const movePill = (target) => {
+        const current = nav.querySelector('.site-nav__link.is-active');
+        let pill = nav.querySelector('.site-nav__pill');
+
+        nav.querySelector('.site-nav__hover')?.classList.remove('is-visible');
+
+        if (!pill || !current) {
+            // Halaman tanpa menu aktif: kotak hijau muncul di menu tujuan.
+            pill = document.createElement('span');
+            pill.className = 'site-nav__pill is-entering';
+            pill.setAttribute('aria-hidden', 'true');
+            target.prepend(pill);
+        } else if (current !== target) {
+            // Memakai left/width (bukan transform) supaya posisi yang terekam
+            // browser saat halaman berganti sama dengan yang terlihat di layar.
+            pill.classList.remove('is-moving');
+            pill.style.right = 'auto';
+            pill.style.left = '0px';
+            pill.style.width = `${current.offsetWidth}px`;
+            pill.getBoundingClientRect();
+
+            pill.classList.add('is-moving');
+            pill.style.left = `${target.offsetLeft - current.offsetLeft}px`;
+            pill.style.width = `${target.offsetWidth}px`;
+        }
+
+        if (current && current !== target) {
+            setDesktopActive(current, false);
+        }
+
+        setDesktopActive(target, true);
+    };
+
+    const startLoading = () => header.classList.add('is-navigating');
+
+    nav?.querySelectorAll('.site-nav__link').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            if (!isPlainClick(event, link)) {
+                return;
+            }
+
+            movePill(link);
+            startLoading();
+        });
+    });
+
+    menu?.querySelectorAll('.site-menu__link').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            if (!isPlainClick(event, link)) {
+                return;
+            }
+
+            menu.querySelectorAll('.site-menu__link.is-active').forEach((other) => setMobileActive(other, false));
+            setMobileActive(link, true);
+            startLoading();
+
+            // Biarkan pilihan terlihat sebentar, lalu tutup panel dengan halus.
+            setTimeout(() => {
+                if (!menu.open) {
+                    return;
+                }
+
+                menu.classList.add('is-closing');
+                setTimeout(() => {
+                    menu.open = false;
+                    menu.classList.remove('is-closing');
+                }, reduceMotion ? 0 : 190);
+            }, reduceMotion ? 0 : 140);
+        });
+    });
+
+    // Tepat sebelum browser merekam halaman lama untuk transisi: bekukan kotak
+    // hijau di posisi yang sedang terlihat, supaya transisi melanjutkan dari situ.
+    window.addEventListener('pageswap', () => {
+        const pill = nav?.querySelector('.site-nav__pill.is-moving');
+
+        if (!pill) {
+            return;
+        }
+
+        const { left, width } = getComputedStyle(pill);
+        pill.classList.remove('is-moving');
+        pill.style.left = left;
+        pill.style.width = width;
+    });
+
+    // Kembali lewat tombol Back (halaman diambil dari cache browser): pulihkan menu.
+    window.addEventListener('pageshow', (event) => {
+        if (!event.persisted) {
+            return;
+        }
+
+        header.classList.remove('is-navigating');
+
+        if (nav) {
+            nav.querySelectorAll('.site-nav__pill.is-entering').forEach((pill) => pill.remove());
+            nav.querySelectorAll('.site-nav__link').forEach((link) => setDesktopActive(link, link === initialDesktop));
+
+            const pill = initialDesktop?.querySelector('.site-nav__pill');
+            if (pill) {
+                pill.classList.remove('is-moving');
+                pill.removeAttribute('style');
+            }
+        }
+
+        menu?.querySelectorAll('.site-menu__link').forEach((link) => setMobileActive(link, link === initialMobile));
+    });
+}
+
+/* ------------------------------------------------------------------
  * 3. Menu HP: tutup saat klik di luar, tekan Esc, atau memilih menu
  * ------------------------------------------------------------------ */
 function initMobileMenu() {
@@ -295,4 +451,5 @@ initOffline();
 initThemeToggle();
 initScrollEffects();
 initNavHover();
+initNavClick();
 initMobileMenu();

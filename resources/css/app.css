@@ -427,6 +427,85 @@
     opacity: 1;
 }
 
+/* Saat menu diklik, kotak hijau langsung meluncur ke menu tujuan
+   tanpa menunggu halaman baru datang dari server (lihat initNavClick). */
+.site-nav__pill.is-moving {
+    transition:
+        left 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-nav__pill.is-entering {
+    animation: nav-pill-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Tekan: tulisan sedikit mengecil sebagai tanda klik diterima */
+.site-nav__label {
+    transition: transform 0.15s ease;
+}
+
+.site-nav__link:active .site-nav__label {
+    transform: scale(0.95);
+}
+
+@keyframes nav-pill-in {
+    from {
+        opacity: 0;
+        transform: scale(0.82);
+    }
+}
+
+/* Garis memuat di bawah navbar. Muncul setelah jeda singkat supaya
+   tidak berkedip kalau halaman cepat datang. */
+.nav-loading {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.nav-loading span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #34d399, #5fd0b7 60%, #a7f3d0);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.7);
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.site-header.is-navigating .nav-loading {
+    opacity: 1;
+    transition-delay: 0.15s;
+}
+
+.site-header.is-navigating .nav-loading span {
+    animation: nav-loading 6s cubic-bezier(0.1, 0.7, 0.2, 1) 0.15s both;
+}
+
+@keyframes nav-loading {
+    0% { transform: scaleX(0); }
+    15% { transform: scaleX(0.45); }
+    100% { transform: scaleX(0.92); }
+}
+
+/* Menu HP: menutup dengan halus setelah menu dipilih */
+.site-menu.is-closing[open] .site-menu__panel {
+    animation: site-menu-out 0.2s ease both;
+}
+
+@keyframes site-menu-out {
+    to {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.97);
+    }
+}
+
 /* 3. Menu HP */
 .site-menu__burger {
     position: relative;
@@ -676,6 +755,21 @@
         transition: none;
     }
 
+    .site-nav__pill.is-moving,
+    .site-nav__label {
+        transition: none;
+    }
+
+    .site-nav__pill.is-entering,
+    .site-menu.is-closing[open] .site-menu__panel,
+    .site-header.is-navigating .nav-loading span {
+        animation: none;
+    }
+
+    .site-header.is-navigating .nav-loading span {
+        transform: scaleX(0.6);
+    }
+
     .site-logo__wave,
     .site-logo__mountain,
     .site-menu[open] .site-menu__panel,
@@ -716,7 +810,7 @@
 
 ::view-transition-group(nav-pill) {
     z-index: 1;
-    animation-duration: 0.45s;
+    animation-duration: 0.3s;
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 

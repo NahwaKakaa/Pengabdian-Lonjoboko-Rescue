@@ -180,8 +180,8 @@
                             <li style="--i: {{ $loop->index }}">
                                 <a href="{{ $item['href'] ?? route($item['route']) }}"
                                    @class([
-                                       'flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl transition-colors',
-                                       'bg-emerald-600 text-white' => $active,
+                                       'site-menu__link flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl transition-colors',
+                                       'is-active bg-emerald-600 text-white' => $active,
                                        'text-river-100 hover:bg-white/10 hover:text-white' => ! $active,
                                    ])
                                    @if ($active) aria-current="page" @endif>
@@ -201,6 +201,9 @@
         @if ($showReadProgress)
             <div class="read-progress" aria-hidden="true"><span id="read-progress-bar"></span></div>
         @endif
+
+        {{-- Garis memuat: muncul kalau halaman tujuan belum datang setelah menu diklik --}}
+        <div class="nav-loading" aria-hidden="true"><span></span></div>
     </header>
 
     <main id="konten" class="flex-1">
