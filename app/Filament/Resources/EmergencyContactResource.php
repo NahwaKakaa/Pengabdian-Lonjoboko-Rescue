@@ -20,6 +20,8 @@ class EmergencyContactResource extends Resource
 {
     protected static ?string $model = EmergencyContact::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-o-phone';
 
     protected static ?string $navigationGroup = 'Informasi Publik';

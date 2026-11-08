@@ -26,6 +26,8 @@ class EducationContentResource extends Resource
 {
     protected static ?string $model = EducationContent::class;
 
+    protected static ?string $recordTitleAttribute = 'title';
+
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
     protected static ?string $navigationGroup = 'Informasi Publik';

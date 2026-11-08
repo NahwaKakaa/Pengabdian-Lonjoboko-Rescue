@@ -25,6 +25,8 @@ class AssemblyPointResource extends Resource
 
     protected static ?string $model = AssemblyPoint::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     protected static ?string $navigationGroup = 'Peta & Evakuasi';

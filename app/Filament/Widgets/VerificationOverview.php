@@ -18,6 +18,9 @@ class VerificationOverview extends StatsOverviewWidget
 {
     protected static ?int $sort = 1;
 
+    // Bawaan Filament memperbarui tiap 5 detik; cukup tiap menit.
+    protected static ?string $pollingInterval = '60s';
+
     protected function getStats(): array
     {
         $items = [

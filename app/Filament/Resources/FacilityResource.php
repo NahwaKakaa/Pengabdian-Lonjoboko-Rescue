@@ -23,6 +23,8 @@ class FacilityResource extends Resource
 
     protected static ?string $model = Facility::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
     protected static ?string $navigationGroup = 'Peta & Evakuasi';

@@ -26,6 +26,8 @@ class HazardZoneResource extends Resource
 
     protected static ?string $model = HazardZone::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
 
     protected static ?string $navigationGroup = 'Peta & Evakuasi';

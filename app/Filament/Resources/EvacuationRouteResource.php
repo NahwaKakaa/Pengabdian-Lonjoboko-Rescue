@@ -26,6 +26,8 @@ class EvacuationRouteResource extends Resource
 
     protected static ?string $model = EvacuationRoute::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
 
     protected static ?string $navigationGroup = 'Peta & Evakuasi';

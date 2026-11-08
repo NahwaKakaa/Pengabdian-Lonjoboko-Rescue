@@ -19,6 +19,8 @@ class VolunteerResource extends Resource
 {
     protected static ?string $model = Volunteer::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'Informasi Publik';
