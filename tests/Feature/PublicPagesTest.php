@@ -130,4 +130,35 @@ class PublicPagesTest extends TestCase
         $this->assertNull($content->fresh()->video_url);
         $this->assertSame('edukasi/poster.png', $content->fresh()->image);
     }
+
+    public function test_popup_muncul_saat_ada_keadaan_darurat(): void
+    {
+        $this->get(route('home'))->assertOk()->assertDontSee('lr-emergency', false);
+
+        \App\Models\Announcement::create([
+            'title' => 'Banjir Sungai Jeneberang, segera mengungsi',
+            'level' => 'waspada',
+            'body' => 'Air sungai naik.',
+            'is_published' => true,
+        ]);
+
+        // Tingkat Waspada cukup di pita atas, tanpa popup.
+        $this->get(route('home'))->assertOk()->assertDontSee('id="lr-emergency"', false);
+
+        $darurat = \App\Models\Announcement::create([
+            'title' => 'Longsor di Dusun Bontote\'ne',
+            'level' => 'darurat',
+            'body' => 'Warga di bawah lereng diminta segera ke titik kumpul.',
+            'is_published' => true,
+        ]);
+
+        $this->get(route('evacuation'))
+            ->assertOk()
+            ->assertSee('id="lr-emergency"', false)
+            ->assertSee("Keadaan darurat")
+            ->assertSee("Longsor di Dusun Bontote'ne");
+
+        // Di halaman peringatan itu sendiri, popup tidak perlu muncul.
+        $this->get(route('announcement.show', $darurat))->assertOk()->assertDontSee('id="lr-emergency"', false);
+    }
 }

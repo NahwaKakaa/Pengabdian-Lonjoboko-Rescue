@@ -270,6 +270,8 @@
         </div>
     </footer>
 
+    <x-emergency-popup :alerts="$activeAlerts" />
+
     @stack('scripts')
 </body>
 </html>
