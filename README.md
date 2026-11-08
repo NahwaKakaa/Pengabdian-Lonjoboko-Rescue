@@ -100,7 +100,8 @@ Web live: **https://lonjoboko-rescue.web.id** (Rumahweb, paket Unlimited M).
 | Branch | Fungsi |
 |---|---|
 | `main` | Pengembangan sehari-hari, tidak memengaruhi web live |
-| `production` | Setiap push ke sini menjalankan tes lalu **deploy otomatis** lewat GitHub Actions |
+| `production` | Push ke sini menjalankan tes dan build lewat GitHub Actions |
+| `deploy` | Dibuat otomatis (kode + hasil build). Server mengeceknya tiap 5 menit lewat Cron Job dan memperbarui web |
 
 Merilis perubahan:
 
@@ -108,7 +109,9 @@ Merilis perubahan:
 git checkout production && git merge main && git push origin production && git checkout main
 ```
 
-Setup server pertama kali, pengaturan GitHub Secrets, dan solusi masalah umum ada di **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+Hasil tes, build, dan deploy dikirim ke Telegram.
+
+Setup server, Cron Job, notifikasi Telegram, dan solusi masalah umum ada di **[docs/DEPLOY.md](docs/DEPLOY.md)**.
 
 Serahkan akun hosting dan domain atas nama desa atau tim, bukan akun pribadi, supaya mudah diteruskan setelah program selesai. Hosting dan domain berlaku sampai **8 November 2027** dan perlu diperpanjang sebelum tanggal itu.
 

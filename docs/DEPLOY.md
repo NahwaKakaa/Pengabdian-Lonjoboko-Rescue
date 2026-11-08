@@ -1,16 +1,31 @@
-# Panduan Deploy LONJOBOKO-RESCUE ke Rumahweb
+# Panduan Deploy LONJOBOKO-RESCUE
 
-Panduan ini untuk hosting **Rumahweb paket Unlimited M** dengan domain **lonjoboko-rescue.web.id**.
-Setup awal dilakukan **sekali saja**. Setelah itu, setiap push ke branch `production` otomatis terdeploy.
+Web live: **https://lonjoboko-rescue.web.id**
+Hosting: Rumahweb Unlimited M (cPanel), akun `lonz8291`, server Kambaniru.
 
-## Cara kerja branch
+## Cara kerja
+
+Hosting ini tidak membuka SSH dari luar dan mematikan fungsi `exec`/`proc_open`. Karena itu deploy memakai pola **jemput**: server sendiri yang mengecek GitHub secara berkala.
+
+```
+Push ke branch production
+        ↓
+GitHub Actions: tes → build tampilan → simpan ke branch "deploy"
+        ↓  (notifikasi Telegram: ✅ build selesai / ❌ gagal)
+Cron Job di server tiap 5 menit menjalankan deploy/server-deploy.sh
+        ↓
+Ada versi baru? → tarik kode, pasang paket, migrasi, optimasi
+        ↓  (notifikasi Telegram: 🚀 web terupdate / ⚠️ gagal)
+Web live terupdate (jeda maksimal ±5 menit)
+```
 
 | Branch | Fungsi |
 |---|---|
-| `main` | Tempat mengembangkan dan push sehari-hari. **Tidak** memengaruhi web live |
-| `production` | Isi web live. Setiap push ke sini menjalankan tes, lalu deploy otomatis |
+| `main` | Pengembangan sehari-hari. Tidak memengaruhi web live |
+| `production` | Versi yang ingin dirilis. Push ke sini memicu tes dan build |
+| `deploy` | Dibuat otomatis oleh GitHub Actions (kode + hasil build). **Jangan diedit manual** |
 
-Merilis perubahan ke web live:
+### Merilis perubahan
 
 ```bash
 git checkout production
@@ -19,192 +34,128 @@ git push origin production
 git checkout main
 ```
 
-Progres deploy bisa dilihat di tab **Actions** pada repo GitHub. Kalau tes gagal, deploy dibatalkan dan web live tidak berubah.
+---
+
+## Bagian 1. Setup awal server (sudah dikerjakan 8 November 2026)
+
+Catatan ini untuk referensi kalau server perlu dipasang ulang.
+
+1. **PHP Selector**: PHP 8.3, ekstensi `intl`, `zip`, `pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `bcmath`, `dom`, `xmlwriter`, `opcache` aktif.
+2. **Database**: `lonz8291_lonjoboko` dengan user `lonz8291_app` (ALL PRIVILEGES).
+3. **Composer** dipasang di `~/bin/composer` (hosting tidak menyediakannya):
+   ```bash
+   mkdir -p ~/bin
+   curl -sS https://getcomposer.org/installer -o ~/composer-setup.php
+   php ~/composer-setup.php --install-dir=$HOME/bin --filename=composer
+   rm ~/composer-setup.php
+   echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+   ```
+4. **Aplikasi** di `~/lonjoboko-rescue`:
+   ```bash
+   git clone --branch production https://github.com/NahwaKakaa/Pengabdian-Lonjoboko-Rescue.git ~/lonjoboko-rescue
+   cd ~/lonjoboko-rescue
+   composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts
+   php artisan package:discover --ansi
+   php artisan filament:upgrade
+   cp .env.example .env && php artisan key:generate
+   nano .env                     # APP_ENV=production, APP_DEBUG=false, APP_URL, DB_*, QUEUE_CONNECTION=sync
+   php artisan migrate --seed --force
+   ```
+   `--no-scripts` wajib karena `proc_open` dimatikan hosting.
+5. **Folder unggahan** (`php artisan storage:link` gagal karena `exec` dimatikan):
+   ```bash
+   ln -s ~/lonjoboko-rescue/storage/app/public ~/lonjoboko-rescue/public/storage
+   ```
+6. **Domain** diarahkan ke folder `public` aplikasi:
+   ```bash
+   cd ~ && mv public_html public_html_lama
+   ln -s ~/lonjoboko-rescue/public ~/public_html
+   cp -r ~/public_html_lama/.well-known ~/lonjoboko-rescue/public/
+   cp ~/public_html_lama/.user.ini ~/lonjoboko-rescue/public/
+   ```
 
 ---
 
-## Bagian 1. Siapkan cPanel
+## Bagian 2. Aktifkan deploy otomatis
 
-Login cPanel dari Clientzone Rumahweb (menu Hosting → lonjoboko-rescue.web.id → Login cPanel).
+### 2.1 Buat bot Telegram (opsional, untuk notifikasi)
 
-### 1.1 Versi PHP
-Buka **Select PHP Version** (atau **MultiPHP Manager**):
-- Pilih **PHP 8.3**
-- Pastikan ekstensi ini aktif: `intl`, `zip`, `pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `bcmath`, `xml`, `curl`
+1. Di Telegram, buka **@BotFather** → `/newbot` → beri nama dan username yang diakhiri `bot`.
+2. Simpan **token** yang diberikan. Jangan dibagikan ke siapa pun.
+3. Buka bot kamu, tekan **Start**, kirim pesan apa saja.
+4. Buka `https://api.telegram.org/bot<TOKEN>/getUpdates` di browser. Angka setelah `"chat":{"id":` adalah **chat ID**.
+   Untuk grup: masukkan bot ke grup, kirim pesan di grup, lalu lihat lagi. Chat ID grup diawali tanda minus.
 
-### 1.2 Database
-Buka **MySQL Databases** (atau **MariaDB Databases**):
-1. Buat database, misalnya `lonjoboko` → nama lengkapnya jadi `USERCPANEL_lonjoboko`
-2. Buat user database dengan kata sandi yang kuat
-3. Tambahkan user ke database dengan **ALL PRIVILEGES**
+### 2.2 Isi Telegram di server
 
-Catat: nama database, nama user, dan kata sandinya.
-
-### 1.3 SSL
-Buka **SSL/TLS Status** atau **Let's Encrypt**, lalu aktifkan untuk `lonjoboko-rescue.web.id` dan `www.lonjoboko-rescue.web.id`.
-Fitur GPS ("Lokasi saya") hanya berjalan lewat **https**.
-
-### 1.4 Akses SSH
-Buka **SSH Access** → **Manage SSH Keys**:
-1. Klik **Import Key**
-2. Nama: `lonjoboko_deploy`
-3. Tempel isi file **`~/.ssh/lonjoboko_deploy.pub`** (kunci **publik**, yang berakhiran `.pub`) di kolom *Public Key*
-4. Simpan, lalu klik **Manage → Authorize**
-
-Cara melihat isi kunci publik di laptop (Mac):
+Di terminal cPanel:
 ```bash
-cat ~/.ssh/lonjoboko_deploy.pub
+cd ~/lonjoboko-rescue
+nano .env
 ```
-
-Kalau menu SSH Access tidak ada atau SSH belum aktif, minta CS Rumahweb mengaktifkannya. Catat **alamat host** dan **port SSH** dari email aktivasi atau dari CS.
-
-Coba masuk dari laptop:
-```bash
-ssh -p PORT -i ~/.ssh/lonjoboko_deploy USERCPANEL@HOST
-```
-
----
-
-## Bagian 2. Pasang aplikasi di server (sekali saja)
-
-Masuk SSH seperti di atas, lalu jalankan:
-
-```bash
-cd ~
-git clone --branch production https://github.com/NahwaKakaa/Pengabdian-Lonjoboko-Rescue.git lonjoboko-rescue
-cd lonjoboko-rescue
-
-php -v              # pastikan 8.2 atau lebih baru
-composer -V         # pastikan Composer tersedia
-
-composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts
-php artisan package:discover --ansi
-php artisan filament:upgrade
-cp .env.example .env
-php artisan key:generate
-nano .env           # isi sesuai bagian 2.1
-```
-
-Kalau `php -v` menampilkan versi lama, coba `/opt/alt/php83/usr/bin/php -v`. Kalau berhasil, pakai perintah itu sebagai pengganti `php`, dan isi variabel `PHP_BIN` di GitHub (bagian 3) dengan path tersebut.
-
-Kalau `composer` tidak ditemukan, pasang di folder akun:
-```bash
-cd ~ && curl -sS https://getcomposer.org/installer | php
-# lalu gunakan: php ~/composer.phar install ...
-```
-dan isi variabel `COMPOSER_BIN` di GitHub dengan `php /home/USERCPANEL/composer.phar`.
-
-### 2.1 Isi `.env` produksi
-
+Isi dua baris ini (sudah ada di bagian bawah `.env.example`):
 ```env
-APP_NAME="LONJOBOKO-RESCUE"
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://lonjoboko-rescue.web.id
-APP_TIMEZONE=Asia/Makassar
-
-DB_CONNECTION=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=USERCPANEL_lonjoboko
-DB_USERNAME=USERCPANEL_namauser
-DB_PASSWORD=katasandi-database
-
-SESSION_DRIVER=database
-CACHE_STORE=database
-QUEUE_CONNECTION=sync
-FILESYSTEM_DISK=public
-
-ADMIN_NAME="Admin Desa Lonjoboko"
-ADMIN_EMAIL=email-admin-desa@contoh.com
-ADMIN_PASSWORD=katasandi-awal-yang-kuat
-
-MAP_CENTER_LAT=-5.xxxx      # koordinat kantor desa
-MAP_CENTER_LNG=119.xxxx
-MAP_ZOOM=15
+TELEGRAM_BOT_TOKEN=token-dari-botfather
+TELEGRAM_CHAT_ID=chat-id-kamu
 ```
-
-Simpan di nano: `Ctrl+O`, Enter, lalu `Ctrl+X`.
-
-### 2.2 Database dan penyimpanan
-
+Uji:
 ```bash
-php artisan migrate --seed --force
-php artisan storage:link
-php artisan optimize
+bash ~/lonjoboko-rescue/deploy/server-deploy.sh --test-telegram
 ```
 
-**Jangan** menjalankan `DemoMapSeeder` di server produksi, kecuali untuk latihan kader. Kalau terlanjur, hapus dengan `php artisan lonjoboko:hapus-contoh`.
+### 2.3 Isi Telegram di GitHub
 
-### 2.3 Arahkan domain ke folder `public`
-
-Domain utama akun cPanel memakai folder `public_html`. Ganti folder itu dengan tautan ke folder `public` aplikasi:
-
-```bash
-cd ~
-mv public_html public_html_lama
-ln -s ~/lonjoboko-rescue/public ~/public_html
-```
-
-Dengan begitu, file seperti `.env` tidak bisa dibuka dari browser.
-
-### 2.4 Tampilan (CSS/JS)
-
-Deploy pertama lewat GitHub Actions akan mengunggah folder `public/build` secara otomatis. Sebelum itu, halaman bisa tampil error karena file tampilan belum ada. Itu normal.
-
-### 2.5 Cron job (opsional)
-
-Buka **Cron Jobs** di cPanel, tambahkan (setiap menit):
-```
-cd /home/USERCPANEL/lonjoboko-rescue && php artisan schedule:run >> /dev/null 2>&1
-```
-
----
-
-## Bagian 3. Hubungkan GitHub ke server
-
-Buka repo di GitHub → **Settings** → **Secrets and variables** → **Actions**.
-
-### 3.1 Secret (tab *Secrets*)
+Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
 
 | Nama | Isi |
 |---|---|
-| `SSH_PRIVATE_KEY` | Seluruh isi file **`~/.ssh/lonjoboko_deploy`** (kunci **rahasia**, tanpa `.pub`), termasuk baris `-----BEGIN ...` dan `-----END ...` |
+| `TELEGRAM_BOT_TOKEN` | token dari BotFather |
+| `TELEGRAM_CHAT_ID` | chat ID |
 
-Cara menyalin di Mac:
+### 2.4 Pasang Cron Job
+
+cPanel → **Cron Jobs** → bagian *Add New Cron Job*:
+- **Common Settings**: *Once Per Five Minutes (\*/5 \* \* \* \*)*
+- **Command**:
+  ```
+  /bin/bash /home/lonz8291/lonjoboko-rescue/deploy/server-deploy.sh >/dev/null 2>&1
+  ```
+- Klik **Add New Cron Job**.
+
+Kalau email cron ingin dimatikan, kosongkan kolom *Cron Email* di bagian atas halaman.
+
+### 2.5 Uji
+
+1. Buka tab **Actions** di GitHub → **Deploy ke hosting** → **Run workflow** (branch `production`).
+2. Tunggu notifikasi ✅ dari GitHub di Telegram.
+3. Dalam ±5 menit, tunggu notifikasi 🚀 dari server.
+
+Atau jalankan langsung di terminal cPanel tanpa menunggu cron:
 ```bash
-pbcopy < ~/.ssh/lonjoboko_deploy
+bash ~/lonjoboko-rescue/deploy/server-deploy.sh
+tail -n 20 ~/lonjoboko-rescue/storage/logs/deploy.log
 ```
 
-Kunci rahasia hanya ditempel di GitHub Secrets. Jangan kirim lewat chat, email, atau simpan di repo.
-
-### 3.2 Variables (tab *Variables*)
-
-| Nama | Contoh isi |
-|---|---|
-| `SSH_HOST` | alamat server dari Rumahweb |
-| `SSH_PORT` | port SSH dari Rumahweb |
-| `SSH_USER` | username cPanel |
-| `APP_PATH` | `/home/USERCPANEL/lonjoboko-rescue` |
-| `PHP_BIN` | *(opsional)* isi hanya kalau `php` di server bukan versi 8.2+ |
-| `COMPOSER_BIN` | *(opsional)* isi hanya kalau `composer` tidak tersedia |
-
-### 3.3 Uji deploy
-
-Buka tab **Actions** → **Deploy ke hosting** → **Run workflow** (pilih branch `production`).
-Kalau hijau semua, buka https://lonjoboko-rescue.web.id.
-
 ---
+
+## Perintah berguna di server
+
+| Kebutuhan | Perintah |
+|---|---|
+| Lihat log deploy | `tail -n 30 ~/lonjoboko-rescue/storage/logs/deploy.log` |
+| Lihat error aplikasi | `grep -E "^\[[0-9]{4}-" ~/lonjoboko-rescue/storage/logs/laravel.log \| tail -n 3 \| cut -c1-300` |
+| Deploy ulang paksa | `bash ~/lonjoboko-rescue/deploy/server-deploy.sh --force` |
+| Uji Telegram | `bash ~/lonjoboko-rescue/deploy/server-deploy.sh --test-telegram` |
+| Buka web dari mode pemeliharaan | `cd ~/lonjoboko-rescue && php artisan up` |
+| Terapkan perubahan `.env` | `cd ~/lonjoboko-rescue && php artisan optimize` |
 
 ## Masalah yang sering terjadi
 
 | Gejala | Penyebab dan solusi |
 |---|---|
-| Actions gagal di langkah "Periksa pengaturan" | Ada secret/variable yang belum diisi. Pesan error menyebutkan namanya |
-| `Permission denied (publickey)` | Kunci publik belum di-*Authorize* di cPanel, atau secret `SSH_PRIVATE_KEY` tidak lengkap |
-| `Connection timed out` | Port SSH salah, atau SSH belum diaktifkan oleh Rumahweb |
-| Halaman putih / error 500 | Lihat log: `tail -n 50 ~/lonjoboko-rescue/storage/logs/laravel.log` |
-| Tampilan berantakan tanpa warna | Folder `public/build` belum terunggah. Jalankan ulang workflow deploy |
-| Foto yang diunggah tidak muncul | Jalankan `php artisan storage:link` di server |
-| `The Process class relies on proc_open` saat composer install | Hosting mematikan `proc_open`. Tambahkan `--no-scripts`, lalu jalankan `php artisan package:discover` dan `php artisan filament:upgrade` |
-| Web tertahan di mode pemeliharaan | Masuk SSH, jalankan `cd ~/lonjoboko-rescue && php artisan up` |
+| Tidak ada notifikasi 🚀 setelah ✅ | Cron Job belum dipasang atau perintahnya salah. Jalankan skrip manual dan lihat log deploy |
+| ⚠️ Deploy gagal, lalu tidak dicoba lagi | Disengaja, supaya versi rusak tidak dicoba tiap 5 menit. Push perbaikan, atau jalankan dengan `--force` |
+| Error 500 setelah deploy | Lihat error aplikasi (perintah di atas) |
+| Tampilan berantakan tanpa warna | Branch `deploy` belum berisi `public/build`. Jalankan ulang workflow di tab Actions |
+| Perubahan `.env` tidak berpengaruh | Konfigurasi di-cache. Jalankan `php artisan optimize` |
+| Web tertahan di mode pemeliharaan | `cd ~/lonjoboko-rescue && php artisan up` |

@@ -1,18 +1,15 @@
-# Deploy otomatis ke hosting setiap ada push ke branch `production`.
+# Deploy otomatis LONJOBOKO-RESCUE
 #
-# Alur:
-#   1. Tes   : menjalankan `php artisan test`. Kalau gagal, deploy dibatalkan.
-#   2. Deploy: build tampilan di GitHub, masuk ke server lewat SSH,
-#              tarik kode terbaru, pasang paket, migrasi, unggah tampilan.
+# Hosting tidak membuka akses SSH dari luar, jadi deploy memakai pola "jemput":
+#   1. Push ke branch `production`.
+#   2. GitHub menjalankan tes dan build tampilan.
+#   3. Hasilnya (kode + public/build) disimpan ke branch `deploy`.
+#   4. Cron Job di server menjalankan deploy/server-deploy.sh tiap 5 menit,
+#      dan memperbarui web kalau ada versi baru di branch `deploy`.
 #
-# Pengaturan yang dibutuhkan (Settings → Secrets and variables → Actions):
-#   Secrets   : SSH_PRIVATE_KEY   isi file ~/.ssh/lonjoboko_deploy (kunci rahasia)
-#   Variables : SSH_HOST          alamat server SSH
-#               SSH_PORT          port SSH (Rumahweb biasanya bukan 22)
-#               SSH_USER          username cPanel
-#               APP_PATH          folder aplikasi di server, mis. /home/USER/lonjoboko-rescue
-#               PHP_BIN           (opsional) perintah PHP di server, bawaan: php
-#               COMPOSER_BIN      (opsional) perintah Composer di server, bawaan: composer
+# Notifikasi Telegram (opsional), isi di Settings → Secrets and variables → Actions:
+#   TELEGRAM_BOT_TOKEN   token dari @BotFather
+#   TELEGRAM_CHAT_ID     chat ID pribadi atau grup
 #
 # Panduan lengkap: docs/DEPLOY.md
 
@@ -25,7 +22,10 @@ on:
 
 concurrency:
   group: deploy-production
-  cancel-in-progress: false
+  cancel-in-progress: true
+
+permissions:
+  contents: write
 
 jobs:
   test:
@@ -51,33 +51,11 @@ jobs:
       - name: Jalankan tes
         run: php artisan test
 
-  deploy:
-    name: Deploy
+  build:
+    name: Build ke branch deploy
     needs: test
     runs-on: ubuntu-latest
-    environment: production
-    env:
-      SSH_HOST: ${{ vars.SSH_HOST }}
-      SSH_PORT: ${{ vars.SSH_PORT || '22' }}
-      SSH_USER: ${{ vars.SSH_USER }}
-      APP_PATH: ${{ vars.APP_PATH }}
-      PHP_BIN: ${{ vars.PHP_BIN || 'php' }}
-      COMPOSER_BIN: ${{ vars.COMPOSER_BIN || 'composer' }}
     steps:
-      - name: Periksa pengaturan
-        env:
-          HAS_KEY: ${{ secrets.SSH_PRIVATE_KEY != '' }}
-        run: |
-          missing=""
-          [ -z "$SSH_HOST" ] && missing="$missing SSH_HOST"
-          [ -z "$SSH_USER" ] && missing="$missing SSH_USER"
-          [ -z "$APP_PATH" ] && missing="$missing APP_PATH"
-          [ "$HAS_KEY" != "true" ] && missing="$missing SSH_PRIVATE_KEY"
-          if [ -n "$missing" ]; then
-            echo "::error::Pengaturan belum diisi:$missing. Lihat docs/DEPLOY.md bagian 'Hubungkan GitHub ke server'."
-            exit 1
-          fi
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -90,73 +68,56 @@ jobs:
           npm ci
           npm run build
 
-      - name: Siapkan kunci SSH
+      - name: Simpan ke branch deploy
+        run: |
+          subject="$(git log -1 --pretty=%s)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B deploy
+          git add -f public/build
+          git commit -q -m "Deploy ${GITHUB_SHA::7}: ${subject}"
+          git push -f origin deploy
+
+  notify:
+    name: Kabari Telegram
+    needs: [test, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kirim notifikasi
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TEST_RESULT: ${{ needs.test.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-          cat >> ~/.ssh/config <<EOF
-          Host server
-            HostName $SSH_HOST
-            Port $SSH_PORT
-            User $SSH_USER
-            IdentityFile ~/.ssh/deploy_key
-            IdentitiesOnly yes
-            ServerAliveInterval 30
-          EOF
+          if [ -z "$TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "Secret Telegram belum diisi, notifikasi dilewati."
+            exit 0
+          fi
 
-      - name: Tarik kode dan pasang paket di server
-        run: |
-          ssh server "APP_PATH='$APP_PATH' PHP_BIN='$PHP_BIN' COMPOSER_BIN='$COMPOSER_BIN' bash -s" <<'REMOTE'
-          set -euo pipefail
-          cd "$APP_PATH"
+          short_sha="${GITHUB_SHA::7}"
+          subject="$(printf '%s' "$COMMIT_MSG" | head -n 1)"
 
-          echo "→ Mode pemeliharaan"
-          $PHP_BIN artisan down --retry=15 || true
+          if [ "$TEST_RESULT" != "success" ]; then
+            text="❌ LONJOBOKO-RESCUE: tes gagal, deploy dibatalkan.
+          Commit: ${short_sha} · ${subject}
+          Web live tidak berubah.
+          Log: ${RUN_URL}"
+          elif [ "$BUILD_RESULT" != "success" ]; then
+            text="❌ LONJOBOKO-RESCUE: build tampilan gagal, deploy dibatalkan.
+          Commit: ${short_sha} · ${subject}
+          Log: ${RUN_URL}"
+          else
+            text="✅ LONJOBOKO-RESCUE: tes lulus dan build selesai.
+          Commit: ${short_sha} · ${subject}
+          Server akan memperbarui web dalam ±5 menit."
+          fi
 
-          echo "→ Tarik kode terbaru (branch production)"
-          git fetch --prune origin production
-          git reset --hard origin/production
-
-          echo "→ Pasang paket Composer"
-          # --no-scripts: hosting mematikan proc_open, jadi skrip Composer
-          # dijalankan manual lewat artisan di bawah ini.
-          $COMPOSER_BIN install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress --no-scripts
-          $PHP_BIN artisan package:discover --ansi
-          $PHP_BIN artisan filament:upgrade
-
-          echo "→ Migrasi database"
-          $PHP_BIN artisan migrate --force
-          REMOTE
-
-      - name: Unggah hasil build tampilan
-        run: |
-          rsync -az --delete -e "ssh" public/build/ "server:$APP_PATH/public/build/"
-
-      - name: Optimasi dan buka kembali web
-        run: |
-          ssh server "APP_PATH='$APP_PATH' PHP_BIN='$PHP_BIN' bash -s" <<'REMOTE'
-          set -euo pipefail
-          cd "$APP_PATH"
-
-          $PHP_BIN artisan storage:link 2>/dev/null || true
-          $PHP_BIN artisan optimize:clear
-          $PHP_BIN artisan optimize
-          $PHP_BIN artisan filament:optimize 2>/dev/null || true
-
-          echo "→ Web dibuka kembali"
-          $PHP_BIN artisan up
-          REMOTE
-
-      - name: Buka web kalau deploy gagal di tengah jalan
-        if: failure()
-        run: |
-          ssh server "cd '$APP_PATH' && $PHP_BIN artisan up" 2>/dev/null || true
-
-      - name: Hapus kunci SSH
-        if: always()
-        run: rm -f ~/.ssh/deploy_key
+          curl -s -o /dev/null --max-time 15 \
+            "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${text}" \
+            --data-urlencode "disable_web_page_preview=true" || echo "Gagal mengirim notifikasi Telegram."
