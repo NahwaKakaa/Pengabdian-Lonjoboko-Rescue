@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('LONJOBOKO-RESCUE')
+            ->brandName('LONJOBOKO RESCUE')
             ->colors([
                 'primary' => Color::Teal,
                 'danger' => Color::Rose,

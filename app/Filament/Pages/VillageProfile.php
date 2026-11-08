@@ -84,7 +84,7 @@ class VillageProfile extends Page implements HasForms
                             ->rows(4)
                             ->helperText('Gambaran wilayah: letak, jumlah dusun, sungai atau lereng di sekitar desa.'),
                         Textarea::make('program_description')
-                            ->label('Tentang program LONJOBOKO-RESCUE')
+                            ->label('Tentang program LONJOBOKO RESCUE')
                             ->rows(4),
                         Textarea::make('population_note')
                             ->label('Catatan kelompok rentan')
