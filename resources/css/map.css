@@ -52,3 +52,52 @@
     margin: 14px 16px;
     line-height: 1.5;
 }
+
+/* Tombol aksi interaktif di dalam popup peta */
+.popup-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    border-radius: 9px;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    cursor: pointer;
+    line-height: 1.25;
+}
+
+.popup-btn-primary {
+    background: #0e6b66;
+    color: #ffffff !important;
+    border: 1px solid #0b5551;
+    box-shadow: 0 2px 6px rgba(14, 107, 102, 0.25);
+}
+
+.popup-btn-primary:hover {
+    background: #093f3c;
+    color: #ffffff !important;
+}
+
+.popup-btn-gmaps {
+    background: #f1f5f9;
+    color: #1e293b !important;
+    border: 1px solid #cbd5e1;
+}
+
+.popup-btn-gmaps:hover {
+    background: #e2e8f0;
+}
+
+/* Animasi garis jalur petunjuk rute */
+@keyframes routeDash {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+.route-guidance-line {
+    animation: routeDash 1s linear infinite;
+}

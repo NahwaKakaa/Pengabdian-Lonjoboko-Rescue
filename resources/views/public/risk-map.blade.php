@@ -37,6 +37,33 @@
 
         <div class="map-frame">
             <div data-lr-map="risk" class="h-[62vh] min-h-[380px] max-h-[640px] w-full" role="region" aria-label="Peta risiko bencana Desa {{ $site['village'] }}"></div>
+
+            {{-- Kartu Info Petunjuk Jalur Aktif --}}
+            <div data-nav-card class="hidden absolute top-4 inset-x-4 sm:inset-x-auto sm:right-4 z-[500] max-w-sm bg-river-950/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-white/20 transition-all">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="grid gap-1 min-w-0">
+                        <span class="inline-flex items-center gap-1.5 text-[0.7rem] uppercase font-black tracking-wider text-emerald-300">
+                            <span class="size-2 rounded-full bg-emerald-400 animate-ping"></span>
+                            Petunjuk Jalur Aktif
+                        </span>
+                        <p data-nav-title class="font-bold text-sm text-white truncate"></p>
+                        <p data-nav-meta class="text-xs text-river-100"></p>
+                    </div>
+                    <button type="button" data-nav-close class="rounded-lg p-1 text-river-300 hover:text-white hover:bg-white/10 transition-colors" title="Tutup Rute">
+                        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <div class="mt-2.5 pt-2.5 border-t border-white/15 flex items-center justify-between gap-2">
+                    <a data-nav-gmaps href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-river-950 transition-colors">
+                        <span>Buka Navigasi HP</span>
+                        <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                    </a>
+                    <button type="button" data-nav-zoom class="text-xs font-semibold text-river-200 hover:text-white underline underline-offset-2">
+                        Fokus Rute
+                    </button>
+                </div>
+            </div>
+
             <div class="absolute bottom-4 left-4 z-[500] flex flex-wrap items-center gap-2">
                 <button type="button" data-locate class="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
                     <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>

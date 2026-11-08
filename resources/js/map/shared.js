@@ -18,8 +18,14 @@ export function round6(value) {
     return Math.round(Number(value) * 1e6) / 1e6;
 }
 
-export function createBaseMap(element, { center, zoom, tileUrl, attribution, scrollWheelZoom = false }) {
-    const map = L.map(element, { scrollWheelZoom, zoomControl: true }).setView([center.lat, center.lng], zoom);
+export function createBaseMap(element, { center, zoom, tileUrl, attribution, scrollWheelZoom = true }) {
+    const map = L.map(element, { 
+        scrollWheelZoom: true,
+        doubleClickZoom: true,
+        touchZoom: true,
+        boxZoom: true,
+        zoomControl: true,
+    }).setView([center.lat, center.lng], zoom);
 
     L.tileLayer(tileUrl, { attribution, maxZoom: 19 }).addTo(map);
 
