@@ -1,0 +1,38 @@
+/* Simbol peta yang dipakai di halaman publik dan panel admin. */
+
+.lr-pin {
+    background: transparent;
+    border: 0;
+}
+
+.lr-pin__body {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: var(--pin, #c2185b);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+}
+
+.lr-pin__glyph {
+    transform: rotate(45deg);
+    color: #fff;
+    font: 700 13px/1 system-ui, sans-serif;
+}
+
+.leaflet-container {
+    font: inherit;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+    padding: 6px 6px 0 0;
+}
+
+.leaflet-popup-content {
+    margin: 12px 14px;
+    line-height: 1.45;
+}

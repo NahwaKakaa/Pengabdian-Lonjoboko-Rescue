@@ -1,0 +1,104 @@
+/*
+ * Gaya field peta di panel admin. Filament tidak memuat kelas Tailwind
+ * buatan sendiri, jadi gaya ditulis sebagai CSS biasa dan memakai
+ * variabel warna Filament (format "R, G, B").
+ */
+
+.lr-field {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.lr-field__map {
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgb(var(--gray-200));
+    z-index: 0;
+}
+
+.dark .lr-field__map {
+    border-color: rgb(255 255 255 / 0.1);
+}
+
+.lr-field__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.lr-field__hint,
+.lr-field__meta {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: rgb(var(--gray-600));
+}
+
+.lr-field__meta {
+    font-weight: 600;
+    color: rgb(var(--primary-700));
+    font-variant-numeric: tabular-nums;
+}
+
+.dark .lr-field__hint {
+    color: rgb(var(--gray-400));
+}
+
+.dark .lr-field__meta {
+    color: rgb(var(--primary-400));
+}
+
+.lr-field__hint:empty {
+    display: none;
+}
+
+.lr-field__coords {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.75rem;
+}
+
+.lr-field__coord {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    color: rgb(var(--gray-600));
+}
+
+.dark .lr-field__coord {
+    color: rgb(var(--gray-400));
+}
+
+.lr-field__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    color: rgb(var(--gray-600));
+}
+
+.lr-field__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.lr-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15);
+}
+
+.lr-dot--safe {
+    background: #16825d;
+}
+
+.lr-dot--hazard {
+    background: #b4580e;
+}
