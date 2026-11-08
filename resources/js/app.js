@@ -141,9 +141,8 @@ function initThemeToggle() {
 
     const label = () => {
         const dark = root.classList.contains('dark');
-        button.setAttribute('aria-label', dark ? 'Ganti ke tampilan siang' : 'Ganti ke tampilan malam');
-        button.setAttribute('title', dark ? 'Tampilan siang' : 'Tampilan malam');
-        button.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        button.setAttribute('aria-checked', dark ? 'true' : 'false');
+        button.setAttribute('title', dark ? 'Ganti ke tampilan siang' : 'Ganti ke tampilan malam');
     };
 
     const apply = (dark) => {
@@ -161,7 +160,7 @@ function initThemeToggle() {
     button.addEventListener('click', () => {
         const dark = !root.classList.contains('dark');
 
-        // Browser tanpa View Transitions: warna dan gambar memudar biasa.
+        // Browser tanpa View Transitions: warna dan gambar memudar lewat CSS.
         if (!document.startViewTransition || reduceMotion) {
             root.classList.add('lr-theme-fade');
             apply(dark);
@@ -170,24 +169,10 @@ function initThemeToggle() {
             return;
         }
 
-        // Suasana baru menyebar melingkar dari tombol.
-        const rect = button.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
-        const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-
+        // Seluruh halaman memudar bersamaan; sakelar tetap meluncur.
         root.classList.add('lr-theme-switching');
 
         const transition = document.startViewTransition(() => apply(dark));
-
-        transition.ready
-            .then(() => {
-                root.animate(
-                    { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-                    { duration: 700, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', pseudoElement: '::view-transition-new(root)' },
-                );
-            })
-            .catch(() => {});
 
         transition.finished.finally(() => root.classList.remove('lr-theme-switching'));
     });

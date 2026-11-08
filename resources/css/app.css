@@ -784,48 +784,100 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
-.site-theme-btn {
+/* Sakelar siang/malam: bulatan meluncur dari matahari ke bulan */
+.site-theme-switch {
     position: relative;
+    flex-shrink: 0;
+    width: 3.6rem;
+    height: 2.05rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b9ad9, #7cc4ef);
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+    transition: background 0.6s ease, box-shadow 0.3s ease;
+}
+
+.site-theme-switch:hover {
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.site-theme-switch:focus-visible {
+    outline: 3px solid #5fd0b7;
+    outline-offset: 2px;
+}
+
+/* Bintang kecil di lintasan, hanya terlihat saat malam */
+.site-theme-switch__stars {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background-image:
+        radial-gradient(1px 1px at 22% 30%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 35% 68%, #ffffff 50%, transparent 52%),
+        radial-gradient(1px 1px at 14% 58%, #c7d2fe 50%, transparent 52%),
+        radial-gradient(1px 1px at 44% 24%, #ffffff 50%, transparent 52%);
+    transform: translateY(6px);
+    transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-theme-switch__knob {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
     display: grid;
     place-items: center;
-    flex-shrink: 0;
-    width: 2.4rem;
-    height: 2.4rem;
-    border-radius: 0.8rem;
-    color: #e6f4f1;
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-    cursor: pointer;
-    overflow: hidden;
-    transition: background-color 0.2s ease;
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #f59e0b;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition:
+        transform 0.6s cubic-bezier(0.34, 1.3, 0.5, 1),
+        background-color 0.6s ease,
+        color 0.6s ease;
 }
 
-.site-theme-btn:hover {
-    background: rgba(255, 255, 255, 0.14);
-}
-
-.site-theme-btn svg {
+.site-theme-switch__knob svg {
     position: absolute;
-    width: 1.15rem;
-    height: 1.15rem;
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    width: 1.05rem;
+    height: 1.05rem;
+    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.site-theme-btn__sun {
-    color: #fcd34d;
-}
-
-.site-theme-btn__moon {
+.site-theme-switch__moon {
     opacity: 0;
-    transform: rotate(-90deg) scale(0.5);
+    transform: rotate(-70deg) scale(0.6);
 }
 
-.dark .site-theme-btn__sun {
+.dark .site-theme-switch {
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
+}
+
+.dark .site-theme-switch__stars {
+    opacity: 1;
+    transform: none;
+}
+
+.dark .site-theme-switch__knob {
+    transform: translateX(1.55rem);
+    background: #0f172a;
+    color: #c4b5fd;
+}
+
+.dark .site-theme-switch__sun {
     opacity: 0;
-    transform: rotate(90deg) scale(0.5);
+    transform: rotate(90deg) scale(0.6);
 }
 
-.dark .site-theme-btn__moon {
+.dark .site-theme-switch__moon {
     opacity: 1;
     transform: none;
 }
@@ -1118,11 +1170,11 @@
 }
 
 /* ------------------------------------------------------------------
-   Saat tombol siang/malam ditekan: suasana baru menyebar melingkar
-   dari tombol (View Transitions). Selama itu, transisi lain dimatikan
-   supaya gambar baru langsung dalam keadaan akhir.
+   Saat sakelar ditekan, seluruh halaman memudar bersamaan dari siang
+   ke malam (atau sebaliknya). Sakelar sendiri tetap "hidup" supaya
+   bulatannya terlihat meluncur, bukan ikut memudar.
    ------------------------------------------------------------------ */
-.lr-theme-switching *,
+.lr-theme-switching *:not(.site-theme-switch):not(.site-theme-switch *),
 .lr-theme-switching *::before,
 .lr-theme-switching *::after {
     transition: none !important;
@@ -1134,18 +1186,36 @@
     view-transition-name: none !important;
 }
 
-.lr-theme-switching::view-transition-old(root),
-.lr-theme-switching::view-transition-new(root) {
+.lr-theme-switching .site-theme-switch {
+    view-transition-name: theme-switch;
+}
+
+/* Tampilan lama tetap utuh, tampilan baru muncul perlahan di atasnya (tanpa meredup di tengah) */
+.lr-theme-switching::view-transition-old(root) {
     animation: none;
+}
+
+.lr-theme-switching::view-transition-new(root) {
+    animation: theme-fade-in 0.75s cubic-bezier(0.4, 0, 0.2, 1) both;
     mix-blend-mode: normal;
 }
 
-.lr-theme-switching::view-transition-old(root) {
-    z-index: 0;
+.lr-theme-switching::view-transition-group(theme-switch) {
+    animation: none;
 }
 
-.lr-theme-switching::view-transition-new(root) {
-    z-index: 1;
+.lr-theme-switching::view-transition-old(theme-switch) {
+    display: none;
+}
+
+.lr-theme-switching::view-transition-new(theme-switch) {
+    animation: none;
+}
+
+@keyframes theme-fade-in {
+    from {
+        opacity: 0;
+    }
 }
 
 /* Cadangan untuk browser tanpa View Transitions: warna berganti halus */

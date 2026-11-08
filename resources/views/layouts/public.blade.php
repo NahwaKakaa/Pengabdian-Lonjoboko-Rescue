@@ -144,10 +144,13 @@
             </nav>
 
 
-            {{-- Ganti tampilan siang / malam --}}
-            <button type="button" id="theme-toggle" class="site-theme-btn" aria-label="Ganti ke tampilan malam" title="Tampilan malam">
-                <svg class="site-theme-btn__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-                <svg class="site-theme-btn__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+            {{-- Sakelar tampilan siang / malam --}}
+            <button type="button" id="theme-toggle" class="site-theme-switch" role="switch" aria-checked="false" aria-label="Tampilan malam" title="Ganti ke tampilan malam">
+                <span class="site-theme-switch__stars" aria-hidden="true"></span>
+                <span class="site-theme-switch__knob" aria-hidden="true">
+                    <svg class="site-theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>
+                    <svg class="site-theme-switch__moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.3A8.5 8.5 0 019.7 3.5a8.5 8.5 0 1010.8 10.8z"/></svg>
+                </span>
             </button>
 
             {{-- Menu HP --}}
