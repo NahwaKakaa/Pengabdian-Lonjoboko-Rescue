@@ -128,6 +128,86 @@ function initMobileMenu() {
     });
 }
 
+/* ------------------------------------------------------------------
+ * Tampilan siang / malam
+ * ------------------------------------------------------------------ */
+function initThemeToggle() {
+    const button = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+
+    if (!button) {
+        return;
+    }
+
+    const label = () => {
+        const dark = root.classList.contains('dark');
+        button.setAttribute('aria-label', dark ? 'Ganti ke tampilan siang' : 'Ganti ke tampilan malam');
+        button.setAttribute('title', dark ? 'Tampilan siang' : 'Tampilan malam');
+        button.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    };
+
+    const apply = (dark) => {
+        root.classList.toggle('dark', dark);
+
+        try {
+            localStorage.setItem('lr-theme', dark ? 'dark' : 'light');
+        } catch (e) {}
+
+        label();
+    };
+
+    label();
+
+    button.addEventListener('click', () => {
+        const dark = !root.classList.contains('dark');
+
+        // Browser tanpa View Transitions: warna dan gambar memudar biasa.
+        if (!document.startViewTransition || reduceMotion) {
+            root.classList.add('lr-theme-fade');
+            apply(dark);
+            setTimeout(() => root.classList.remove('lr-theme-fade'), 950);
+
+            return;
+        }
+
+        // Suasana baru menyebar melingkar dari tombol.
+        const rect = button.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+        root.classList.add('lr-theme-switching');
+
+        const transition = document.startViewTransition(() => apply(dark));
+
+        transition.ready
+            .then(() => {
+                root.animate(
+                    { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+                    { duration: 700, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', pseudoElement: '::view-transition-new(root)' },
+                );
+            })
+            .catch(() => {});
+
+        transition.finished.finally(() => root.classList.remove('lr-theme-switching'));
+    });
+
+    // Ikuti pengaturan HP/laptop kalau warga belum pernah memilih sendiri.
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', (event) => {
+        let chosen = null;
+
+        try {
+            chosen = localStorage.getItem('lr-theme');
+        } catch (e) {}
+
+        if (!chosen) {
+            root.classList.toggle('dark', event.matches);
+            label();
+        }
+    });
+}
+
+initThemeToggle();
 initScrollEffects();
 initNavHover();
 initMobileMenu();

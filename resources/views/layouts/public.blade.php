@@ -24,8 +24,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 
-    {{-- Logo hanya digambar ulang di halaman pertama kunjungan --}}
+    {{-- Tema siang/malam dipasang sebelum halaman tergambar (tanpa kilatan putih).
+         Logo hanya digambar ulang di halaman pertama kunjungan. --}}
     <script>
+        try {
+            var theme = localStorage.getItem('lr-theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (e) {}
         try {
             if (sessionStorage.getItem('lr-visited')) {
                 document.documentElement.classList.add('lr-returning');
@@ -40,50 +47,56 @@
 <body class="min-h-screen flex flex-col antialiased bg-scenic-ambient text-ink">
     <a href="#konten" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-river-900 focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:font-bold">Langsung ke konten</a>
 
-    {{-- Pita status: selalu tampil, supaya warga langsung tahu ada peringatan atau tidak. --}}
-    @if ($topAlert)
-        <div role="alert" class="{{ $isEmergency ? 'bg-danger shadow-md' : 'bg-alert shadow-md' }} text-white relative z-50">
-            <div class="wrap flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-2.5 text-sm">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="inline-flex items-center gap-1.5 font-black uppercase tracking-wider text-xs px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 backdrop-blur-xs">
-                        <span class="size-2 rounded-full bg-white animate-ping" aria-hidden="true"></span>
-                        {{ $topAlert->level->getLabel() }}
-                    </span>
-                    <a href="{{ route('announcement.show', $topAlert) }}" class="font-bold underline underline-offset-4 decoration-white/60 hover:decoration-white truncate">
-                        {{ $topAlert->title }}
-                    </a>
-                </div>
-                @if ($activeAlerts->count() > 1)
-                    <a href="{{ route('emergency') }}" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 transition-colors">+{{ $activeAlerts->count() - 1 }} peringatan lain</a>
-                @endif
-            </div>
-        </div>
-    @else
-        <div class="site-topbar">
-            <div class="wrap flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-xs sm:text-sm">
-                <span class="inline-flex items-center gap-2 font-semibold text-xs text-river-100">
-                    <span class="relative flex size-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-safe opacity-75"></span>
-                        <span class="relative inline-flex rounded-full size-2 bg-safe"></span>
-                    </span>
-                    Status Desa: <span class="font-bold text-white">Aman & Terkendali</span>
-                </span>
-                <div class="flex items-center gap-4 text-xs text-river-100">
-                    <span class="hidden md:inline">Kawasan Lereng Pegunungan & Persawahan Parangloe</span>
-                    <a href="https://www.bmkg.go.id" target="_blank" rel="noopener" class="text-river-100 hover:text-white underline underline-offset-4 decoration-river-100/40 inline-flex items-center gap-1 transition-colors">
-                        <span>Prakiraan Cuaca BMKG</span>
-                        <svg viewBox="0 0 24 24" class="size-3" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    @endif
-
     @php
         $alertTone = $topAlert ? ($isEmergency ? 'darurat' : 'waspada') : null;
         $showReadProgress = request()->routeIs('education.show', 'announcement.show');
     @endphp
     <header id="site-header" @class(['site-header sticky top-0 z-40 shadow-lg', 'has-alert-'.$alertTone => $alertTone]) style="top: env(safe-area-inset-top, 0px)">
+        {{-- Bar status di dalam navbar, supaya posisinya sama di setiap halaman --}}
+        @if ($topAlert)
+            <div role="alert" @class(['site-ribbon text-white', 'bg-danger' => $isEmergency, 'bg-alert' => ! $isEmergency])>
+                <div class="wrap flex items-center justify-between gap-3 py-2 text-sm">
+                    <div class="flex min-w-0 items-center gap-2.5">
+                        <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-2.5 py-0.5 text-[0.7rem] font-black uppercase tracking-wider">
+                            <span class="relative flex size-1.5" aria-hidden="true">
+                                <span class="absolute inline-flex size-full animate-ping rounded-full bg-white opacity-80"></span>
+                                <span class="relative inline-flex size-1.5 rounded-full bg-white"></span>
+                            </span>
+                            {{ $topAlert->level->getLabel() }}
+                        </span>
+                        <a href="{{ route('announcement.show', $topAlert) }}" class="truncate font-bold underline decoration-white/50 underline-offset-4 hover:decoration-white">{{ $topAlert->title }}</a>
+                    </div>
+                    @if ($activeAlerts->count() > 1)
+                        <a href="{{ route('emergency') }}" class="shrink-0 rounded-lg bg-white/15 px-2.5 py-1 text-xs font-semibold transition-colors hover:bg-white/25">+{{ $activeAlerts->count() - 1 }}<span class="hidden sm:inline"> peringatan lain</span></a>
+                    @endif
+                </div>
+            </div>
+        @else
+            <div class="site-topbar">
+                <div class="wrap flex items-center justify-between gap-3 py-1.5 text-xs">
+                    <span class="inline-flex min-w-0 items-center gap-2 font-semibold text-river-100">
+                        <span class="relative flex size-2 shrink-0" aria-hidden="true">
+                            <span class="absolute inline-flex size-full animate-ping rounded-full bg-safe opacity-75"></span>
+                            <span class="relative inline-flex size-2 rounded-full bg-safe"></span>
+                        </span>
+                        <span class="truncate"><span class="hidden sm:inline">Status desa: </span><span class="font-bold text-white">Aman &amp; terkendali</span></span>
+                    </span>
+                    <div class="flex shrink-0 items-center gap-3">
+                        <span class="hidden items-center gap-1.5 text-river-200 lg:inline-flex">
+                            <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-10 4 6 3-4 5 8z"/></svg>
+                            Lereng pegunungan &amp; persawahan {{ $site['district'] }}
+                        </span>
+                        <span class="hidden h-3.5 w-px bg-white/15 lg:block" aria-hidden="true"></span>
+                        <a href="https://www.bmkg.go.id" target="_blank" rel="noopener" class="site-weather-chip" title="Buka prakiraan cuaca di situs BMKG">
+                            <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g stroke="#fcd34d"><path d="M12 3v1.5M5.6 5.6l1 1M3 12h1.5M18.4 5.6l-1 1"/><path d="M8.5 11.2a3.5 3.5 0 016.6-1.4"/></g><path stroke="#e6f4f1" d="M8 20h9a3.5 3.5 0 00.4-7 5 5 0 00-9.6 1.2A3 3 0 008 20z"/></svg>
+                            <span><span class="hidden sm:inline">Prakiraan cuaca </span>BMKG</span>
+                            <svg viewBox="0 0 24 24" class="size-3 opacity-70" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="site-header__bar wrap flex items-center justify-between gap-4">
             <a href="{{ route('home') }}" class="site-logo group flex items-center gap-3 min-w-0" aria-label="LONJOBOKO RESCUE, ke beranda">
                 <span class="site-logo__mark grid place-items-center size-10 shrink-0 rounded-xl bg-gradient-to-br from-emerald-600 to-river-800 text-white shadow-md shadow-black/30" aria-hidden="true">
@@ -93,11 +106,12 @@
                     </svg>
                 </span>
                 <span class="min-w-0 leading-tight">
-                    <span class="block font-black tracking-tight text-white text-base">LONJOBOKO RESCUE</span>
+                    <span class="block whitespace-nowrap font-black tracking-tight text-white text-[0.95rem] sm:text-base">LONJOBOKO RESCUE</span>
                     <span class="site-logo__sub block text-xs text-river-100 truncate font-semibold">Desa {{ $site['village'] }} Tangguh Bencana</span>
                 </span>
             </a>
 
+            <div class="flex items-center gap-2">
             {{-- Menu laptop: penanda hijau meluncur ke menu aktif, sorotan tipis mengikuti kursor --}}
             <nav aria-label="Menu utama" class="hidden lg:block">
                 <ul class="site-nav relative flex items-center gap-1.5 text-sm font-semibold">
@@ -129,11 +143,18 @@
                 </ul>
             </nav>
 
+
+            {{-- Ganti tampilan siang / malam --}}
+            <button type="button" id="theme-toggle" class="site-theme-btn" aria-label="Ganti ke tampilan malam" title="Tampilan malam">
+                <svg class="site-theme-btn__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                <svg class="site-theme-btn__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+            </button>
+
             {{-- Menu HP --}}
             <details class="site-menu lg:hidden relative">
-                <summary class="list-none cursor-pointer inline-flex items-center gap-2.5 rounded-xl border border-white/25 bg-river-800 text-white px-3.5 py-2 text-sm font-bold shadow-xs hover:bg-river-700 [&::-webkit-details-marker]:hidden" aria-label="Buka menu">
+                <summary class="list-none cursor-pointer inline-flex h-[2.4rem] items-center gap-2.5 rounded-xl border border-white/25 bg-river-800 text-white px-3 sm:px-3.5 text-sm font-bold shadow-xs hover:bg-river-700 [&::-webkit-details-marker]:hidden" aria-label="Buka menu">
                     <span class="site-menu__burger" aria-hidden="true"><span></span><span></span><span></span></span>
-                    <span>Menu</span>
+                    <span class="hidden sm:inline">Menu</span>
                     @if ($alertTone)
                         <span class="site-nav__alert-dot is-{{ $alertTone }}" aria-hidden="true"></span>
                     @endif
@@ -160,6 +181,7 @@
                     </ul>
                 </nav>
             </details>
+            </div>
         </div>
 
         @if ($showReadProgress)

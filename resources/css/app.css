@@ -686,9 +686,9 @@
 
 /* ==================================================================
    Transisi antarhalaman (View Transitions)
-   Navbar tetap di tempat, kotak menu aktif meluncur ke menu baru,
-   isi halaman berganti dengan memudar dan sedikit naik.
-   Browser yang belum mendukung (mis. Firefox) tetap berpindah biasa.
+   Navbar (beserta bar status) tetap di tempat; hanya kotak menu aktif
+   yang meluncur. Isi halaman berganti dengan memudar silang tanpa
+   bergeser. Browser yang belum mendukung tetap berpindah biasa.
    ================================================================== */
 @view-transition {
     navigation: auto;
@@ -698,24 +698,28 @@
     view-transition-name: site-header;
 }
 
-#konten {
-    view-transition-name: page-content;
-}
-
-.site-footer {
-    view-transition-name: site-footer;
-}
-
-::view-transition-group(nav-pill) {
-    animation-duration: 0.5s;
+::view-transition-group(site-header) {
+    animation-duration: 0.3s;
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Urutan lapisan: kotak hijau di atas navbar, tulisan menu di atas kotak hijau */
-::view-transition-group(nav-pill) {
-    z-index: 1;
+/* Navbar lama dan baru hampir sama persis: langsung tukar, tanpa pudar ganda */
+::view-transition-old(site-header) {
+    animation: none;
+    opacity: 0;
 }
 
+::view-transition-new(site-header) {
+    animation: none;
+}
+
+::view-transition-group(nav-pill) {
+    z-index: 1;
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Tulisan menu selalu di atas kotak hijau */
 ::view-transition-group(nav-label-0),
 ::view-transition-group(nav-label-1),
 ::view-transition-group(nav-label-2),
@@ -727,38 +731,434 @@
     z-index: 2;
 }
 
-::view-transition-group(site-header) {
-    animation-duration: 0.35s;
+::view-transition-old(root) {
+    animation: page-fade-out 0.2s ease both;
 }
 
-::view-transition-old(page-content) {
-    animation: page-out 0.18s ease-in both;
-}
-
-::view-transition-new(page-content) {
-    animation: page-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.06s both;
-}
-
-::view-transition-old(root),
 ::view-transition-new(root) {
-    animation-duration: 0.25s;
+    animation: page-fade-in 0.3s ease both;
 }
 
-@keyframes page-out {
+@keyframes page-fade-out {
     to {
         opacity: 0;
     }
 }
 
-@keyframes page-in {
+@keyframes page-fade-in {
     from {
         opacity: 0;
-        transform: translateY(10px);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     @view-transition {
         navigation: none;
+    }
+}
+
+/* ==================================================================
+   Bar status (cuaca BMKG) & tombol siang/malam di navbar
+   ================================================================== */
+.site-header .site-topbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.site-weather-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.65rem 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    color: #e6f4f1;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.site-weather-chip:hover {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.site-theme-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.8rem;
+    color: #e6f4f1;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    cursor: pointer;
+    overflow: hidden;
+    transition: background-color 0.2s ease;
+}
+
+.site-theme-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.site-theme-btn svg {
+    position: absolute;
+    width: 1.15rem;
+    height: 1.15rem;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.site-theme-btn__sun {
+    color: #fcd34d;
+}
+
+.site-theme-btn__moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+}
+
+.dark .site-theme-btn__sun {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+}
+
+.dark .site-theme-btn__moon {
+    opacity: 1;
+    transform: none;
+}
+
+/* ==================================================================
+   Mode gelap (malam). Kelas .dark dipasang di <html> oleh skrip di
+   <head> sebelum halaman tergambar, jadi tidak ada kilatan putih.
+   ================================================================== */
+.dark {
+    color-scheme: dark;
+    --color-ink: #e3efed;
+    --color-ink-soft: #a3b8b4;
+    --color-paper: #07110f;
+    --color-card: #0f1c1b;
+    --color-line: #22403c;
+    --color-flood-soft: rgba(96, 165, 250, 0.14);
+    --color-slide-soft: rgba(251, 146, 60, 0.14);
+    --color-safe-soft: rgba(52, 211, 153, 0.14);
+    --color-alert-soft: rgba(251, 146, 60, 0.14);
+    --color-danger-soft: rgba(248, 113, 113, 0.14);
+}
+
+/* Latar & permukaan */
+.dark .bg-scenic-ambient {
+    background-color: #07110f;
+    background-image:
+        radial-gradient(at 10% 0%, rgba(20, 83, 76, 0.28) 0px, transparent 45%),
+        radial-gradient(at 90% 25%, rgba(30, 58, 110, 0.22) 0px, transparent 45%),
+        radial-gradient(at 50% 100%, rgba(20, 83, 76, 0.18) 0px, transparent 50%);
+}
+
+.dark .elevation-card {
+    background: var(--color-card);
+    border-color: var(--color-line);
+    box-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.35);
+}
+
+.dark .elevation-card:hover {
+    border-color: rgba(95, 208, 183, 0.4);
+    box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.55);
+}
+
+.dark .bg-white {
+    background-color: var(--color-card);
+}
+
+.dark .bg-white\/90 {
+    background-color: rgba(15, 28, 27, 0.9);
+}
+
+.dark .from-white {
+    --tw-gradient-from: var(--color-card);
+}
+
+.dark .via-white {
+    --tw-gradient-via: var(--color-card);
+}
+
+.dark .to-river-50\/60 {
+    --tw-gradient-to: rgba(95, 208, 183, 0.06);
+}
+
+.dark .bg-ink {
+    background-color: #000000;
+}
+
+.dark .map-frame {
+    border-color: var(--color-line);
+    background: #0b1716;
+    box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.5);
+}
+
+.dark .ring-black\/10 {
+    --tw-ring-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .site-header {
+    background-color: #041715;
+}
+
+.dark .site-header.is-scrolled {
+    background-color: rgba(4, 23, 21, 0.92);
+}
+
+.dark .site-footer {
+    background-color: #041312;
+    border-top-color: #12302d;
+}
+
+.dark .site-footer-bar {
+    background-color: #020b0a;
+}
+
+/* Teks & aksen hijau yang semula untuk latar terang */
+.dark .text-river-600,
+.dark .text-river-700,
+.dark .group:hover .group-hover\:text-river-700,
+.dark .prose-lr a,
+.dark .eyebrow {
+    color: #7fd6c4;
+}
+
+.dark .text-river-800,
+.dark .text-river-900,
+.dark .hover\:text-river-900:hover {
+    color: #b9e7de;
+}
+
+.dark .bg-river-50,
+.dark .hover\:bg-river-50:hover {
+    background-color: rgba(95, 208, 183, 0.1);
+}
+
+.dark .bg-river-100,
+.dark .hover\:bg-river-100:hover {
+    background-color: rgba(95, 208, 183, 0.16);
+}
+
+.dark .border-river-100,
+.dark .border-river-200,
+.dark .border-river-200\/70,
+.dark .border-river-200\/80 {
+    border-color: var(--color-line);
+}
+
+.dark .bg-emerald-50,
+.dark .hover\:bg-emerald-50:hover {
+    background-color: rgba(16, 185, 129, 0.12);
+}
+
+.dark .bg-emerald-100\/40 {
+    background-color: rgba(16, 185, 129, 0.07);
+}
+
+.dark .text-emerald-600 {
+    color: #34d399;
+}
+
+.dark .text-emerald-700,
+.dark .text-emerald-800,
+.dark .text-emerald-900 {
+    color: #6ee7b7;
+}
+
+.dark .border-emerald-100,
+.dark .border-emerald-200 {
+    border-color: rgba(52, 211, 153, 0.28);
+}
+
+.dark .bg-amber-50\/80 {
+    background-color: rgba(245, 158, 11, 0.12);
+}
+
+.dark .border-amber-200\/80 {
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.dark .text-amber-950,
+.dark .text-amber-900\/90 {
+    color: #fde68a;
+}
+
+.dark .text-amber-600 {
+    color: #fbbf24;
+}
+
+/* Warna status sebagai teks: dibuat lebih terang supaya terbaca di latar gelap */
+.dark .text-danger { color: #f87171; }
+.dark .text-alert { color: #fb923c; }
+.dark .text-safe { color: #34d399; }
+.dark .text-flood { color: #60a5fa; }
+.dark .text-slide { color: #fb923c; }
+.dark .text-route { color: #f472b6; }
+
+/* Peta: ubin OSM digelapkan, penanda tetap berwarna */
+.dark .leaflet-container {
+    background: #0b1716;
+}
+
+.dark .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.88) saturate(0.6);
+}
+
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+    background: var(--color-card);
+    color: var(--color-ink);
+}
+
+.dark .leaflet-bar a,
+.dark .leaflet-control-layers {
+    background: var(--color-card);
+    color: var(--color-ink);
+    border-color: var(--color-line);
+}
+
+.dark .leaflet-control-attribution {
+    background: rgba(7, 17, 15, 0.8) !important;
+    color: var(--color-ink-soft);
+}
+
+.dark .leaflet-control-attribution a {
+    color: #7fd6c4;
+}
+
+.dark .popup-btn-gmaps {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-ink) !important;
+    border-color: var(--color-line);
+}
+
+.dark .site-footer iframe {
+    filter: invert(0.9) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+/* ------------------------------------------------------------------
+   Pemandangan siang -> malam: foto malam (bulan, bintang, lampu rumah)
+   memudar di atas foto siang, ditambah beberapa bintang berkelip.
+   ------------------------------------------------------------------ */
+.hero-scenic-bg::before,
+.page-header-scenic::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background-image:
+        linear-gradient(to right, rgba(3, 9, 22, 0.86) 0%, rgba(3, 9, 22, 0.6) 45%, rgba(3, 9, 22, 0.15) 100%),
+        url('/images/hero-mountains-night.jpg');
+    background-size: cover;
+    background-position: center 20%;
+    background-repeat: no-repeat;
+    transition: opacity 0.9s ease;
+}
+
+.page-header-scenic::before {
+    background-image:
+        linear-gradient(to right, rgba(3, 9, 22, 0.88) 0%, rgba(3, 9, 22, 0.66) 55%, rgba(3, 9, 22, 0.3) 100%),
+        url('/images/hero-mountains-night.jpg');
+    background-position: center 12%;
+}
+
+.dark .hero-scenic-bg::before,
+.dark .page-header-scenic::before {
+    opacity: 1;
+}
+
+/* Bintang berkelip (lapisan tipis di atas langit foto malam) */
+.hero-scenic-bg::after,
+.page-header-scenic::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 50% 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background-image:
+        radial-gradient(1.6px 1.6px at 62% 18%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 71% 42%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.8px 1.8px at 84% 12%, #fff7d6 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 92% 36%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.4px 1.4px at 55% 8%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 77% 26%, #dbe7ff 50%, transparent 52%),
+        radial-gradient(1.6px 1.6px at 97% 20%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 47% 30%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.4px 1.4px at 66% 5%, #ffffff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 88% 48%, #ffffff 50%, transparent 52%);
+    transition: opacity 0.9s ease;
+}
+
+.dark .hero-scenic-bg::after,
+.dark .page-header-scenic::after {
+    opacity: 1;
+    animation: site-twinkle 3.2s ease-in-out 1s infinite alternate;
+}
+
+@keyframes site-twinkle {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+
+    100% {
+        opacity: 0.9;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Saat tombol siang/malam ditekan: suasana baru menyebar melingkar
+   dari tombol (View Transitions). Selama itu, transisi lain dimatikan
+   supaya gambar baru langsung dalam keadaan akhir.
+   ------------------------------------------------------------------ */
+.lr-theme-switching *,
+.lr-theme-switching *::before,
+.lr-theme-switching *::after {
+    transition: none !important;
+}
+
+.lr-theme-switching .site-header,
+.lr-theme-switching .site-nav__pill,
+.lr-theme-switching .site-nav__label {
+    view-transition-name: none !important;
+}
+
+.lr-theme-switching::view-transition-old(root),
+.lr-theme-switching::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+.lr-theme-switching::view-transition-old(root) {
+    z-index: 0;
+}
+
+.lr-theme-switching::view-transition-new(root) {
+    z-index: 1;
+}
+
+/* Cadangan untuk browser tanpa View Transitions: warna berganti halus */
+html.lr-theme-fade,
+html.lr-theme-fade *,
+html.lr-theme-fade *::before,
+html.lr-theme-fade *::after {
+    transition: background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease, opacity 0.9s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dark .hero-scenic-bg::after,
+    .dark .page-header-scenic::after {
+        animation: none;
     }
 }
