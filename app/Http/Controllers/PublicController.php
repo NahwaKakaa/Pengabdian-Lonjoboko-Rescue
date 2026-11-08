@@ -12,7 +12,9 @@ use App\Models\EmergencyContact;
 use App\Models\EvacuationRoute;
 use App\Models\Facility;
 use App\Models\HazardZone;
+use App\Models\Setting;
 use App\Models\Volunteer;
+use App\Support\PosterMap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -111,6 +113,28 @@ class PublicController extends Controller
     {
         return view('public.volunteers', [
             'volunteers' => Volunteer::active()->orderBy('sort_order')->orderBy('name')->get(),
+        ]);
+    }
+
+    /** Poster A4 siap cetak: peta skematis, titik kumpul, jalur, nomor darurat, QR. */
+    public function poster(): View
+    {
+        $boundaryFile = resource_path('data/lonjoboko-boundary.json');
+        $boundary = file_exists($boundaryFile) ? json_decode((string) file_get_contents($boundaryFile), true) : null;
+
+        $points = AssemblyPoint::verified()->orderBy('name')->get()->filter->hasValidLocation()->values();
+        $routes = EvacuationRoute::verified()->with('assemblyPoint')->orderBy('name')->get()
+            ->filter(fn (EvacuationRoute $r) => count($r->path ?? []) >= 2)->values();
+        $hazards = HazardZone::verified()->get()->filter->hasValidLocation()->values();
+
+        return view('public.poster', [
+            'map' => PosterMap::make($boundary, $points, $routes, $hazards),
+            'points' => $points,
+            'routes' => $routes,
+            'contacts' => EmergencyContact::active()->orderBy('sort_order')->take(6)->get(),
+            'whatsapp' => Setting::get('whatsapp_number'),
+            'whatsappLabel' => Setting::get('whatsapp_label'),
+            'officePhone' => Setting::get('office_phone'),
         ]);
     }
 

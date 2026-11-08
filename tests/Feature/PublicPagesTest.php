@@ -161,4 +161,42 @@ class PublicPagesTest extends TestCase
         // Di halaman peringatan itu sendiri, popup tidak perlu muncul.
         $this->get(route('announcement.show', $darurat))->assertOk()->assertDontSee('id="lr-emergency"', false);
     }
+
+    public function test_poster_cetak_bisa_dibuka_walau_data_kosong(): void
+    {
+        $this->get(route('poster'))
+            ->assertOk()
+            ->assertSee('Peta Evakuasi')
+            ->assertSee('data-qr', false)
+            ->assertSee('112');
+    }
+
+    public function test_poster_menampilkan_titik_kumpul_dan_nomor_darurat(): void
+    {
+        $this->seed([DatabaseSeeder::class, DemoMapSeeder::class]);
+        Setting::putMany(['whatsapp_number' => '0812-3456-7890']);
+
+        $response = $this->get(route('poster'))->assertOk();
+
+        foreach (\App\Models\AssemblyPoint::verified()->get() as $point) {
+            $response->assertSee($point->name);
+        }
+
+        $response->assertSee('0812-3456-7890')
+            ->assertSee('<polygon', false)
+            ->assertSee('<polyline', false);
+    }
+
+    public function test_file_aplikasi_offline_tersedia(): void
+    {
+        $this->assertFileExists(public_path('sw.js'));
+        $manifest = json_decode((string) file_get_contents(public_path('manifest.webmanifest')), true);
+
+        $this->assertSame('/', $manifest['scope']);
+        foreach ($manifest['icons'] as $icon) {
+            $this->assertFileExists(public_path(ltrim($icon['src'], '/')));
+        }
+
+        $this->get(route('home'))->assertSee('rel="manifest"', false);
+    }
 }

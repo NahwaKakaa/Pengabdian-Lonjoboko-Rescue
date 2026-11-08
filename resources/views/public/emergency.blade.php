@@ -95,6 +95,21 @@
                 @endif
             </section>
 
+            {{-- Poster siaga untuk dicetak dan dipasang di kantor desa / titik kumpul --}}
+            <section class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-3" aria-labelledby="poster">
+                <div class="flex items-center gap-3">
+                    <span class="grid place-items-center size-10 shrink-0 rounded-xl bg-river-50 text-river-700 border border-river-100" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+                    </span>
+                    <h2 id="poster" class="text-lg font-extrabold text-ink">Poster siaga untuk dicetak</h2>
+                </div>
+                <p class="text-sm text-ink-soft leading-relaxed">Peta evakuasi, titik kumpul, dan nomor darurat dalam satu lembar A4, lengkap dengan kode QR ke web ini. Pasang di kantor desa, masjid, dan titik kumpul supaya tetap terbaca saat sinyal atau listrik padam.</p>
+                <a href="{{ route('poster') }}" class="action-link">
+                    <span>Buka poster</span>
+                    <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </section>
+
             <section class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-4" aria-labelledby="sumber">
                 <h2 id="sumber" class="text-lg font-extrabold text-ink">Sumber Peringatan Dini Resmi</h2>
                 <p class="text-xs text-ink-soft leading-relaxed">Web desa ini meneruskan informasi dan panduan lapangan bagi warga. Untuk data meteorologi dan hidrometeorologi resmi, rujuk instansi berikut:</p>

@@ -33,6 +33,7 @@ class WelcomeBanner extends Widget
 
         if ($isAdmin) {
             $actions[] = ['label' => 'Buat peringatan', 'url' => AnnouncementResource::getUrl('create'), 'icon' => 'megaphone'];
+            $actions[] = ['label' => 'Cetak poster siaga', 'url' => route('poster'), 'icon' => 'printer', 'external' => true];
         }
 
         if ($pending === 0) {

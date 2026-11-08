@@ -27,7 +27,8 @@ export function createBaseMap(element, { center, zoom, tileUrl, attribution, scr
         zoomControl: true,
     }).setView([center.lat, center.lng], zoom);
 
-    L.tileLayer(tileUrl, { attribution, maxZoom: 19 }).addTo(map);
+    // crossOrigin: ubin bisa disimpan service worker untuk dibuka offline.
+    L.tileLayer(tileUrl, { attribution, maxZoom: 19, crossOrigin: true }).addTo(map);
 
     // Peta di dalam tab, modal, atau bagian yang dilipat perlu dihitung ulang ukurannya.
     if ('ResizeObserver' in window) {

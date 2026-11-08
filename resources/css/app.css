@@ -1477,3 +1477,104 @@ html.lr-theme-fade *::after {
         transition: none;
     }
 }
+
+/* ==================================================================
+   Status koneksi & tombol pasang aplikasi (PWA)
+   ================================================================== */
+.net-status {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    z-index: 45;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    max-width: calc(100vw - 2rem - 4rem);
+    padding: 0.6rem 1rem 0.6rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: #1f2937;
+    box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.net-status.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.net-status svg {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.net-status__ok {
+    display: none;
+}
+
+.net-status[data-mode="offline"] {
+    background: #7c2d12;
+}
+
+.net-status[data-mode="online"],
+.net-status[data-mode="ready"] {
+    background: #065f46;
+}
+
+.net-status[data-mode="online"] .net-status__off,
+.net-status[data-mode="ready"] .net-status__off {
+    display: none;
+}
+
+.net-status[data-mode="online"] .net-status__ok,
+.net-status[data-mode="ready"] .net-status__ok {
+    display: block;
+}
+
+.site-install-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+    max-width: 24rem;
+    padding: 0.6rem 0.95rem;
+    border: 0;
+    border-radius: 0.9rem;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-align: left;
+    color: #e6f4f1;
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-install-btn:hover {
+    background: rgba(255, 255, 255, 0.13);
+    transform: translateY(-1px);
+}
+
+.site-install-btn svg {
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: #5fd0b7;
+}
+
+.site-install-btn[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .net-status,
+    .site-install-btn {
+        transition: none;
+    }
+}

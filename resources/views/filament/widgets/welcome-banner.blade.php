@@ -1,5 +1,6 @@
 @php
     $icons = [
+        'printer' => '<path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v7H6z"/>',
         'pin' => '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
         'route' => '<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3.5 3.5 0 000-7H9a3.5 3.5 0 010-7h7"/>',
         'flag' => '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
@@ -31,7 +32,7 @@
 
             <div class="lr-welcome__actions">
                 @foreach ($actions as $action)
-                    <a href="{{ $action['url'] }}" class="lr-action" wire:navigate>
+                    <a href="{{ $action['url'] }}" class="lr-action" @if ($action['external'] ?? false) target="_blank" rel="noopener" @else wire:navigate @endif>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icons[$action['icon']] !!}</svg>
                         <span>{{ $action['label'] }}</span>
                     </a>

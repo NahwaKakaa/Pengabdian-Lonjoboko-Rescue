@@ -15,7 +15,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#093f3c">
+    <meta name="theme-color" content="#062b29">
+    {{-- Aplikasi web (PWA): bisa dipasang di HP dan dibuka tanpa internet --}}
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Lonjoboko Rescue">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="@yield('description', 'Sistem informasi dan edukasi mitigasi bencana banjir dan tanah longsor Desa '.$site['village'].'.')">
     @php $pageTitle = trim($__env->yieldContent('title')); @endphp
     <title>{{ $pageTitle !== '' ? $pageTitle.' · ' : '' }}LONJOBOKO RESCUE</title>
@@ -240,6 +249,15 @@
                         Kantor desa: <span class="font-bold text-white num">{{ $site['office_phone'] }}</span>
                     </a>
                 @endif
+
+                {{-- Pasang web sebagai aplikasi di HP (muncul bila browser mendukung) --}}
+                <div class="grid gap-1.5">
+                    <button type="button" id="install-app" class="site-install-btn" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M11 18h2"/></svg>
+                        Pasang di HP, bisa dibuka tanpa internet
+                    </button>
+                    <p id="install-ios-hint" class="text-xs text-river-200 leading-relaxed" hidden>Di iPhone: ketuk tombol <strong class="text-white">Bagikan</strong>, lalu pilih <strong class="text-white">Tambahkan ke Layar Utama</strong>.</p>
+                </div>
             </section>
 
             {{-- Kontak darurat --}}
@@ -335,6 +353,13 @@
             </div>
         </div>
     </footer>
+
+    {{-- Penanda koneksi: muncul saat offline, dan sekali saat web siap dibuka tanpa internet --}}
+    <div id="net-status" class="net-status" role="status" aria-live="polite" hidden>
+        <svg class="net-status__off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2l20 20M8.5 16.4a5 5 0 017 0M5 12.9a10 10 0 015.2-2.7M19 12.9a10 10 0 00-2.4-1.7M1.4 9a15 15 0 014.1-2.6M22.6 9A15 15 0 0011 5.1M12 20h.01"/></svg>
+        <svg class="net-status__ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <span class="net-status__text"></span>
+    </div>
 
     {{-- Tombol kembali ke atas; lingkarannya menunjukkan seberapa jauh halaman sudah digulir --}}
     <button type="button" id="back-to-top" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">

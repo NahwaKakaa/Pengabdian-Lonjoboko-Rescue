@@ -192,6 +192,106 @@ function initThemeToggle() {
     });
 }
 
+/* ------------------------------------------------------------------
+ * Offline (PWA): daftarkan service worker, tampilkan status koneksi,
+ * dan tombol "Pasang di HP".
+ * ------------------------------------------------------------------ */
+function initOffline() {
+    const status = document.getElementById('net-status');
+    const text = status?.querySelector('.net-status__text');
+    let hideTimer = null;
+
+    const show = (mode, message, autoHide) => {
+        if (!status) return;
+        clearTimeout(hideTimer);
+        status.dataset.mode = mode;
+        text.textContent = message;
+        status.hidden = false;
+        requestAnimationFrame(() => status.classList.add('is-visible'));
+        if (autoHide) {
+            hideTimer = setTimeout(hide, autoHide);
+        }
+    };
+
+    const hide = () => {
+        if (!status) return;
+        status.classList.remove('is-visible');
+        hideTimer = setTimeout(() => (status.hidden = true), 300);
+    };
+
+    const update = () => {
+        if (navigator.onLine) {
+            if (status?.dataset.mode === 'offline') show('online', 'Tersambung kembali', 2500);
+        } else {
+            show('offline', 'Sedang offline. Menampilkan data yang tersimpan di HP.');
+        }
+    };
+
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    if (!navigator.onLine) update();
+
+    // Service worker hanya berjalan di HTTPS (atau localhost saat pengembangan).
+    const secure = location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname);
+
+    if ('serviceWorker' in navigator && secure) {
+        const firstInstall = !navigator.serviceWorker.controller;
+
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            let told = false;
+
+            try {
+                told = localStorage.getItem('lr-offline-ready') === '1';
+                localStorage.setItem('lr-offline-ready', '1');
+            } catch (e) {}
+
+            if (firstInstall && !told) {
+                show('ready', 'Siap dibuka tanpa internet', 4000);
+            }
+        });
+    }
+
+    // Tombol pasang aplikasi
+    const installButton = document.getElementById('install-app');
+    const iosHint = document.getElementById('install-ios-hint');
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    let deferredPrompt = null;
+
+    if (!installButton || standalone) return;
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+        installButton.hidden = false;
+    });
+
+    // iPhone/iPad tidak punya prompt otomatis: tampilkan petunjuknya.
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isIos) {
+        installButton.hidden = false;
+    }
+
+    installButton.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            if (outcome === 'accepted') installButton.hidden = true;
+        } else if (iosHint) {
+            iosHint.hidden = !iosHint.hidden;
+        }
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installButton.hidden = true;
+        if (iosHint) iosHint.hidden = true;
+    });
+}
+
+initOffline();
 initThemeToggle();
 initScrollEffects();
 initNavHover();

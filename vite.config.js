@@ -11,6 +11,8 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/public-map.js',
                 'resources/js/admin-map.js',
+                'resources/css/poster.css',
+                'resources/js/poster.js',
             ],
             refresh: true,
         }),

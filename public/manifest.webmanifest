@@ -1,0 +1,23 @@
+{
+    "name": "LONJOBOKO RESCUE · Desa Lonjoboko Tangguh Bencana",
+    "short_name": "Lonjoboko Rescue",
+    "description": "Peta lokasi rawan, jalur evakuasi, titik kumpul, dan nomor darurat Desa Lonjoboko. Bisa dibuka tanpa internet setelah sekali dibuka.",
+    "lang": "id",
+    "start_url": "/?sumber=aplikasi",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#062b29",
+    "theme_color": "#062b29",
+    "categories": ["utilities", "news"],
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ],
+    "shortcuts": [
+        { "name": "Info Darurat", "short_name": "Darurat", "url": "/darurat", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+        { "name": "Jalur Evakuasi", "short_name": "Evakuasi", "url": "/jalur-evakuasi", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+        { "name": "Peta Risiko", "short_name": "Peta", "url": "/peta-risiko", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+    ]
+}
