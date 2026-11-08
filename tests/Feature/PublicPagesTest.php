@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\VerificationStatus;
 use App\Models\EducationContent;
 use App\Models\HazardZone;
+use App\Models\Setting;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\DemoMapSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,6 +39,20 @@ class PublicPagesTest extends TestCase
 
         $content = EducationContent::first();
         $this->get(route('education.show', $content))->assertOk()->assertSee($content->title);
+    }
+
+    public function test_footer_menampilkan_whatsapp_kontak_darurat_dan_peta(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        Setting::putMany(['whatsapp_number' => '0812-3456-7890', 'whatsapp_label' => 'Posko Desa']);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('https://wa.me/6281234567890', false)
+            ->assertSee('Posko Desa')
+            ->assertSee('Kontak Darurat')
+            ->assertSee('tel:119', false)
+            ->assertSee('maps.google.com/maps?q=', false);
     }
 
     public function test_hanya_data_terverifikasi_yang_tampil_di_peta(): void

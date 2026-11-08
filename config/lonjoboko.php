@@ -16,6 +16,7 @@ return [
     'district' => 'Parangloe',
     'regency' => 'Gowa',
     'province' => 'Sulawesi Selatan',
+    'postal_code' => '92179',
 
     /*
     |--------------------------------------------------------------------------

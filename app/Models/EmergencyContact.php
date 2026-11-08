@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContactCategory;
+use App\Support\Phone;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,22 +37,12 @@ class EmergencyContact extends Model
     /** Nomor untuk tautan tel: (hanya angka dan +). */
     public function telHref(): string
     {
-        return 'tel:'.preg_replace('/[^0-9+]/', '', $this->phone);
+        return Phone::telHref($this->phone);
     }
 
     /** Tautan WhatsApp dengan format 62xxx. */
-    public function whatsappHref(): ?string
+    public function whatsappHref(?string $message = null): ?string
     {
-        if (! $this->is_whatsapp) {
-            return null;
-        }
-
-        $digits = preg_replace('/\D/', '', $this->phone);
-
-        if (str_starts_with($digits, '0')) {
-            $digits = '62'.substr($digits, 1);
-        }
-
-        return "https://wa.me/{$digits}";
+        return $this->is_whatsapp ? Phone::whatsappHref($this->phone, $message) : null;
     }
 }

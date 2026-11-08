@@ -45,6 +45,9 @@ class VillageProfile extends Page implements HasForms
         'report_instructions',
         'office_address',
         'office_phone',
+        'whatsapp_number',
+        'whatsapp_label',
+        'maps_url',
     ];
 
     /** @var array<string, mixed> */
@@ -75,6 +78,29 @@ class VillageProfile extends Page implements HasForms
                         TextInput::make('regency')->label('Kabupaten')->maxLength(100),
                         TextInput::make('office_address')->label('Alamat kantor desa')->maxLength(255)->columnSpan(2),
                         TextInput::make('office_phone')->label('Telepon kantor desa')->tel()->maxLength(30),
+                    ]),
+
+                Section::make('Kontak & lokasi di footer web')
+                    ->description('Tampil di bagian bawah setiap halaman publik.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('whatsapp_number')
+                            ->label('Nomor WhatsApp desa')
+                            ->tel()
+                            ->maxLength(30)
+                            ->placeholder('0812xxxxxxxx')
+                            ->helperText('Untuk warga melapor atau bertanya. Kalau kosong, dipakai kontak darurat pertama yang punya WhatsApp.'),
+                        TextInput::make('whatsapp_label')
+                            ->label('Nama pemegang nomor')
+                            ->maxLength(80)
+                            ->placeholder('Posko Desa Lonjoboko'),
+                        TextInput::make('maps_url')
+                            ->label('Tautan Google Maps kantor desa (opsional)')
+                            ->url()
+                            ->maxLength(500)
+                            ->placeholder('https://maps.app.goo.gl/...')
+                            ->helperText('Buka lokasi kantor desa di Google Maps, tekan Bagikan, lalu salin tautannya ke sini.')
+                            ->columnSpan(2),
                     ]),
 
                 Section::make('Teks di Beranda')

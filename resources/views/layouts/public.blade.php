@@ -131,47 +131,141 @@
     </main>
 
     <footer class="mt-20 site-footer relative">
-        <div class="wrap grid gap-10 py-12 md:grid-cols-3 text-sm">
-            <div class="grid gap-3 content-start">
+        @php
+            $phoneIcon = '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>';
+            $waIcon = '<path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.2.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3z"/>';
+        @endphp
+
+        <div class="wrap grid grid-cols-1 gap-10 py-14 text-sm lg:grid-cols-12 lg:gap-8">
+            {{-- Identitas & WhatsApp desa --}}
+            <section class="grid grid-cols-1 gap-4 content-start min-w-0 lg:col-span-4" aria-labelledby="footer-identitas">
                 <div class="flex items-center gap-3">
-                    <span class="grid place-items-center size-9 shrink-0 rounded-xl bg-emerald-600 text-white shadow-sm" aria-hidden="true">
+                    <span class="grid place-items-center size-10 shrink-0 rounded-xl bg-emerald-600 text-white shadow-sm" aria-hidden="true">
                         <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2-1.5 4.5-1.5S19 18 21 18"/>
                             <path d="M4 13l5-7 3 4 2-2 6 5"/>
                         </svg>
                     </span>
-                    <p class="font-black text-white text-lg tracking-tight">LONJOBOKO RESCUE</p>
+                    <div class="leading-tight">
+                        <p id="footer-identitas" class="font-black text-white text-lg tracking-tight">LONJOBOKO RESCUE</p>
+                        <p class="text-xs font-semibold text-river-200">Desa {{ $site['village'] }} Tangguh Bencana</p>
+                    </div>
                 </div>
-                <p class="text-river-100 leading-relaxed font-normal">Sistem Informasi dan Edukasi Mitigasi Bencana Desa {{ $site['village'] }}, Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}, Sulawesi Selatan.</p>
-                @if ($site['office_address'])
-                    <p class="text-river-100 text-xs flex items-start gap-1.5 pt-1">
-                        <svg viewBox="0 0 24 24" class="size-4 shrink-0 text-emerald-400 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-                        <span>{{ $site['office_address'] }}</span>
-                    </p>
+                <p class="text-river-100 leading-relaxed max-w-sm">Sistem informasi dan edukasi mitigasi banjir & tanah longsor untuk warga Desa {{ $site['village'] }}, Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}.</p>
+
+                @if ($footer['whatsapp'])
+                    <a href="{{ $footer['whatsapp']['href'] }}" target="_blank" rel="noopener"
+                       class="group mt-1 flex items-center gap-3.5 rounded-2xl bg-[#1f9d55] p-3.5 pr-4 text-white shadow-lg shadow-black/25 ring-1 ring-white/15 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1a8a4a] max-w-sm">
+                        <span class="grid place-items-center size-11 shrink-0 rounded-xl bg-white/15" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" class="size-6" fill="currentColor">{!! $waIcon !!}</svg>
+                        </span>
+                        <span class="min-w-0 flex-1 leading-tight">
+                            <span class="block text-xs font-semibold text-white/80">Lapor / tanya via WhatsApp</span>
+                            <span class="block font-black text-base num tracking-wide">{{ $footer['whatsapp']['number'] }}</span>
+                            <span class="block truncate text-xs text-white/80">{{ $footer['whatsapp']['label'] }}</span>
+                        </span>
+                        <svg viewBox="0 0 24 24" class="size-5 shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </a>
                 @endif
-            </div>
-            <div class="grid gap-3 content-start">
-                <p class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="size-2 rounded-full bg-alert"></span>
-                    Penting Diperhatikan
+
+                @if ($site['office_phone'])
+                    <a href="{{ \App\Support\Phone::telHref($site['office_phone']) }}" class="inline-flex items-center gap-2 text-river-100 hover:text-white transition-colors w-fit">
+                        <svg viewBox="0 0 24 24" class="size-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $phoneIcon !!}</svg>
+                        Kantor desa: <span class="font-bold text-white num">{{ $site['office_phone'] }}</span>
+                    </a>
+                @endif
+            </section>
+
+            {{-- Kontak darurat --}}
+            <section class="grid grid-cols-1 gap-4 content-start min-w-0 lg:col-span-4" aria-labelledby="footer-darurat">
+                <div class="flex items-center justify-between gap-3">
+                    <p id="footer-darurat" class="font-bold text-white text-base flex items-center gap-2">
+                        <span class="relative flex size-2" aria-hidden="true">
+                            <span class="absolute inline-flex size-full rounded-full bg-red-400 opacity-75 animate-ping"></span>
+                            <span class="relative inline-flex size-2 rounded-full bg-red-500"></span>
+                        </span>
+                        Kontak Darurat
+                    </p>
+                    <span class="text-xs text-river-200 shrink-0">Ketuk untuk menelepon</span>
+                </div>
+
+                @if ($footer['contacts']->isNotEmpty())
+                    <ul class="grid grid-cols-1 gap-2">
+                        @foreach ($footer['contacts'] as $contact)
+                            <li class="flex min-w-0 items-center gap-2">
+                                <a href="{{ $contact->telHref() }}" class="group flex min-w-0 flex-1 items-center gap-3 rounded-xl bg-white/[0.06] px-3 py-2.5 ring-1 ring-white/10 transition-colors hover:bg-white/[0.12]">
+                                    <span class="grid place-items-center size-8 shrink-0 rounded-lg bg-red-500/15 text-red-300 group-hover:bg-red-500 group-hover:text-white transition-colors" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $phoneIcon !!}</svg>
+                                    </span>
+                                    <span class="min-w-0 flex-1 truncate text-river-100 group-hover:text-white" title="{{ $contact->name }}">{{ $contact->name }}</span>
+                                    <span class="shrink-0 font-black text-white text-base num">{{ $contact->phone }}</span>
+                                </a>
+                                @if ($contact->whatsappHref())
+                                    <a href="{{ $contact->whatsappHref() }}" target="_blank" rel="noopener" class="grid place-items-center size-11 shrink-0 rounded-xl bg-[#1f9d55]/15 text-[#4ade80] ring-1 ring-[#4ade80]/25 hover:bg-[#1f9d55] hover:text-white transition-colors" aria-label="WhatsApp {{ $contact->name }}" title="WhatsApp">
+                                        <svg viewBox="0 0 24 24" class="size-5" fill="currentColor" aria-hidden="true">{!! $waIcon !!}</svg>
+                                    </a>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="text-river-100">Nomor darurat nasional: <span class="font-bold text-white num">112</span> (terpadu), <span class="font-bold text-white num">119</span> (ambulans), <span class="font-bold text-white num">115</span> (Basarnas).</p>
+                @endif
+
+                <a href="{{ route('emergency') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 hover:text-white transition-colors w-fit">
+                    {{ $footer['contact_count'] > 5 ? 'Lihat semua '.$footer['contact_count'].' kontak' : 'Info darurat & cara melapor' }}
+                    <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </section>
+
+            {{-- Peta lokasi desa --}}
+            <section class="grid grid-cols-1 gap-4 content-start min-w-0 lg:col-span-4" aria-labelledby="footer-lokasi">
+                <p id="footer-lokasi" class="font-bold text-white text-base flex items-center gap-2">
+                    <svg viewBox="0 0 24 24" class="size-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Lokasi Desa
                 </p>
-                <p class="text-river-100 leading-relaxed">Web ini adalah sarana informasi kesiapsiagaan dan edukasi mitigasi kebencanaan, serta <strong class="text-white font-bold underline decoration-amber-400 underline-offset-2">bukan pengganti instruksi tanggap darurat resmi</strong>. Saat terjadi bencana, ikuti selalu komando dari aparat desa, BPBD, dan BMKG.</p>
-            </div>
-            <div class="grid gap-3 content-start">
-                <p class="font-bold text-white text-base">Sumber Data & Pengelola</p>
-                <p class="text-river-100 leading-relaxed">Data peta risiko, titik kumpul, dan jalur evakuasi dihimpun dan diverifikasi bersama pemerintah desa. Peta dasar &copy; kontributor OpenStreetMap.</p>
-                <div class="pt-2">
-                    <a href="{{ url('/admin') }}" class="inline-flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors border border-white/20 shadow-xs">
-                        <svg viewBox="0 0 24 24" class="size-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        Masuk Dasbor Pengelola
+                <div class="overflow-hidden rounded-2xl ring-1 ring-white/15 shadow-lg shadow-black/30 bg-river-950">
+                    <iframe
+                        src="{{ $footer['map_embed'] }}"
+                        title="Peta lokasi Desa {{ $site['village'] }} di Google Maps"
+                        class="block h-52 w-full border-0"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+                <p class="text-river-100 text-xs leading-relaxed">{{ $site['office_address'] ? $site['office_address'].' · ' : '' }}{{ $footer['place'] }} {{ config('lonjoboko.postal_code') }}</p>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ $footer['map_directions'] }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-500 transition-colors">
+                        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                        Petunjuk arah
+                    </a>
+                    <a href="{{ $footer['map_open'] }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3.5 py-2 text-xs font-bold text-white ring-1 ring-white/20 hover:bg-white/20 transition-colors">
+                        Buka di Google Maps
+                        <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.25" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
                     </a>
                 </div>
+            </section>
+        </div>
+
+        {{-- Catatan penting & akses pengelola --}}
+        <div class="border-t border-white/10">
+            <div class="wrap flex flex-col gap-4 py-5 text-xs md:flex-row md:items-center md:justify-between">
+                <p class="flex items-start gap-2.5 text-river-100 leading-relaxed max-w-3xl">
+                    <span class="mt-0.5 grid place-items-center size-5 shrink-0 rounded-full bg-amber-400/15 text-amber-300 font-black" aria-hidden="true">!</span>
+                    <span>Web ini sarana informasi dan edukasi, <strong class="text-white">bukan pengganti instruksi tanggap darurat resmi</strong>. Saat bencana, ikuti arahan aparat desa, BPBD, dan BMKG. Peta dasar &copy; kontributor OpenStreetMap.</span>
+                </p>
+                <a href="{{ url('/admin') }}" class="inline-flex shrink-0 items-center gap-2 font-bold px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors ring-1 ring-white/15 w-fit">
+                    <svg viewBox="0 0 24 24" class="size-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Masuk Dasbor Pengelola
+                </a>
             </div>
         </div>
+
         <div class="site-footer-bar py-4 text-xs">
             <div class="wrap flex flex-wrap items-center justify-between gap-2">
-                <p class="font-semibold text-white">&copy; {{ date('Y') }} LONJOBOKO RESCUE · Pengabdian Masyarakat & Pemerintah Desa Lonjoboko</p>
-                <p class="text-river-100 font-medium">Kawasan Lereng Pegunungan Bawakaraeng & Pertanian Sawah Lonjoboko</p>
+                <p class="font-semibold text-white">&copy; {{ date('Y') }} LONJOBOKO RESCUE · Pengabdian Masyarakat & Pemerintah Desa {{ $site['village'] }}</p>
+                <p class="text-river-100 font-medium">Kawasan Lereng Pegunungan Bawakaraeng & Pertanian Sawah {{ $site['village'] }}</p>
             </div>
         </div>
     </footer>
