@@ -14,24 +14,37 @@
     />
 
     <section class="wrap py-8 grid gap-4">
+        {{-- Tombol lapisan peta: warna mengikuti warna lapisannya di peta --}}
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Tampilkan lapisan peta">
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-emerald-600 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-800">
-                <input type="checkbox" class="accent-emerald-600 size-4 rounded" data-layer-toggle="boundary" checked> Lingkup Area Lonjoboko
+            <label class="layer-chip layer-chip--boundary">
+                <input type="checkbox" class="sr-only" data-layer-toggle="boundary" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Lingkup Area Lonjoboko
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-flood/50 has-[:checked]:border-flood has-[:checked]:bg-flood-soft has-[:checked]:text-flood">
-                <input type="checkbox" class="accent-flood size-4 rounded" data-layer-toggle="banjir" checked> Rawan banjir
+            <label class="layer-chip layer-chip--flood">
+                <input type="checkbox" class="sr-only" data-layer-toggle="banjir" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Rawan banjir
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-slide/50 has-[:checked]:border-slide has-[:checked]:bg-slide-soft has-[:checked]:text-slide">
-                <input type="checkbox" class="accent-slide size-4 rounded" data-layer-toggle="longsor" checked> Rawan longsor
+            <label class="layer-chip layer-chip--slide">
+                <input type="checkbox" class="sr-only" data-layer-toggle="longsor" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Rawan longsor
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-safe/50 has-[:checked]:border-safe has-[:checked]:bg-safe-soft has-[:checked]:text-safe">
-                <input type="checkbox" class="accent-safe size-4 rounded" data-layer-toggle="points" checked> Titik kumpul
+            <label class="layer-chip layer-chip--safe">
+                <input type="checkbox" class="sr-only" data-layer-toggle="points" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Titik kumpul
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-route/50 has-[:checked]:border-route has-[:checked]:bg-pink-50 has-[:checked]:text-route">
-                <input type="checkbox" class="accent-route size-4 rounded" data-layer-toggle="routes"> Jalur evakuasi
+            <label class="layer-chip layer-chip--route">
+                <input type="checkbox" class="sr-only" data-layer-toggle="routes">
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Jalur evakuasi
             </label>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-ink-soft has-[:checked]:border-ink-soft has-[:checked]:bg-river-50">
-                <input type="checkbox" class="size-4 rounded" data-layer-toggle="facilities" checked> Fasilitas umum
+            <label class="layer-chip layer-chip--facility">
+                <input type="checkbox" class="sr-only" data-layer-toggle="facilities" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Fasilitas umum
             </label>
         </div>
 
@@ -94,9 +107,9 @@
                         @if ($zone->description)
                             <p class="text-sm text-ink-soft leading-relaxed">{{ $zone->description }}</p>
                         @endif
-                        <button type="button" data-focus-hazard="{{ $zone->id }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4 w-fit inline-flex items-center gap-1">
+                        <button type="button" data-focus-hazard="{{ $zone->id }}" class="action-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
                             <span>Tunjukkan di peta</span>
-                            <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </button>
                     </div>
                     @if ($zone->photo)
@@ -139,7 +152,10 @@
             <div class="elevation-card rounded-2xl bg-river-50 border border-river-100 p-5 sm:p-6 grid gap-2 text-sm">
                 <p class="font-bold">Ingin melihat peta risiko resmi?</p>
                 <p class="text-ink-soft">BNPB menyediakan peta potensi bencana per wilayah di InaRISK.</p>
-                <a href="https://inarisk.bnpb.go.id" target="_blank" rel="noopener" class="font-semibold text-river-700 underline underline-offset-4 w-fit">Buka InaRISK BNPB</a>
+                <a href="https://inarisk.bnpb.go.id" target="_blank" rel="noopener" class="action-link mt-1">
+                    <span>Buka InaRISK BNPB</span>
+                    <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+                </a>
             </div>
         </aside>
     </section>

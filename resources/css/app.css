@@ -1233,3 +1233,247 @@ html.lr-theme-fade *::after {
         animation: none;
     }
 }
+
+/* ==================================================================
+   Tombol lapisan peta (.layer-chip) & saringan jalur (.filter-chip)
+   Warna tiap tombol = warna lapisannya di peta. Saat aktif: latar lembut
+   berwarna dan kotak centang terisi; saat mati: netral dan redup.
+   ================================================================== */
+.layer-chip,
+.filter-chip {
+    --chip: #0e6b66;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.95rem 0.45rem 0.6rem;
+    border: 0;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 650;
+    line-height: 1.2;
+    color: var(--color-ink-soft);
+    background: var(--color-card);
+    box-shadow:
+        inset 0 0 0 1px var(--color-line),
+        0 1px 2px rgba(9, 63, 60, 0.05);
+    cursor: pointer;
+    user-select: none;
+    transition:
+        background-color 0.25s ease,
+        box-shadow 0.25s ease,
+        color 0.25s ease,
+        transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.filter-chip {
+    padding-left: 0.95rem;
+}
+
+.layer-chip:hover,
+.filter-chip:hover {
+    color: var(--color-ink);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--chip) 45%, transparent),
+        0 4px 12px -6px color-mix(in srgb, var(--chip) 45%, transparent);
+    transform: translateY(-1px);
+}
+
+.layer-chip:active,
+.filter-chip:active {
+    transform: scale(0.97);
+}
+
+.layer-chip:has(:focus-visible),
+.filter-chip:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--chip) 55%, transparent);
+    outline-offset: 2px;
+}
+
+.layer-chip:has(input:checked),
+.filter-chip[aria-pressed="true"] {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--chip) 11%, var(--color-card));
+    box-shadow:
+        inset 0 0 0 1.5px color-mix(in srgb, var(--chip) 55%, transparent),
+        0 4px 14px -8px color-mix(in srgb, var(--chip) 60%, transparent);
+}
+
+.filter-chip[aria-pressed="true"] {
+    color: #ffffff;
+    background: var(--chip);
+    box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--chip) 80%, transparent);
+}
+
+/* Kotak centang buatan */
+.layer-chip__box {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 0.35rem;
+    color: #ffffff;
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--chip) 60%, var(--color-line));
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.layer-chip__box svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    stroke-dasharray: 16;
+    stroke-dashoffset: 16;
+    transition: stroke-dashoffset 0.28s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.layer-chip:has(input:checked) .layer-chip__box {
+    background: var(--chip);
+    box-shadow: none;
+}
+
+.layer-chip:has(input:checked) .layer-chip__box svg {
+    stroke-dashoffset: 0;
+}
+
+/* Warna per lapisan (siang) */
+.layer-chip--boundary { --chip: #0e8a6a; }
+.layer-chip--flood,
+.filter-chip--flood { --chip: #1d6fd1; }
+.layer-chip--slide,
+.filter-chip--slide { --chip: #c2620f; }
+.layer-chip--safe { --chip: #16825d; }
+.layer-chip--route { --chip: #c2185b; }
+.layer-chip--facility { --chip: #475569; }
+.filter-chip--all { --chip: #0e6b66; }
+
+/* Warna per lapisan (malam): lebih terang supaya tetap terlihat */
+.dark .layer-chip,
+.dark .filter-chip {
+    box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+.dark .layer-chip--boundary { --chip: #34d399; }
+.dark .layer-chip--flood,
+.dark .filter-chip--flood { --chip: #60a5fa; }
+.dark .layer-chip--slide,
+.dark .filter-chip--slide { --chip: #fb923c; }
+.dark .layer-chip--safe { --chip: #4ade80; }
+.dark .layer-chip--route { --chip: #f472b6; }
+.dark .layer-chip--facility { --chip: #94a3b8; }
+.dark .filter-chip--all { --chip: #2dd4bf; }
+
+.dark .layer-chip:has(input:checked),
+.dark .filter-chip[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--chip) 14%, var(--color-card));
+}
+
+.dark .filter-chip[aria-pressed="true"] {
+    color: #04130f;
+    background: var(--chip);
+}
+
+.dark .layer-chip:has(input:checked) .layer-chip__box {
+    color: #04130f;
+}
+
+/* ==================================================================
+   Tautan aksi (.action-link): pengganti teks bergaris bawah, misalnya
+   "Tunjukkan di peta", "Petunjuk arah", "Buka InaRISK BNPB", "BMKG".
+   ================================================================== */
+.action-link {
+    --link: #0e6b66;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    padding: 0.42rem 0.85rem;
+    border: 0;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--link);
+    background: color-mix(in srgb, var(--link) 9%, transparent);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.action-link svg {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+}
+
+.action-link .action-link__arrow,
+.action-link .action-link__back {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.action-link:hover {
+    background: color-mix(in srgb, var(--link) 16%, transparent);
+    transform: translateY(-1px);
+}
+
+.action-link:hover .action-link__arrow {
+    transform: translate(2px, -1px);
+}
+
+.action-link:hover .action-link__arrow:has(path[d^="M5 12"]) {
+    transform: translateX(3px);
+}
+
+.action-link:hover .action-link__back {
+    transform: translateX(-3px);
+}
+
+.action-link:active {
+    transform: scale(0.97);
+}
+
+.action-link:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--link) 45%, transparent);
+    outline-offset: 2px;
+}
+
+/* Versi garis tepi untuk aksi kedua (mis. Petunjuk arah) */
+.action-link--ghost {
+    color: var(--color-ink-soft);
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+.action-link--ghost:hover {
+    color: var(--link);
+    background: color-mix(in srgb, var(--link) 6%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--link) 40%, transparent);
+}
+
+.dark .action-link {
+    --link: #7fd6c4;
+}
+
+.dark .action-link--ghost {
+    color: var(--color-ink-soft);
+}
+
+.dark .action-link--ghost:hover {
+    color: var(--link);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .layer-chip,
+    .filter-chip,
+    .action-link,
+    .layer-chip__box svg,
+    .action-link svg {
+        transition: none;
+    }
+}

@@ -101,11 +101,11 @@
                 <ul class="grid gap-3">
                     @foreach ($sources as $source)
                         <li class="border-t border-line/60 pt-3 first:border-0 first:pt-0">
-                            <a href="{{ $source['url'] }}" target="_blank" rel="noopener" class="font-bold text-sm text-river-700 hover:text-river-900 underline underline-offset-4 inline-flex items-center gap-1">
+                            <a href="{{ $source['url'] }}" target="_blank" rel="noopener" class="action-link">
                                 <span>{{ $source['name'] }}</span>
-                                <svg viewBox="0 0 24 24" class="size-3" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                                <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
                             </a>
-                            <p class="text-xs text-ink-soft mt-0.5 leading-relaxed">{{ $source['description'] }}</p>
+                            <p class="text-xs text-ink-soft mt-1.5 leading-relaxed">{{ $source['description'] }}</p>
                         </li>
                     @endforeach
                 </ul>

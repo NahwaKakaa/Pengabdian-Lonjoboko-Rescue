@@ -9,8 +9,8 @@
     @endphp
     <div class="wrap py-10 max-w-4xl">
         <article class="elevation-card rounded-3xl p-6 sm:p-10 bg-card grid gap-6">
-            <a href="{{ route('home') }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4 w-fit inline-flex items-center gap-1">
-                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <a href="{{ route('home') }}" class="action-link action-link--ghost">
+                <svg class="action-link__back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
                 <span>Kembali ke beranda</span>
             </a>
 

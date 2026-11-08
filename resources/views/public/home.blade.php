@@ -287,9 +287,9 @@
             @else
                 <p class="rounded-2xl border border-dashed border-line bg-card p-6 text-ink-soft">Kontak darurat belum diisi.</p>
             @endif
-            <a href="{{ route('emergency') }}" class="inline-flex items-center gap-1 text-sm font-bold text-river-700 hover:text-river-900 underline underline-offset-4 w-fit pt-1">
+            <a href="{{ route('emergency') }}" class="action-link mt-1">
                 <span>Lihat semua nomor kontak & alur pelaporan</span>
-                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
         </aside>
     </div>
@@ -304,9 +304,9 @@
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Edukasi Mitigasi Bencana</h2>
                 </div>
-                <a href="{{ route('education') }}" class="inline-flex items-center gap-1 text-sm font-bold text-river-700 hover:text-river-900 underline underline-offset-4">
+                <a href="{{ route('education') }}" class="action-link">
                     <span>Lihat semua modul & panduan</span>
-                    <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>
             </div>
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

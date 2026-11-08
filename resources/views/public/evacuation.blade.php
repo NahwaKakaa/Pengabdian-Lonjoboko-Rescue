@@ -16,12 +16,14 @@
     <section class="wrap py-8 grid gap-4">
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Saring jalur menurut jenis bencana">
             <span class="text-xs sm:text-sm font-bold text-ink-soft mr-1">Tampilkan jalur untuk:</span>
-            <button type="button" data-route-filter="all" aria-pressed="true" class="rounded-full border border-line/80 bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold shadow-xs hover:border-river-600 transition-all cursor-pointer aria-pressed:bg-river-800 aria-pressed:text-white aria-pressed:border-river-800 aria-pressed:shadow-sm">Semua</button>
-            <button type="button" data-route-filter="banjir" aria-pressed="false" class="rounded-full border border-line/80 bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold shadow-xs hover:border-flood transition-all cursor-pointer aria-pressed:bg-flood aria-pressed:text-white aria-pressed:border-flood aria-pressed:shadow-sm">Banjir</button>
-            <button type="button" data-route-filter="longsor" aria-pressed="false" class="rounded-full border border-line/80 bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold shadow-xs hover:border-slide transition-all cursor-pointer aria-pressed:bg-slide aria-pressed:text-white aria-pressed:border-slide aria-pressed:shadow-sm">Tanah longsor</button>
-            <div class="h-4 w-px bg-line/80 mx-1 hidden sm:block"></div>
-            <label class="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-xs sm:text-sm font-semibold cursor-pointer shadow-xs transition-all duration-200 select-none hover:border-emerald-600 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-800">
-                <input type="checkbox" class="accent-emerald-600 size-4 rounded" data-layer-toggle="boundary" checked> Lingkup Area Lonjoboko
+            <button type="button" data-route-filter="all" aria-pressed="true" class="filter-chip filter-chip--all">Semua</button>
+            <button type="button" data-route-filter="banjir" aria-pressed="false" class="filter-chip filter-chip--flood">Banjir</button>
+            <button type="button" data-route-filter="longsor" aria-pressed="false" class="filter-chip filter-chip--slide">Tanah longsor</button>
+            <div class="h-5 w-px bg-line mx-1 hidden sm:block" aria-hidden="true"></div>
+            <label class="layer-chip layer-chip--boundary">
+                <input type="checkbox" class="sr-only" data-layer-toggle="boundary" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Lingkup Area Lonjoboko
             </label>
         </div>
 
@@ -90,9 +92,9 @@
                     @if ($route->description)
                         <p class="text-sm text-ink-soft leading-relaxed">{{ $route->description }}</p>
                     @endif
-                    <button type="button" data-focus-route="{{ $route->id }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4 w-fit inline-flex items-center gap-1">
+                    <button type="button" data-focus-route="{{ $route->id }}" class="action-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
                         <span>Tunjukkan di peta</span>
-                        <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
                 </article>
             @empty
@@ -118,9 +120,16 @@
                         @if ($point->facilities)
                             <p class="text-sm"><span class="text-ink-soft">Fasilitas:</span> {{ $point->facilities }}</p>
                         @endif
-                        <div class="flex flex-wrap gap-x-4 gap-y-1 pt-1">
-                            <button type="button" data-focus-point="{{ $point->id }}" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4">Tunjukkan di peta</button>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $point->lat }},{{ $point->lng }}&travelmode=walking" target="_blank" rel="noopener" class="text-sm font-semibold text-river-700 hover:text-river-900 underline underline-offset-4">Petunjuk arah</a>
+                        <div class="flex flex-wrap gap-2 pt-1.5">
+                            <button type="button" data-focus-point="{{ $point->id }}" class="action-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                                <span>Tunjukkan di peta</span>
+                            </button>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $point->lat }},{{ $point->lng }}&travelmode=walking" target="_blank" rel="noopener" class="action-link action-link--ghost">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                                <span>Petunjuk arah</span>
+                                <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+                            </a>
                         </div>
                     </div>
                     @if ($point->photo)
