@@ -69,61 +69,86 @@
         </div>
     @endif
 
-    <header class="sticky top-0 z-40 site-header shadow-lg" style="top: env(safe-area-inset-top, 0px)">
-        <div class="wrap flex items-center justify-between gap-4 py-3.5">
-            <a href="{{ route('home') }}" class="group flex items-center gap-3 min-w-0" aria-label="LONJOBOKO RESCUE, ke beranda">
-                <span class="grid place-items-center size-10 shrink-0 rounded-xl bg-gradient-to-br from-emerald-600 to-river-800 text-white shadow-md shadow-black/30 group-hover:scale-105 transition-transform" aria-hidden="true">
+    @php
+        $alertTone = $topAlert ? ($isEmergency ? 'darurat' : 'waspada') : null;
+        $showReadProgress = request()->routeIs('education.show', 'announcement.show');
+    @endphp
+    <header id="site-header" @class(['site-header sticky top-0 z-40 shadow-lg', 'has-alert-'.$alertTone => $alertTone]) style="top: env(safe-area-inset-top, 0px)">
+        <div class="site-header__bar wrap flex items-center justify-between gap-4">
+            <a href="{{ route('home') }}" class="site-logo group flex items-center gap-3 min-w-0" aria-label="LONJOBOKO RESCUE, ke beranda">
+                <span class="site-logo__mark grid place-items-center size-10 shrink-0 rounded-xl bg-gradient-to-br from-emerald-600 to-river-800 text-white shadow-md shadow-black/30" aria-hidden="true">
                     <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2-1.5 4.5-1.5S19 18 21 18"/>
-                        <path d="M4 13l5-7 3 4 2-2 6 5"/>
+                        <path class="site-logo__wave" pathLength="1" d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2-1.5 4.5-1.5S19 18 21 18"/>
+                        <path class="site-logo__mountain" pathLength="1" d="M4 13l5-7 3 4 2-2 6 5"/>
                     </svg>
                 </span>
                 <span class="min-w-0 leading-tight">
                     <span class="block font-black tracking-tight text-white text-base">LONJOBOKO RESCUE</span>
-                    <span class="block text-xs text-river-100 truncate font-semibold">Desa {{ $site['village'] }} Tangguh Bencana</span>
+                    <span class="site-logo__sub block text-xs text-river-100 truncate font-semibold">Desa {{ $site['village'] }} Tangguh Bencana</span>
                 </span>
             </a>
 
+            {{-- Menu laptop: penanda hijau meluncur ke menu aktif, sorotan tipis mengikuti kursor --}}
             <nav aria-label="Menu utama" class="hidden lg:block">
-                <ul class="flex items-center gap-1.5 text-sm font-semibold">
+                <ul class="site-nav relative flex items-center gap-1.5 text-sm font-semibold">
+                    <li class="site-nav__hover" role="presentation" aria-hidden="true"></li>
+                    <li class="site-nav__active" role="presentation" aria-hidden="true"></li>
                     @foreach ($menu as $item)
                         @php $active = request()->routeIs($item['route']); @endphp
                         <li>
                             <a href="{{ $item['href'] ?? route($item['route']) }}"
                                @class([
-                                   'px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold',
-                                   'bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400/50' => $active,
-                                   'text-river-100 hover:bg-white/10 hover:text-white' => ! $active,
+                                   'site-nav__link relative z-[1] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition-colors duration-200 font-semibold',
+                                   'is-active bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400/50' => $active,
+                                   'text-river-100 hover:text-white' => ! $active,
                                ])
-                               @if ($active) aria-current="page" @endif>{{ $item['label'] }}</a>
+                               @if ($active) aria-current="page" @endif>
+                                {{ $item['label'] }}
+                                @if ($item['route'] === 'emergency' && $alertTone)
+                                    <span class="site-nav__alert-dot is-{{ $alertTone }}" aria-label="ada peringatan aktif"></span>
+                                @endif
+                            </a>
                         </li>
                     @endforeach
                 </ul>
             </nav>
 
-            <details class="lg:hidden relative group">
-                <summary class="list-none cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/25 bg-river-800 text-white px-3.5 py-2 text-sm font-bold shadow-xs hover:bg-river-700 [&::-webkit-details-marker]:hidden">
-                    <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-                    Menu
+            {{-- Menu HP --}}
+            <details class="site-menu lg:hidden relative">
+                <summary class="list-none cursor-pointer inline-flex items-center gap-2.5 rounded-xl border border-white/25 bg-river-800 text-white px-3.5 py-2 text-sm font-bold shadow-xs hover:bg-river-700 [&::-webkit-details-marker]:hidden" aria-label="Buka menu">
+                    <span class="site-menu__burger" aria-hidden="true"><span></span><span></span><span></span></span>
+                    <span>Menu</span>
+                    @if ($alertTone)
+                        <span class="site-nav__alert-dot is-{{ $alertTone }}" aria-hidden="true"></span>
+                    @endif
                 </summary>
-                <nav aria-label="Menu utama" class="absolute right-0 mt-2 w-64 rounded-2xl border border-white/20 bg-[#062b29] p-2.5 shadow-2xl ring-1 ring-black/50 text-white z-50">
+                <nav aria-label="Menu utama" class="site-menu__panel absolute right-0 mt-2 w-64 rounded-2xl border border-white/20 bg-[#062b29] p-2.5 shadow-2xl ring-1 ring-black/50 text-white z-50">
                     <ul class="grid gap-1 text-base font-semibold">
                         @foreach ($menu as $item)
                             @php $active = request()->routeIs($item['route']); @endphp
-                            <li>
+                            <li style="--i: {{ $loop->index }}">
                                 <a href="{{ $item['href'] ?? route($item['route']) }}"
                                    @class([
-                                       'block px-3.5 py-2.5 rounded-xl transition-colors',
+                                       'flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl transition-colors',
                                        'bg-emerald-600 text-white' => $active,
                                        'text-river-100 hover:bg-white/10 hover:text-white' => ! $active,
                                    ])
-                                   @if ($active) aria-current="page" @endif>{{ $item['label'] }}</a>
+                                   @if ($active) aria-current="page" @endif>
+                                    {{ $item['label'] }}
+                                    @if ($item['route'] === 'emergency' && $alertTone)
+                                        <span class="site-nav__alert-dot is-{{ $alertTone }}" aria-label="ada peringatan aktif"></span>
+                                    @endif
+                                </a>
                             </li>
                         @endforeach
                     </ul>
                 </nav>
             </details>
         </div>
+
+        @if ($showReadProgress)
+            <div class="read-progress" aria-hidden="true"><span id="read-progress-bar"></span></div>
+        @endif
     </header>
 
     <main id="konten" class="flex-1">
@@ -269,6 +294,15 @@
             </div>
         </div>
     </footer>
+
+    {{-- Tombol kembali ke atas; lingkarannya menunjukkan seberapa jauh halaman sudah digulir --}}
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">
+        <svg class="back-to-top__ring" viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="22" pathLength="1" class="back-to-top__track"/>
+            <circle id="back-to-top-progress" cx="24" cy="24" r="22" pathLength="1" class="back-to-top__progress"/>
+        </svg>
+        <svg class="back-to-top__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
 
     <x-emergency-popup :alerts="$activeAlerts" />
 
