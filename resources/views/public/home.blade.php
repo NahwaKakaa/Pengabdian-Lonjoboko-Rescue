@@ -141,13 +141,13 @@
                     </div>
                 </div>
 
-                {{-- Visual Card: Foto Pemandangan Alam Desa Lonjoboko --}}
+                {{-- Visual Card: gambar ilustrasi. Ganti public/images/sawah-desa.jpg dengan foto asli desa bila sudah ada. --}}
                 <div class="relative group rounded-2xl overflow-hidden border border-river-200/80 shadow-md bg-river-900 aspect-video lg:aspect-[4/3]">
-                    <img src="{{ asset('images/hero-mountains-dusk.jpg') }}" alt="Pemandangan perbukitan dan persawahan Desa Lonjoboko" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <img src="{{ asset('images/sawah-desa.jpg') }}" alt="Ilustrasi petak sawah berair di lereng bukit" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
                     <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5 text-white">
-                        <p class="text-[0.7rem] font-bold text-amber-300 uppercase tracking-wider">Bentang Alam Desa</p>
-                        <p class="text-xs sm:text-sm font-semibold leading-snug drop-shadow-sm text-river-50">Kawasan lereng pegunungan & persawahan Desa Lonjoboko, Kec. Parangloe</p>
+                        <p class="text-[0.7rem] font-bold text-amber-300 uppercase tracking-wider">Ilustrasi bentang alam</p>
+                        <p class="text-xs sm:text-sm font-semibold leading-snug drop-shadow-sm text-river-50">Persawahan di lereng perbukitan, ciri wilayah seperti Kec. Parangloe</p>
                     </div>
                 </div>
             </div>
@@ -196,14 +196,14 @@
         <div class="relative rounded-3xl overflow-hidden elevation-card border border-river-100">
             <div class="grid lg:grid-cols-[1.1fr_1fr] items-stretch">
                 <div class="relative min-h-[300px] lg:min-h-full">
-                    <img src="{{ asset('images/hero-mountains.jpg') }}" alt="Bentang Alam Pegunungan dan Hamparan Sawah Desa Lonjoboko" class="absolute inset-0 w-full h-full object-cover">
+                    <img src="{{ asset('images/hero-mountains.jpg') }}" alt="Ilustrasi sawah terasering di lereng perbukitan" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-black/30"></div>
                     <div class="absolute bottom-4 left-4 right-4 text-white">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-white border border-white/30">
                             <span class="size-1.5 rounded-full bg-emerald-400"></span>
-                            Bentang Alam Lonjoboko
+                            Ilustrasi bentang alam
                         </span>
-                        <p class="mt-2 text-sm font-semibold text-white/90 drop-shadow-sm">Hamparan sawah terasering dan gugusan pegunungan kaki Bawakaraeng</p>
+                        <p class="mt-2 text-sm font-semibold text-white/90 drop-shadow-sm">Sawah terasering di lereng perbukitan</p>
                     </div>
                 </div>
                 <div class="p-8 sm:p-10 flex flex-col justify-center gap-5 bg-card">
