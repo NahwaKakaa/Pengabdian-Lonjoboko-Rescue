@@ -24,6 +24,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 
+    {{-- Logo hanya digambar ulang di halaman pertama kunjungan --}}
+    <script>
+        try {
+            if (sessionStorage.getItem('lr-visited')) {
+                document.documentElement.classList.add('lr-returning');
+            }
+            sessionStorage.setItem('lr-visited', '1');
+        } catch (e) {}
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
@@ -92,21 +102,27 @@
             <nav aria-label="Menu utama" class="hidden lg:block">
                 <ul class="site-nav relative flex items-center gap-1.5 text-sm font-semibold">
                     <li class="site-nav__hover" role="presentation" aria-hidden="true"></li>
-                    <li class="site-nav__active" role="presentation" aria-hidden="true"></li>
                     @foreach ($menu as $item)
                         @php $active = request()->routeIs($item['route']); @endphp
                         <li>
                             <a href="{{ $item['href'] ?? route($item['route']) }}"
                                @class([
                                    'site-nav__link relative z-[1] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition-colors duration-200 font-semibold',
-                                   'is-active bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400/50' => $active,
+                                   'is-active text-white' => $active,
                                    'text-river-100 hover:text-white' => ! $active,
                                ])
                                @if ($active) aria-current="page" @endif>
-                                {{ $item['label'] }}
-                                @if ($item['route'] === 'emergency' && $alertTone)
-                                    <span class="site-nav__alert-dot is-{{ $alertTone }}" aria-label="ada peringatan aktif"></span>
+                                @if ($active)
+                                    {{-- Kotak hijau menu aktif; saat pindah halaman, browser menggesernya ke menu baru --}}
+                                    <span class="site-nav__pill" aria-hidden="true"></span>
                                 @endif
+                                {{-- Tulisan menu punya lapisan transisi sendiri supaya tidak tertutup kotak hijau yang lewat --}}
+                                <span class="site-nav__label" style="view-transition-name: nav-label-{{ $loop->index }}">
+                                    {{ $item['label'] }}
+                                    @if ($item['route'] === 'emergency' && $alertTone)
+                                        <span class="site-nav__alert-dot is-{{ $alertTone }}" aria-label="ada peringatan aktif"></span>
+                                    @endif
+                                </span>
                             </a>
                         </li>
                     @endforeach

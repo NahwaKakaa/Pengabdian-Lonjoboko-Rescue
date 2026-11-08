@@ -55,58 +55,24 @@ function initScrollEffects() {
 }
 
 /* ------------------------------------------------------------------
- * 2. Penanda menu yang meluncur (laptop)
+ * 2. Sorotan tipis yang mengikuti kursor di menu (laptop).
+ *    Kotak hijau menu aktif tidak diatur di sini: saat pindah halaman,
+ *    browser menggesernya lewat View Transitions (lihat app.css).
  * ------------------------------------------------------------------ */
-function initSlidingNav() {
+function initNavHover() {
     const nav = document.querySelector('.site-nav');
+    const hover = nav?.querySelector('.site-nav__hover');
 
-    if (!nav) {
+    if (!nav || !hover) {
         return;
     }
 
-    const active = nav.querySelector('.site-nav__active');
-    const hover = nav.querySelector('.site-nav__hover');
-    const current = nav.querySelector('.site-nav__link.is-active');
-    const STORE_KEY = 'lr-nav-active';
-
-    const place = (el, target) => {
-        el.style.width = `${target.offsetWidth}px`;
-        el.style.height = `${target.offsetHeight}px`;
-        el.style.transform = `translate(${target.offsetLeft}px, ${target.offsetTop}px)`;
+    const place = (target) => {
+        hover.style.width = `${target.offsetWidth}px`;
+        hover.style.height = `${target.offsetHeight}px`;
+        hover.style.transform = `translate(${target.offsetLeft}px, ${target.offsetTop}px)`;
     };
 
-    nav.classList.add('is-enhanced');
-
-    if (current) {
-        // Mulai dari posisi menu halaman sebelumnya, lalu meluncur ke menu sekarang.
-        let previous = null;
-
-        try {
-            previous = JSON.parse(sessionStorage.getItem(STORE_KEY) || 'null');
-        } catch (e) {}
-
-        if (previous && !reduceMotion) {
-            active.style.transition = 'none';
-            active.style.width = `${previous.w}px`;
-            active.style.height = `${current.offsetHeight}px`;
-            active.style.transform = `translate(${previous.x}px, ${current.offsetTop}px)`;
-            active.getBoundingClientRect(); // paksa browser menggambar posisi awal
-            active.style.transition = '';
-        }
-
-        requestAnimationFrame(() => {
-            place(active, current);
-            active.classList.add('is-ready');
-        });
-
-        try {
-            sessionStorage.setItem(STORE_KEY, JSON.stringify({ x: current.offsetLeft, w: current.offsetWidth }));
-        } catch (e) {}
-
-        window.addEventListener('resize', () => place(active, current), { passive: true });
-    }
-
-    // Sorotan tipis mengikuti kursor
     nav.querySelectorAll('.site-nav__link').forEach((link) => {
         link.addEventListener('mouseenter', () => {
             if (link.classList.contains('is-active')) {
@@ -118,11 +84,11 @@ function initSlidingNav() {
             if (!hover.classList.contains('is-visible')) {
                 // Muncul di tempat dulu, baru meluncur untuk sorotan berikutnya.
                 hover.style.transition = 'opacity .2s ease';
-                place(hover, link);
+                place(link);
                 hover.getBoundingClientRect();
                 hover.style.transition = '';
             } else {
-                place(hover, link);
+                place(link);
             }
 
             hover.classList.add('is-visible');
@@ -163,5 +129,5 @@ function initMobileMenu() {
 }
 
 initScrollEffects();
-initSlidingNav();
+initNavHover();
 initMobileMenu();
