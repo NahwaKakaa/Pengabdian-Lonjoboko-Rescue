@@ -56,6 +56,11 @@ class FacilityResource extends Resource
                         ->label('Nomor telepon')
                         ->tel()
                         ->maxLength(30),
+                    TextInput::make('opening_hours')
+                        ->label('Jam layanan')
+                        ->maxLength(120)
+                        ->placeholder('Contoh: Senin–Sabtu 08.00–14.00, IGD 24 jam')
+                        ->columnSpanFull(),
                     TextInput::make('address')
                         ->label('Alamat / patokan')
                         ->maxLength(255)
@@ -80,6 +85,7 @@ class FacilityResource extends Resource
                 TextColumn::make('name')->label('Nama fasilitas')->searchable()->wrap(),
                 TextColumn::make('category')->label('Kategori')->badge(),
                 TextColumn::make('phone')->label('Telepon')->placeholder('-')->copyable(),
+                TextColumn::make('opening_hours')->label('Jam layanan')->placeholder('-')->toggleable(),
                 ...static::verificationColumns(),
             ])
             ->defaultSort('updated_at', 'desc')

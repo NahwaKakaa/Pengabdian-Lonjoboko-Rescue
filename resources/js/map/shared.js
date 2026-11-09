@@ -10,6 +10,7 @@ export const COLORS = {
     safe: '#16825d',
     route: '#c2185b',
     facility: '#475569',
+    vulnerable: '#7c3aed',
 };
 
 export const RISK_OPACITY = { rendah: 0.18, sedang: 0.3, tinggi: 0.45 };

@@ -56,6 +56,7 @@ class VillageProfile extends Page implements HasForms
         'whatsapp_label',
         'maps_url',
         'landscape_note',
+        'population_source',
         'safety_first_steps',
         'safety_flood_steps',
         'safety_landslide_steps',
@@ -107,6 +108,12 @@ class VillageProfile extends Page implements HasForms
                                         TextInput::make('regency')->label('Kabupaten')->maxLength(100),
                                         TextInput::make('office_address')->label('Alamat kantor desa')->maxLength(255)->columnSpan(2),
                                         TextInput::make('office_phone')->label('Telepon kantor desa')->tel()->maxLength(30),
+                                        TextInput::make('population_source')
+                                            ->label('Sumber data penduduk')
+                                            ->maxLength(120)
+                                            ->placeholder('Contoh: Profil Desa Lonjoboko 2025 / BPS Kec. Parangloe Dalam Angka 2025')
+                                            ->helperText('Angka per dusun diisi di menu Data Desa > Data Penduduk.')
+                                            ->columnSpanFull(),
                                         TextInput::make('landscape_note')
                                             ->label('Keterangan bentang alam')
                                             ->maxLength(90)

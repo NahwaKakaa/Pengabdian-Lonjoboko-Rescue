@@ -69,8 +69,10 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->navigationGroups([
+                NavigationGroup::make('Laporan & Kejadian'),
                 NavigationGroup::make('Peta & Evakuasi'),
                 NavigationGroup::make('Informasi Publik'),
+                NavigationGroup::make('Data Desa'),
                 NavigationGroup::make('Pengaturan'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

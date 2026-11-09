@@ -53,6 +53,7 @@ Artisan::command('lonjoboko:isi-data-desa {--ulang : Hapus data desa yang pernah
 Artisan::command('lonjoboko:hapus-data-desa', function () {
     $this->info(\App\Support\VillageData::remove().' data desa dihapus.');
     $this->info(\App\Support\VillageContent::removeEducation().' konten edukasi dihapus.');
+    $this->info(\App\Support\VillageContent::removeEvents().' riwayat kejadian awal dihapus.');
     $this->line('Isian Profil Desa tidak dihapus; ubah lewat admin bila perlu.');
 })->purpose('Hapus data yang diisi oleh lonjoboko:isi-data-desa dan lonjoboko:lengkapi-data');
 
@@ -65,6 +66,7 @@ Artisan::command('lonjoboko:lengkapi-data', function () {
     }
 
     $this->info(\App\Support\VillageContent::installEducation().' konten edukasi dari perintah ini ada di web.');
+    $this->info(\App\Support\VillageContent::installEvents().' riwayat kejadian awal ditambahkan.');
 
     // Gambar infografis disimpan di storage/app/public; web membacanya lewat public/storage.
     if (! file_exists(public_path('storage'))) {

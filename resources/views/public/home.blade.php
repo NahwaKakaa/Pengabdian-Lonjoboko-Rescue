@@ -125,6 +125,8 @@
                         </div>
                     @endif
 
+                    @include('public.partials.population', ['hamlets' => $hamlets, 'detailed' => false])
+
                     <div class="flex flex-wrap gap-2 pt-1 text-xs">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-river-50 border border-river-100 font-semibold text-river-800">
                             <svg viewBox="0 0 24 24" class="size-3.5 text-river-600" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18l7-10 4 5 3-4 4 9H3z"/></svg>
@@ -238,6 +240,29 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Warga ikut menjadi sumber informasi: lapor kejadian & riwayat bencana --}}
+    <section class="wrap pb-6">
+        <div class="report-band">
+            <div class="report-band__text">
+                <p class="report-band__eyebrow">Warga ikut menjaga desa</p>
+                <h2 class="report-band__title">Melihat banjir, longsor, atau tanda bahaya? Laporkan.</h2>
+                <p class="report-band__lead">Cukup isi jenis kejadian, lokasi, dan foto bila ada. Kader Karang Taruna akan mengecek ke lokasi, lalu pemerintah desa menindaklanjuti.</p>
+            </div>
+            <div class="report-band__actions">
+                <a href="{{ route('report') }}" class="report-band__btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+                    Lapor kejadian
+                </a>
+                <a href="{{ route('history') }}" class="report-band__link">
+                    Lihat riwayat bencana desa
+                    @if ($latestEvent)
+                        <small>Terakhir: {{ $latestEvent->occurred_on->translatedFormat('F Y') }}</small>
+                    @endif
+                </a>
             </div>
         </div>
     </section>

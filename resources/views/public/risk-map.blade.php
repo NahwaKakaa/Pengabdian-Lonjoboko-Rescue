@@ -46,6 +46,11 @@
                 <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
                 Fasilitas umum
             </label>
+            <label class="layer-chip layer-chip--vulnerable">
+                <input type="checkbox" class="sr-only" data-layer-toggle="hamlets" checked>
+                <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
+                Warga rentan
+            </label>
         </div>
 
         <div class="map-frame">
@@ -130,6 +135,7 @@
                     <li class="flex items-center gap-3"><span class="size-4 rounded-full bg-safe ring-2 ring-white shadow" aria-hidden="true"></span>Titik kumpul / pengungsian</li>
                     <li class="flex items-center gap-3"><span class="h-1 w-6 rounded bg-route" aria-hidden="true"></span>Jalur evakuasi</li>
                     <li class="flex items-center gap-3"><span class="size-4 rounded bg-ink-soft ring-2 ring-white shadow" aria-hidden="true"></span>Fasilitas umum dan kesehatan</li>
+                    <li class="flex items-center gap-3"><span class="size-4 rounded-full bg-vulnerable/30 ring-2 ring-vulnerable" aria-hidden="true"></span>Warga rentan per dusun (makin besar, makin banyak)</li>
                 </ul>
                 <p class="text-xs text-ink-soft">Warna lingkaran makin pekat berarti tingkat kerawanan makin tinggi.</p>
             </div>
@@ -143,10 +149,29 @@
                         @if ($facility->phone)
                             <a href="tel:{{ preg_replace('/[^0-9+]/', '', $facility->phone) }}" class="text-sm font-semibold text-river-700 num">{{ $facility->phone }}</a>
                         @endif
+                        @if ($facility->opening_hours)
+                            <p class="text-xs text-ink-soft">Jam layanan: {{ $facility->opening_hours }}</p>
+                        @endif
                     </div>
                 @empty
                     <p class="text-sm text-ink-soft">Belum ada data fasilitas.</p>
                 @endforelse
+            </div>
+
+            <div class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3">
+                <h2 class="font-extrabold text-lg">Bencana yang pernah terjadi</h2>
+                @forelse ($events as $event)
+                    <a href="{{ route('history') }}#kejadian-{{ $event->id }}" class="block border-t border-line pt-3 first:border-0 first:pt-0 hover:text-river-700">
+                        <p class="text-xs font-bold uppercase tracking-wider text-ink-soft">{{ $event->occurred_on->translatedFormat('j F Y') }} · {{ $event->hazard_type->getLabel() }}</p>
+                        <p class="font-semibold">{{ $event->title }}</p>
+                    </a>
+                @empty
+                    <p class="text-sm text-ink-soft">Belum ada riwayat kejadian yang dicatat.</p>
+                @endforelse
+                <a href="{{ route('history') }}" class="action-link mt-1">
+                    <span>Lihat semua riwayat</span>
+                    <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
             </div>
 
             <div class="elevation-card rounded-2xl bg-river-50 border border-river-100 p-5 sm:p-6 grid gap-2 text-sm">
@@ -158,5 +183,15 @@
                 </a>
             </div>
         </aside>
+    </section>
+
+    {{-- Penduduk & warga rentan per dusun --}}
+    <section class="wrap py-10 grid gap-4" id="penduduk">
+        <div class="grid gap-1">
+            <p class="eyebrow">Penduduk &amp; warga rentan</p>
+            <h2 class="text-2xl font-extrabold tracking-tight">Siapa yang perlu didahulukan saat evakuasi</h2>
+            <p class="text-ink-soft max-w-[62ch]">Lansia, balita, ibu hamil, dan penyandang disabilitas butuh bantuan lebih dulu. Lingkaran ungu di peta menunjukkan dusun dengan warga rentan terbanyak.</p>
+        </div>
+        @include('public.partials.population', ['hamlets' => $hamlets, 'detailed' => true])
     </section>
 @endsection

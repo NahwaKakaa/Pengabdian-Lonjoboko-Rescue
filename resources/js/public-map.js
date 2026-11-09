@@ -49,6 +49,7 @@ function initMap(element) {
         points: L.featureGroup(),
         routes: L.featureGroup(),
         facilities: L.featureGroup(),
+        hamlets: L.featureGroup(),
     };
     const index = { hazard: {}, point: {}, route: {} };
 
@@ -176,6 +177,7 @@ function initMap(element) {
                         ['Kategori', f.categoryLabel],
                         ['Alamat', f.address],
                         ['Telepon', f.phone],
+                        ['Jam layanan', f.hours],
                     ],
                     null,
                     [
@@ -187,10 +189,33 @@ function initMap(element) {
             .addTo(layers.facilities);
     });
 
+    // Warga rentan per dusun: lingkaran makin besar = makin banyak warga yang perlu didahulukan.
+    const hamlets = data.hamlets ?? [];
+    const maxVulnerable = Math.max(1, ...hamlets.map((h) => h.vulnerable || 0));
+    hamlets.forEach((h) => {
+        const size = h.vulnerable ? 10 + 18 * Math.sqrt(h.vulnerable / maxVulnerable) : 8;
+        L.circleMarker([h.lat, h.lng], {
+            radius: size,
+            color: COLORS.vulnerable,
+            weight: 2,
+            fillColor: COLORS.vulnerable,
+            fillOpacity: 0.22,
+        })
+            .bindTooltip(`Dusun ${escapeHtml(h.name)}`, { direction: 'top' })
+            .bindPopup(
+                popup(`Dusun ${h.name}`, [
+                    ['Penduduk', h.population ? `${h.population.toLocaleString('id-ID')} jiwa` : null],
+                    ['Warga rentan', h.vulnerable ? `${h.vulnerable.toLocaleString('id-ID')} orang` : 'belum didata'],
+                    ...h.parts.filter(([, v]) => v).map(([label, v]) => [label, `${v.toLocaleString('id-ID')} orang`]),
+                ]),
+            )
+            .addTo(layers.hamlets);
+    });
+
     // Lapisan yang tampil saat pertama dibuka.
     const initial = mode === 'evacuation' 
         ? ['boundary', 'banjir', 'longsor', 'points', 'routes'] 
-        : ['boundary', 'banjir', 'longsor', 'points', 'facilities'];
+        : ['boundary', 'banjir', 'longsor', 'points', 'facilities', 'hamlets'];
     initial.forEach((key) => layers[key].addTo(map));
 
     // Arahkan peta ke lingkup wilayah desa bila tersedia, atau ke seluruh data yang ada.

@@ -4,6 +4,9 @@ namespace App\Support;
 
 use App\Enums\EducationCategory;
 use App\Enums\EducationTopic;
+use App\Enums\HazardType;
+use App\Enums\VerificationStatus;
+use App\Models\DisasterEvent;
 use App\Models\EducationContent;
 use App\Models\Setting;
 use Database\Seeders\EducationContentSeeder;
@@ -24,6 +27,89 @@ class VillageContent
     public const SETTING = 'village_education_ids';
 
     public const DUMMY_WHATSAPP = '0812-0000-0000';
+
+    public const EVENTS_SETTING = 'village_event_ids';
+
+    /**
+     * Riwayat kejadian awal dari berita yang bisa dicek. Angka korban
+     * mengikuti sumber yang disebut; pemerintah desa sebaiknya memastikan.
+     *
+     * @return int jumlah kejadian baru
+     */
+    public static function installEvents(): int
+    {
+        $ids = json_decode((string) Setting::get(self::EVENTS_SETTING), true) ?: [];
+        $added = 0;
+
+        foreach (self::events() as $event) {
+            if (DisasterEvent::where('title', $event['title'])->exists()) {
+                continue;
+            }
+
+            $ids[] = DisasterEvent::create($event + ['status' => VerificationStatus::Terverifikasi])->id;
+            $added++;
+        }
+
+        Setting::putMany([self::EVENTS_SETTING => json_encode(array_values(array_unique($ids)))]);
+
+        return $added;
+    }
+
+    public static function removeEvents(): int
+    {
+        $ids = json_decode((string) Setting::get(self::EVENTS_SETTING), true);
+
+        if (! is_array($ids) || $ids === []) {
+            return 0;
+        }
+
+        $total = DisasterEvent::whereIn('id', $ids)->delete();
+        Setting::putMany([self::EVENTS_SETTING => null]);
+
+        return $total;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private static function events(): array
+    {
+        return [
+            [
+                'title' => 'Longsor di Jalan Poros Malino, Borong Sapiri dan Kunyika',
+                'hazard_type' => HazardType::Longsor,
+                'occurred_on' => '2022-11-16',
+                'hamlet' => 'Bontoloe dan Galesong',
+                'description' => "Rabu petang sekitar pukul 18.00 WITA, setelah hujan deras, tanah longsor terjadi di Jalan Poros Malino Km 62 (Kampung Borong Sapiri, Dusun Bontoloe) dan Km 58 (Kampung Kunyika, Dusun Galesong). Tanah dan lumpur turun dari bukit yang sangat terjal. Sebuah mobil terseret ke jurang dan jalan poros tertutup total.\n\nMenurut Polres Gowa (ANTARA, 17 Nov 2022), 2 orang meninggal dan 2 orang dicari. Basarnas Sulawesi Selatan kemudian melaporkan 9 korban: 5 meninggal, 2 masih dicari, dan 2 selamat.",
+                'impact' => '5 rumah warga rusak, 3 mobil rusak, dan Jalan Poros Malino tertutup total.',
+                'deaths' => 5,
+                'injured' => 0,
+                'missing' => 2,
+                'displaced' => 0,
+                'houses_damaged' => 5,
+                'source' => 'ANTARA Makassar (Polres Gowa) dan Basarnas Sulsel',
+                'source_url' => 'https://makassar.antaranews.com/berita/442909/dua-warga-meninggal-akibat-tanah-longsor-di-poros-malino-gowa',
+            ],
+            [
+                'title' => 'Sungai meluap di Jembatan Lebong',
+                'hazard_type' => HazardType::Banjir,
+                'occurred_on' => '2022-11-16',
+                'hamlet' => 'Bontoloe',
+                'description' => 'Pada hujan deras yang sama dengan longsor di Poros Malino, air sungai meluap di Jembatan Lebong, Kampung Lebong, Dusun Bontoloe.',
+                'impact' => null,
+                'source' => 'ANTARA Makassar (Polres Gowa)',
+                'source_url' => 'https://makassar.antaranews.com/berita/442909/dua-warga-meninggal-akibat-tanah-longsor-di-poros-malino-gowa',
+            ],
+            [
+                'title' => "Longsor memutus Jalan Poros Malino di Mala'lang",
+                'hazard_type' => HazardType::Longsor,
+                'occurred_on' => '2022-12-24',
+                'hamlet' => "Mala'lang",
+                'description' => "Setelah hujan deras beberapa hari, tanah longsor menutup Jalan Poros Malino Km 60 di Mala'lang, Desa Lonjoboko, sehingga akses jalan terputus. Saat berita terbit, ada atau tidaknya korban belum diketahui. Seorang warga menyebut 6 rumah tertimbun, tetapi angka ini belum dipastikan.",
+                'impact' => 'Akses Jalan Poros Malino terputus dan perlu alat untuk membersihkan timbunan.',
+                'source' => 'Tribun Timur',
+                'source_url' => 'https://makassar.tribunnews.com/2022/12/24/akses-jalan-poros-malino-di-desa-lonjoboko-gowa-tak-bisa-diakses-pasca-longsor',
+            ],
+        ];
+    }
 
     /** @return list<string> kunci pengaturan yang diisi */
     public static function completeProfile(): array

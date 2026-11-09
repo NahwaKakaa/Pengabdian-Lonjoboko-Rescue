@@ -13,4 +13,7 @@ Route::controller(PublicController::class)->group(function () {
     Route::get('/informasi/{announcement:slug}', 'announcementShow')->name('announcement.show');
     Route::get('/relawan', 'volunteers')->name('volunteers');
     Route::get('/poster', 'poster')->name('poster');
+    Route::get('/riwayat-kejadian', 'history')->name('history');
+    Route::get('/lapor', 'reportForm')->name('report');
+    Route::post('/lapor', 'reportStore')->name('report.store')->middleware('throttle:lapor');
 });

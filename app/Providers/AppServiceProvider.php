@@ -7,8 +7,10 @@ use App\Models\EmergencyContact;
 use App\Models\Setting;
 use App\Support\Phone;
 use Carbon\Carbon;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -25,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Carbon::setLocale(config('app.locale'));
+
+        // Lapor kejadian: paling banyak 6 laporan per jam dari satu jaringan.
+        RateLimiter::for('lapor', fn (Request $request) => Limit::perHour(6)->by($request->ip())
+            ->response(fn () => back()->withInput()->withErrors([
+                'description' => 'Laporan dari jaringan ini sudah banyak dalam satu jam terakhir. Bila darurat, hubungi nomor darurat atau WhatsApp posko desa.',
+            ])));
 
         if (! $this->app->runningInConsole()) {
             self::useRequestScheme(request());

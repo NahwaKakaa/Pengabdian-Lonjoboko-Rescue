@@ -155,6 +155,12 @@
             </nav>
 
 
+            {{-- Lapor kejadian: selalu terlihat, di laptop maupun HP --}}
+            <a href="{{ route('report') }}" @class(['site-report-btn', 'is-active' => request()->routeIs('report')]) title="Laporkan kejadian atau tanda bahaya">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+                <span>Lapor</span>
+            </a>
+
             {{-- Sakelar tampilan siang / malam --}}
             <button type="button" id="theme-toggle" class="site-theme-switch" role="switch" aria-checked="false" aria-label="Tampilan malam" title="Ganti ke tampilan malam">
                 <span class="site-theme-switch__stars" aria-hidden="true"></span>

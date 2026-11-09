@@ -17,6 +17,7 @@ class Facility extends Model
         'category',
         'address',
         'phone',
+        'opening_hours',
         'location',
         'status',
         'review_note',

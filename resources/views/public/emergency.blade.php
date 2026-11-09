@@ -87,12 +87,40 @@
                         </li>
                     @endforeach
                 </ol>
+                <a href="{{ route('report') }}" class="report-cta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+                    Lapor lewat web
+                </a>
                 @if ($site['office_phone'])
                     <p class="text-sm text-river-100/90 border-t border-white/15 pt-3 flex items-center gap-2">
                         <span>Kantor Desa:</span>
                         <a href="tel:{{ preg_replace('/[^0-9+]/', '', $site['office_phone']) }}" class="font-bold text-white num underline underline-offset-4">{{ $site['office_phone'] }}</a>
                     </p>
                 @endif
+            </section>
+
+            {{-- Fasilitas kesehatan terdekat --}}
+            <section class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-3" aria-labelledby="faskes">
+                <h2 id="faskes" class="text-lg font-extrabold text-ink flex items-center gap-2">
+                    <span class="grid size-8 place-items-center rounded-xl bg-danger-soft text-danger" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                    </span>
+                    Fasilitas kesehatan
+                </h2>
+                @forelse ($healthFacilities as $facility)
+                    <div class="border-t border-line pt-3 first-of-type:border-0 first-of-type:pt-0 grid gap-0.5">
+                        <p class="font-bold text-ink">{{ $facility->name }}</p>
+                        @if ($facility->address)
+                            <p class="text-sm text-ink-soft">{{ $facility->address }}</p>
+                        @endif
+                        <p class="text-sm text-ink-soft">Jam layanan: <span class="font-semibold text-ink">{{ $facility->opening_hours ?: 'belum dicatat' }}</span></p>
+                        @if ($facility->phone)
+                            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $facility->phone) }}" class="text-sm font-bold text-river-700 num">Telepon {{ $facility->phone }}</a>
+                        @endif
+                    </div>
+                @empty
+                    <p class="text-sm text-ink-soft">Belum ada data fasilitas kesehatan.</p>
+                @endforelse
             </section>
 
             {{-- Poster siaga untuk dicetak dan dipasang di kantor desa / titik kumpul --}}
