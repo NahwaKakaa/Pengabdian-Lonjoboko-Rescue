@@ -16,6 +16,14 @@
 
     RewriteEngine On
 
+    # Selalu pakai HTTPS di domain asli (fitur offline hanya jalan di HTTPS).
+    # Tidak berlaku di laptop (127.0.0.1/localhost).
+    RewriteCond %{HTTP_HOST} (^|\.)lonjoboko-rescue\.web\.id$ [NC]
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
