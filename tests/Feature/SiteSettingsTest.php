@@ -133,4 +133,31 @@ class SiteSettingsTest extends TestCase
         $this->assertSame(0, \App\Models\EvacuationRoute::count());
         $this->assertDatabaseHas('emergency_contacts', ['name' => 'BPBD Kabupaten Gowa']);
     }
+
+    public function test_lengkapi_profil_dan_edukasi_tanpa_menimpa_isian_admin(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        \App\Models\Setting::putMany(['office_phone' => '0411-000', 'whatsapp_number' => '081234567890']);
+
+        $this->artisan('lonjoboko:lengkapi-data')->assertSuccessful();
+
+        $this->assertSame('081234567890', \App\Models\Setting::get('whatsapp_number'));
+        $this->assertSame('Posko Desa Lonjoboko', \App\Models\Setting::get('whatsapp_label'));
+        $this->assertNotEmpty(\App\Models\Setting::get('village_profile'));
+
+        $this->assertDatabaseHas('education_contents', ['title' => 'Sungai Jeneberang dan risiko banjir di Lonjoboko']);
+        $infographic = \App\Models\EducationContent::where('title', 'Infografis: isi tas siaga bencana')->firstOrFail();
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($infographic->image);
+
+        // Dijalankan lagi tidak membuat duplikat.
+        $count = \App\Models\EducationContent::count();
+        $this->artisan('lonjoboko:lengkapi-data')->assertSuccessful();
+        $this->assertSame($count, \App\Models\EducationContent::count());
+
+        $this->get('/edukasi')->assertOk()->assertSee('Aman melintas di Jalan Poros Malino');
+        $this->get('/relawan')->assertOk()->assertSee('Lima tim siaga dan tugasnya');
+
+        $this->artisan('lonjoboko:hapus-data-desa')->assertSuccessful();
+        $this->assertSame(0, \App\Models\EducationContent::count());
+    }
 }

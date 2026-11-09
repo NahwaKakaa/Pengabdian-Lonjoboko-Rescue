@@ -3,7 +3,11 @@
 <a href="{{ route('education.show', $item) }}" class="elevation-card group flex flex-col rounded-3xl overflow-hidden">
     <div class="relative overflow-hidden aspect-[16/9] w-full bg-river-100">
         @if ($item->image)
-            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->image) }}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            {{-- Infografis biasanya tegak: tampilkan bagian atasnya (judul) --}}
+            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($item->image) }}" alt="" loading="lazy" @class([
+                'w-full h-full object-cover group-hover:scale-105 transition-transform duration-500',
+                'object-top' => $item->category === \App\Enums\EducationCategory::Infografis,
+            ])>
         @elseif ($item->youtubeId())
             <img src="https://i.ytimg.com/vi/{{ $item->youtubeId() }}/hqdefault.jpg" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
             <span class="absolute inset-0 grid place-items-center bg-black/20 group-hover:bg-black/10 transition-colors">

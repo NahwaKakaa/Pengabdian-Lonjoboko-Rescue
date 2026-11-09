@@ -52,4 +52,26 @@ Artisan::command('lonjoboko:isi-data-desa {--ulang : Hapus data desa yang pernah
 
 Artisan::command('lonjoboko:hapus-data-desa', function () {
     $this->info(\App\Support\VillageData::remove().' data desa dihapus.');
-})->purpose('Hapus data yang diisi oleh lonjoboko:isi-data-desa');
+    $this->info(\App\Support\VillageContent::removeEducation().' konten edukasi dihapus.');
+    $this->line('Isian Profil Desa tidak dihapus; ubah lewat admin bila perlu.');
+})->purpose('Hapus data yang diisi oleh lonjoboko:isi-data-desa dan lonjoboko:lengkapi-data');
+
+Artisan::command('lonjoboko:lengkapi-data', function () {
+    $keys = \App\Support\VillageContent::completeProfile();
+    $this->info(count($keys).' isian Profil Desa dilengkapi'.($keys ? ': '.implode(', ', $keys) : ' (semua sudah terisi).'));
+
+    if (in_array('whatsapp_number', $keys, true)) {
+        $this->warn('Nomor WhatsApp desa diisi nomor DUMMY '.\App\Support\VillageContent::DUMMY_WHATSAPP.'. Ganti dengan nomor posko yang aktif lewat admin > Profil Desa sebelum web disebarkan ke warga.');
+    }
+
+    $this->info(\App\Support\VillageContent::installEducation().' konten edukasi dari perintah ini ada di web.');
+
+    // Gambar infografis disimpan di storage/app/public; web membacanya lewat public/storage.
+    if (! file_exists(public_path('storage'))) {
+        $this->call('storage:link');
+    }
+
+    if (! file_exists(public_path('storage'))) {
+        $this->warn('Folder public/storage belum terhubung, gambar infografis belum tampil. Jalankan: php artisan storage:link');
+    }
+})->purpose('Lengkapi isian Profil Desa yang kosong dan tambahkan konten edukasi');

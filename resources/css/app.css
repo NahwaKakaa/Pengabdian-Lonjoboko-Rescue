@@ -1701,3 +1701,480 @@ html.lr-theme-fade *::after {
 .dark .has-hero-photo .page-header-scenic::after {
     inset: 0 0 60% 0;
 }
+
+/* ==================================================================
+   Halaman Kader & Relawan
+   ================================================================== */
+.vol-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.vol-stats li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.55rem 0.95rem;
+    border-radius: 0.9rem;
+    background: rgba(3, 28, 26, 0.55);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+    font-size: 0.85rem;
+    color: var(--color-river-100);
+}
+
+.vol-stats strong {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #ffffff;
+}
+
+.vol-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.vol-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-river-600);
+}
+
+.vol-title {
+    margin-top: 0.35rem;
+    font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-wrap: balance;
+}
+
+.vol-lead {
+    margin-top: 0.5rem;
+    max-width: 62ch;
+    color: var(--color-ink-soft);
+}
+
+.vol-hamlets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.vol-hamlets li {
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-river-700);
+    background: var(--color-river-50);
+}
+
+.vol-empty {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.5rem;
+    border: 1px dashed var(--color-line);
+    border-radius: 1.25rem;
+    color: var(--color-ink-soft);
+    background: var(--color-card);
+}
+
+/* Kartu orang */
+.vol-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+}
+
+.vol-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.25rem;
+    background: var(--color-card);
+    box-shadow: 0 4px 18px -6px rgba(9, 63, 60, 0.08);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.vol-card:not(.vol-card--slot):hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-river-600) 35%, var(--color-line));
+    box-shadow: 0 14px 30px -12px rgba(9, 63, 60, 0.2);
+}
+
+.vol-card--leader {
+    position: relative;
+    overflow: hidden;
+    gap: 1.4rem;
+    padding: 1.5rem 1.6rem;
+    background:
+        radial-gradient(28rem 12rem at 100% 0%, color-mix(in srgb, var(--color-river-600) 12%, transparent), transparent 70%),
+        var(--color-card);
+}
+
+.vol-card--leader::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: linear-gradient(180deg, #34d399, var(--color-river-600));
+}
+
+.vol-card--slot {
+    border-style: dashed;
+    box-shadow: none;
+    background: transparent;
+}
+
+.vol-name {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--color-ink);
+}
+
+.vol-card--leader .vol-name {
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+}
+
+.vol-role {
+    margin-top: 0.15rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-river-600);
+}
+
+.vol-card--leader .vol-role {
+    margin: 0 0 0.25rem;
+}
+
+.vol-meta {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+}
+
+.vol-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.7rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-river-700);
+    background: var(--color-river-50);
+    transition: background-color 0.2s ease;
+}
+
+.vol-call:hover {
+    background: var(--color-river-100);
+}
+
+.vol-call svg {
+    width: 0.95rem;
+    height: 0.95rem;
+}
+
+.vol-call--sm {
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.78rem;
+}
+
+/* Foto / inisial */
+.vol-avatar {
+    position: relative;
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 1.1rem;
+    color: #ffffff;
+    background: linear-gradient(140deg, #14857c 0%, var(--color-river-800) 100%);
+    box-shadow: 0 8px 18px -10px rgba(6, 43, 41, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.vol-avatar--md {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.05rem;
+}
+
+.vol-avatar--lg {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.4rem;
+    font-size: 1.5rem;
+}
+
+.vol-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vol-avatar__initials {
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+.vol-slot-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px dashed var(--color-line);
+    border-radius: 1.1rem;
+    color: var(--color-ink-soft);
+}
+
+.vol-slot-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+/* Tim siaga */
+.vol-band {
+    border-block: 1px solid var(--color-line);
+    background:
+        radial-gradient(40rem 18rem at 0% 0%, color-mix(in srgb, var(--color-river-600) 7%, transparent), transparent 70%),
+        color-mix(in srgb, var(--color-card) 55%, transparent);
+}
+
+.vol-teams {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+}
+
+.vol-team {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-line);
+    border-top: 3px solid var(--tone);
+    border-radius: 1.1rem;
+    background: var(--color-card);
+}
+
+.vol-team__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vol-team__icon {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+    color: var(--tone);
+    background: color-mix(in srgb, var(--tone) 12%, transparent);
+}
+
+.vol-team__icon svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.vol-team__no {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--color-ink-soft);
+    opacity: 0.6;
+}
+
+.vol-team__name {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-ink);
+}
+
+.vol-team__duties {
+    display: grid;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+}
+
+.vol-team__duties li {
+    position: relative;
+    padding-left: 1rem;
+}
+
+.vol-team__duties li::before {
+    content: "";
+    position: absolute;
+    top: 0.55em;
+    left: 0;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--tone);
+    opacity: 0.7;
+}
+
+/* Ajakan bergabung */
+.vol-join {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    overflow: hidden;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 1.6rem;
+    color: #ffffff;
+    background:
+        radial-gradient(30rem 16rem at 100% 0%, rgba(52, 211, 153, 0.22), transparent 70%),
+        linear-gradient(135deg, #0b5551 0%, #062b29 100%);
+    box-shadow: 0 24px 50px -24px rgba(6, 43, 41, 0.6);
+}
+
+@media (min-width: 768px) {
+    .vol-join {
+        grid-template-columns: 1.4fr 1fr;
+    }
+
+    .vol-card--leader {
+        grid-column: span 2;
+    }
+}
+
+@media (min-width: 1024px) {
+    .vol-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .vol-teams {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+.vol-join__eyebrow {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8fe3cf;
+}
+
+.vol-join__title {
+    margin-top: 0.4rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.vol-join__list {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.vol-join__list li {
+    position: relative;
+    padding-left: 1.6rem;
+}
+
+.vol-join__list li::before {
+    content: "";
+    position: absolute;
+    top: 0.2em;
+    left: 0;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 999px;
+    background: rgba(143, 227, 207, 0.18) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fe3cf' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center / 0.7rem no-repeat;
+}
+
+.vol-join__actions {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.vol-join__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 3.1rem;
+    padding: 0 1.4rem;
+    border-radius: 0.95rem;
+    font-weight: 800;
+    color: #062b29;
+    background: #ffffff;
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.vol-join__btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px -12px rgba(0, 0, 0, 0.55);
+}
+
+.vol-join__btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #16a34a;
+}
+
+.vol-join__note {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+/* Mode gelap */
+.dark .vol-eyebrow,
+.dark .vol-role {
+    color: #5fd0b7;
+}
+
+.dark .vol-hamlets li,
+.dark .vol-call {
+    color: #8fe3cf;
+    background: rgba(63, 184, 165, 0.12);
+}
+
+.dark .vol-call:hover {
+    background: rgba(63, 184, 165, 0.2);
+}
+
+.dark .vol-card {
+    box-shadow: none;
+}
+
+.dark .vol-join {
+    background:
+        radial-gradient(30rem 16rem at 100% 0%, rgba(52, 211, 153, 0.16), transparent 70%),
+        linear-gradient(135deg, #0d3f3b 0%, #071a19 100%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vol-card,
+    .vol-join__btn {
+        transition: none;
+    }
+}
