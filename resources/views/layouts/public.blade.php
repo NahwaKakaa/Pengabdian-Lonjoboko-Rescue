@@ -117,7 +117,7 @@
                     </svg>
                 </span>
                 <span class="min-w-0 leading-tight">
-                    <span class="block whitespace-nowrap font-black tracking-tight text-white text-[0.95rem] sm:text-base">LONJOBOKO RESCUE</span>
+                    <span class="block truncate font-black tracking-tight text-white text-[0.95rem] sm:text-base">LONJOBOKO RESCUE</span>
                     <span class="site-logo__sub block text-xs text-river-100 truncate font-semibold">Desa {{ $site['village'] }} Tangguh Bencana</span>
                 </span>
             </a>
@@ -161,12 +161,11 @@
                 <span>Lapor</span>
             </a>
 
-            {{-- Sakelar tampilan siang / malam --}}
+            {{-- Tombol tampilan siang / malam --}}
             <button type="button" id="theme-toggle" class="site-theme-switch" role="switch" aria-checked="false" aria-label="Tampilan malam" title="Ganti ke tampilan malam">
-                <span class="site-theme-switch__stars" aria-hidden="true"></span>
                 <span class="site-theme-switch__knob" aria-hidden="true">
                     <svg class="site-theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>
-                    <svg class="site-theme-switch__moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.3A8.5 8.5 0 019.7 3.5a8.5 8.5 0 1010.8 10.8z"/></svg>
+                    <svg class="site-theme-switch__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 019.7 3.5a8.5 8.5 0 1010.8 10.8z"/></svg>
                 </span>
             </button>
 
