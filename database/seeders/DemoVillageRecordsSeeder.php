@@ -16,21 +16,23 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Data DUMMY untuk melihat tampilan fitur data penduduk, riwayat kejadian,
+ * Data SEMENTARA (dummy) untuk fitur data penduduk, riwayat kejadian,
  * laporan warga, kegiatan Karang Taruna, dan jam layanan faskes.
- * Hanya untuk laptop / presentasi. JANGAN dijalankan di server online.
+ * Data yang sudah ada tidak ditimpa. Semua yang ditambahkan dicatat,
+ * jadi bisa dihapus bersih nanti dengan: php artisan lonjoboko:hapus-data-sementara
  *
- *   php artisan db:seed --class=DemoVillageRecordsSeeder
+ *   php artisan lonjoboko:isi-data-sementara
  */
 class DemoVillageRecordsSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->isProduction()) {
-            $this->command?->error('Seeder dummy ini tidak boleh dijalankan di production.');
-
-            return;
-        }
+        $added = self::recorded();
+        $track = function (string $type, $model) use (&$added) {
+            if ($model->wasRecentlyCreated) {
+                $added[$type][] = $model->getKey();
+            }
+        };
 
         $hamlets = [
             ['Bontoloe', 812, 231, 402, 410, 73, 66, 9, 5, -5.2702, 119.7068],
@@ -39,15 +41,17 @@ class DemoVillageRecordsSeeder extends Seeder
             ['Lantaboko', 598, 169, 296, 302, 49, 47, 6, 2, -5.2738, 119.7552],
         ];
         foreach ($hamlets as $i => [$name, $pop, $kk, $m, $f, $old, $kid, $preg, $dis, $lat, $lng]) {
-            HamletPopulation::updateOrCreate(['name' => $name], [
+            $track('hamlets', HamletPopulation::firstOrCreate(['name' => $name], [
                 'population' => $pop, 'households' => $kk, 'male' => $m, 'female' => $f,
                 'elderly' => $old, 'toddlers' => $kid, 'pregnant' => $preg, 'disabled' => $dis,
                 'location' => ['lat' => $lat, 'lng' => $lng], 'sort_order' => $i + 1,
-            ]);
+            ]));
         }
-        Setting::putMany(['population_source' => 'Data dummy untuk contoh tampilan']);
+        if (! Setting::get('population_source')) {
+            Setting::putMany(['population_source' => self::POPULATION_SOURCE]);
+        }
 
-        $event = DisasterEvent::updateOrCreate(['title' => 'Banjir luapan sungai di Dusun Tombongi'], [
+        $event = DisasterEvent::firstOrCreate(['title' => 'Banjir luapan sungai di Dusun Tombongi'], [
             'hazard_type' => HazardType::Banjir,
             'occurred_on' => '2025-12-28',
             'hamlet' => 'Tombongi',
@@ -58,6 +62,7 @@ class DemoVillageRecordsSeeder extends Seeder
             'source' => 'Laporan kader Karang Taruna',
             'status' => VerificationStatus::Terverifikasi,
         ]);
+        $track('events', $event);
 
         $reports = [
             ['tanda_bahaya', 'Ada retakan tanah baru di kebun belakang rumah, panjangnya sekitar 5 meter, setelah hujan semalam.', 'Bontoloe', 'Dekat Masjid Ar Rahman', 'Daeng Rani', '0812 0000 1111', ReportStatus::Baru, null, null],
@@ -66,11 +71,11 @@ class DemoVillageRecordsSeeder extends Seeder
             ['lainnya', 'Pohon besar miring ke arah rumah warga setelah angin kencang.', 'Lantaboko', null, null, null, ReportStatus::TidakSesuai, 'Sudah dicek, pohon tidak miring, hanya dahannya patah.', 'Dahan sudah dipotong warga, tidak perlu tindak lanjut.'],
         ];
         foreach ($reports as [$kind, $desc, $hamlet, $landmark, $name, $phone, $status, $check, $admin]) {
-            IncidentReport::firstOrCreate(['description' => $desc], [
+            $track('reports', IncidentReport::firstOrCreate(['description' => $desc], [
                 'kind' => $kind, 'hamlet' => $hamlet, 'landmark' => $landmark,
                 'reporter_name' => $name, 'reporter_phone' => $phone,
                 'status' => $status, 'check_note' => $check, 'admin_note' => $admin,
-            ]);
+            ]));
         }
         IncidentReport::where('description', 'like', 'Air sungai naik cepat%')->update(['disaster_event_id' => $event->id]);
 
@@ -95,8 +100,9 @@ class DemoVillageRecordsSeeder extends Seeder
             $activity = Activity::firstOrCreate(['title' => $title], [
                 'held_on' => $date, 'place' => $place, 'description' => $desc, 'is_published' => true,
             ]);
+            $track('activities', $activity);
 
-            if (! $activity->photo) {
+            if ($activity->wasRecentlyCreated && ! $activity->photo) {
                 $set = collect($sets[$n])->map(fn ($i) => $photos[$i - 1]);
                 $activity->update(['photo' => $set->first(), 'gallery' => $set->slice(1)->values()->all()]);
             }
@@ -107,13 +113,53 @@ class DemoVillageRecordsSeeder extends Seeder
         }
 
         Facility::where('category', FacilityCategory::Kesehatan->value)->whereNull('opening_hours')
-            ->each(fn (Facility $f) => $f->update([
-                'opening_hours' => str_contains($f->name, 'Puskesmas')
-                    ? 'Senin–Kamis 08.00–14.00, Jumat 08.00–11.00, Sabtu 08.00–13.00. UGD 24 jam'
-                    : 'Senin–Sabtu 08.00–14.00',
-                'phone' => $f->phone ?: '0812 0000 3333',
-            ]));
+            ->each(function (Facility $f) use (&$added) {
+                $f->update([
+                    'opening_hours' => str_contains($f->name, 'Puskesmas')
+                        ? 'Senin–Kamis 08.00–14.00, Jumat 08.00–11.00, Sabtu 08.00–13.00. UGD 24 jam'
+                        : 'Senin–Sabtu 08.00–14.00',
+                ]);
+                $added['facility_hours'][] = $f->id;
+            });
 
-        $this->command?->info('Data dummy ditambahkan: penduduk 4 dusun, 1 kejadian, 4 laporan warga, 4 kegiatan dengan foto, jam layanan faskes.');
+        Setting::putMany([self::SETTING => json_encode(array_map(fn ($ids) => array_values(array_unique($ids)), $added))]);
+
+        $this->command?->info('Data sementara ditambahkan: penduduk 4 dusun, 1 kejadian, 4 laporan warga, 4 kegiatan dengan foto, jam layanan faskes.');
+    }
+
+    public const SETTING = 'temporary_record_ids';
+
+    public const POPULATION_SOURCE = 'Data sementara, menunggu data resmi dari kantor desa';
+
+    /** @return array<string, list<int>> */
+    public static function recorded(): array
+    {
+        $data = json_decode((string) Setting::get(self::SETTING), true);
+
+        return array_merge(
+            ['hamlets' => [], 'events' => [], 'reports' => [], 'activities' => [], 'facility_hours' => []],
+            is_array($data) ? $data : [],
+        );
+    }
+
+    /** Hapus semua data sementara yang pernah ditambahkan seeder ini. */
+    public static function remove(): int
+    {
+        $ids = self::recorded();
+        $total = HamletPopulation::whereKey($ids['hamlets'])->delete()
+            + IncidentReport::whereKey($ids['reports'])->delete()
+            + DisasterEvent::whereKey($ids['events'])->delete();
+
+        $total += Activity::whereKey($ids['activities'])->delete();
+        Storage::disk('public')->delete(collect(range(1, 8))->map(fn ($i) => "kegiatan/contoh-{$i}.jpg")->all());
+
+        Facility::whereKey($ids['facility_hours'])->update(['opening_hours' => null]);
+
+        if (Setting::get('population_source') === self::POPULATION_SOURCE) {
+            Setting::putMany(['population_source' => null]);
+        }
+        Setting::putMany([self::SETTING => null]);
+
+        return $total;
     }
 }
