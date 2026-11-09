@@ -110,4 +110,27 @@ class SiteSettingsTest extends TestCase
             ->assertSee('Tidak ada peringatan berlaku')
             ->assertSee('lr-auth-page');
     }
+
+    public function test_isi_dan_hapus_data_desa(): void
+    {
+        $this->artisan('lonjoboko:isi-data-desa')->assertSuccessful();
+
+        $this->assertSame(6, \App\Models\AssemblyPoint::count());
+        $this->assertSame(0, \App\Models\HazardZone::where('name', 'like', '[CONTOH]%')->count());
+        $this->assertDatabaseHas('emergency_contacts', ['name' => 'BPBD Kabupaten Gowa']);
+
+        // Tampil di halaman publik, laporan yang belum diverifikasi tidak.
+        $this->get('/peta-risiko')->assertOk()
+            ->assertSee("Lereng Jalan Poros Malino, Mala'lang")
+            ->assertDontSee('Lereng kebun di utara Tombongi');
+        $this->get('/jalur-evakuasi')->assertOk()->assertSee('Masjid Ar Rahman');
+
+        // Tidak mengisi dua kali tanpa --ulang.
+        $this->artisan('lonjoboko:isi-data-desa')->assertFailed();
+
+        $this->artisan('lonjoboko:hapus-data-desa')->assertSuccessful();
+        $this->assertSame(0, \App\Models\AssemblyPoint::count());
+        $this->assertSame(0, \App\Models\EvacuationRoute::count());
+        $this->assertDatabaseHas('emergency_contacts', ['name' => 'BPBD Kabupaten Gowa']);
+    }
 }
