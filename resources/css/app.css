@@ -3437,3 +3437,371 @@ html.lr-theme-fade *::after {
         width: 100%;
     }
 }
+
+/* Panel "cari titik kumpul terdekat" di Jalur Evakuasi */
+.nearest {
+    scroll-margin-top: 7rem;
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--color-safe, #059669) 35%, var(--color-line));
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--color-safe, #059669) 7%, var(--color-card));
+}
+
+@media (min-width: 640px) {
+    .nearest {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        padding: 1.35rem 1.5rem;
+    }
+
+    .nearest__result {
+        grid-column: 1 / -1;
+    }
+}
+
+.nearest__intro {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+}
+
+.nearest__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.85rem;
+    color: #ffffff;
+    background: var(--color-safe, #059669);
+}
+
+.nearest__icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.nearest__intro h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1.3;
+    text-wrap: balance;
+    color: var(--color-ink);
+}
+
+.nearest__intro p {
+    margin-top: 0.2rem;
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+}
+
+.nearest__go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 3.25rem;
+    padding: 0 1.4rem;
+    border-radius: 0.95rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+    background: var(--color-safe, #059669);
+    box-shadow: 0 10px 22px -12px rgba(5, 150, 105, 0.9);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.nearest__go:hover {
+    background: #047857;
+    transform: translateY(-1px);
+}
+
+.nearest__go svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.nearest__go[aria-busy='true'] {
+    opacity: 0.75;
+    pointer-events: none;
+}
+
+.nearest[data-state='idle'] .nearest__result:empty {
+    display: none;
+}
+
+.nearest__result {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+}
+
+.nearest[data-state='done'] .nearest__result {
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+}
+
+.nearest[data-state='error'] .nearest__result {
+    color: #b45309;
+    font-weight: 600;
+}
+
+.nearest__label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-safe, #059669);
+}
+
+.nearest__name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.nearest__meta,
+.nearest__others {
+    color: var(--color-ink-soft);
+}
+
+.nearest__warn {
+    font-weight: 600;
+    color: #b45309;
+}
+
+.nearest__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+}
+
+.nearest__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border-radius: 0.8rem;
+    font-weight: 800;
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+    background: var(--color-card);
+    cursor: pointer;
+}
+
+.nearest__btn--primary {
+    border-color: transparent;
+    color: #ffffff;
+    background: var(--color-safe, #059669);
+}
+
+@media (max-width: 479.98px) {
+    .nearest__go,
+    .nearest__btn {
+        width: 100%;
+    }
+}
+
+.dark .nearest__label { color: #5fd0b7; }
+
+/* ==================================================================
+   Bilah aksi cepat di HP (Telepon · Titik terdekat · Lapor)
+   ================================================================== */
+.quickbar {
+    display: none;
+}
+
+@media (max-width: 1023.98px) {
+    .quickbar {
+        position: fixed;
+        inset: auto 0 0 0;
+        z-index: 40;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+        padding: 0.45rem max(0.6rem, env(safe-area-inset-right, 0px)) calc(0.45rem + env(safe-area-inset-bottom, 0px)) max(0.6rem, env(safe-area-inset-left, 0px));
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(6, 34, 32, 0.96);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 -10px 24px -14px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+        padding-bottom: calc(4.4rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .back-to-top,
+    .net-status {
+        bottom: calc(5.1rem + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+.quickbar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    min-height: 3.1rem;
+    border-radius: 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #e6f4f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.quickbar__item svg {
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+.quickbar__item:hover,
+.quickbar__item[aria-current='page'] {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.quickbar__item:focus-visible {
+    outline: 3px solid #5fd0b7;
+    outline-offset: -3px;
+}
+
+.quickbar__item--call {
+    color: #ffffff;
+    background: #dc2626;
+}
+
+.quickbar__item--call:hover {
+    background: #b91c1c;
+}
+
+.quickbar__item--near svg { color: #6ee7b7; }
+.quickbar__item--report svg { color: #fcd34d; }
+
+/* Lembar nomor telepon */
+.callsheet {
+    width: min(100vw - 1.5rem, 26rem);
+    max-height: 85dvh;
+    margin: auto auto calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    padding: 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.25rem;
+    color: var(--color-ink);
+    background: var(--color-card);
+    box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.55);
+}
+
+@media (min-width: 640px) {
+    .callsheet {
+        margin: auto;
+    }
+}
+
+.callsheet::backdrop {
+    background: rgba(2, 12, 11, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+.callsheet__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.callsheet__head h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.callsheet__close {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+    background: color-mix(in srgb, var(--color-ink) 7%, transparent);
+    cursor: pointer;
+}
+
+.callsheet__close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.callsheet__hint {
+    margin-top: 0.15rem;
+    font-size: 0.88rem;
+    color: var(--color-ink-soft);
+}
+
+.callsheet__list {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+}
+
+.callsheet__list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 3.1rem;
+    padding: 0.55rem 0.95rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.9rem;
+    font-weight: 600;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.callsheet__list a:hover {
+    border-color: #dc2626;
+    background: color-mix(in srgb, #dc2626 6%, var(--color-card));
+}
+
+.callsheet__list span {
+    min-width: 0;
+    font-size: 0.92rem;
+}
+
+.callsheet__list strong {
+    flex-shrink: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #dc2626;
+}
+
+.callsheet__list .callsheet__wa strong {
+    color: #16a34a;
+}
+
+.callsheet__more {
+    display: block;
+    margin-top: 0.85rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-river-600);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.dark .callsheet__list strong { color: #f87171; }
+.dark .callsheet__list .callsheet__wa strong { color: #4ade80; }
+.dark .callsheet__more { color: #5fd0b7; }
+
+/* Di HP tombol Lapor sudah ada di bilah aksi bawah, jadi navbar cukup logo + Menu */
+@media (max-width: 1023.98px) {
+    .site-header .site-report-btn {
+        display: none;
+    }
+}

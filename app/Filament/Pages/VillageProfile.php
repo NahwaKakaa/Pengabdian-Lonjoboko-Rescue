@@ -67,8 +67,6 @@ class VillageProfile extends Page implements HasForms
         'photo_hero',
         'photo_profile',
         'photo_profile_caption',
-        'photo_landscape',
-        'photo_landscape_caption',
     ];
 
     /** @var array<string, mixed> */
@@ -244,12 +242,6 @@ class VillageProfile extends Page implements HasForms
                                     ->schema([
                                         self::photoUpload('photo_profile')->label('Foto'),
                                         TextInput::make('photo_profile_caption')->label('Keterangan foto')->maxLength(120)->placeholder('Contoh: Persawahan Dusun Bontote\'ne'),
-                                    ]),
-                                Section::make('Foto di bagian karakteristik wilayah')
-                                    ->columns(2)
-                                    ->schema([
-                                        self::photoUpload('photo_landscape')->label('Foto'),
-                                        TextInput::make('photo_landscape_caption')->label('Keterangan foto')->maxLength(120)->placeholder('Contoh: Lereng perbukitan di utara desa'),
                                     ]),
                             ]),
 

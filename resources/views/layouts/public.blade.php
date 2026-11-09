@@ -374,6 +374,58 @@
         </div>
     </footer>
 
+    {{-- Bilah aksi cepat di HP: selalu terlihat di bawah layar --}}
+    @php
+        $quickNumbers = collect([
+            ['Panggilan darurat', '112'],
+            ['Ambulans', '119'],
+            ['Basarnas (pencarian & pertolongan)', '115'],
+        ])->merge($footer['contacts']->map(fn ($c) => [$c->name, $c->phone]))->unique(1)->values();
+    @endphp
+    <nav class="quickbar" aria-label="Aksi cepat saat darurat">
+        <button type="button" class="quickbar__item quickbar__item--call" data-quick-call>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>
+            <span>Telepon</span>
+        </button>
+        <a href="{{ route('evacuation') }}#terdekat" class="quickbar__item quickbar__item--near" @if (request()->routeIs('evacuation')) data-quick-near @endif>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            <span>Titik terdekat</span>
+        </a>
+        <a href="{{ route('report') }}" class="quickbar__item quickbar__item--report" @if (request()->routeIs('report')) aria-current="page" @endif>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></svg>
+            <span>Lapor</span>
+        </a>
+    </nav>
+
+    <dialog class="callsheet" id="call-sheet" aria-labelledby="call-sheet-title">
+        <div class="callsheet__head">
+            <h2 id="call-sheet-title">Telepon darurat</h2>
+            <button type="button" class="callsheet__close" data-call-close aria-label="Tutup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+        </div>
+        <p class="callsheet__hint">Tekan nomor untuk langsung menelepon.</p>
+        <ul class="callsheet__list">
+            @foreach ($quickNumbers as [$label, $number])
+                <li>
+                    <a href="{{ \App\Support\Phone::telHref($number) }}">
+                        <span>{{ $label }}</span>
+                        <strong class="num">{{ $number }}</strong>
+                    </a>
+                </li>
+            @endforeach
+            @if ($footer['whatsapp'])
+                <li>
+                    <a href="{{ $footer['whatsapp']['href'] }}" target="_blank" rel="noopener" class="callsheet__wa">
+                        <span>WhatsApp {{ $footer['whatsapp']['label'] }}</span>
+                        <strong class="num">{{ $footer['whatsapp']['number'] }}</strong>
+                    </a>
+                </li>
+            @endif
+        </ul>
+        <a href="{{ route('emergency') }}" class="callsheet__more">Semua nomor &amp; cara melapor</a>
+    </dialog>
+
     {{-- Penanda koneksi: muncul saat offline, dan sekali saat web siap dibuka tanpa internet --}}
     <div id="net-status" class="net-status" role="status" aria-live="polite" hidden>
         <svg class="net-status__off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2l20 20M8.5 16.4a5 5 0 017 0M5 12.9a10 10 0 015.2-2.7M19 12.9a10 10 0 00-2.4-1.7M1.4 9a15 15 0 014.1-2.6M22.6 9A15 15 0 0011 5.1M12 20h.01"/></svg>

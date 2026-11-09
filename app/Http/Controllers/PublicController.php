@@ -46,7 +46,6 @@ class PublicController extends Controller
             ],
             'announcements' => Announcement::published()->latest('published_at')->take(4)->get(),
             'education' => EducationContent::published()->orderBy('sort_order')->latest()->take(3)->get(),
-            'contacts' => EmergencyContact::active()->orderBy('sort_order')->take(4)->get(),
             'hamlets' => $this->hamlets(),
             'latestEvent' => DisasterEvent::verified()->latest('occurred_on')->first(),
         ]);

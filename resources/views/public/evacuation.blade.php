@@ -10,10 +10,27 @@
     <x-page-header
         eyebrow="Jalur evakuasi & titik kumpul"
         title="Ke mana harus pergi saat darurat"
-        intro="Garis merah muda adalah jalur evakuasi menuju titik kumpul (hijau). Tekan “Lokasi saya” untuk melihat posisi Anda dan titik kumpul terdekat."
+        intro="Garis merah muda adalah jalur evakuasi menuju titik kumpul (hijau). Tekan tombol di bawah untuk mencari titik kumpul terdekat dari posisi Anda."
     />
 
     <section class="wrap py-8 grid gap-4">
+        <div class="nearest" id="terdekat" data-nearest data-state="idle">
+            <div class="nearest__intro">
+                <span class="nearest__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/></svg>
+                </span>
+                <div>
+                    <h2>Ke titik kumpul mana saya harus pergi?</h2>
+                    <p>Web memakai GPS HP untuk mencari titik kumpul terdekat dari posisi Anda sekarang.</p>
+                </div>
+            </div>
+            <button type="button" data-locate class="nearest__go">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                Cari titik kumpul terdekat
+            </button>
+            <div class="nearest__result" data-nearest-result aria-live="polite"></div>
+        </div>
+
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Saring jalur menurut jenis bencana">
             <span class="text-xs sm:text-sm font-bold text-ink-soft mr-1">Tampilkan jalur untuk:</span>
             <button type="button" data-route-filter="all" aria-pressed="true" class="filter-chip filter-chip--all">Semua</button>
@@ -28,7 +45,7 @@
         </div>
 
         <div class="map-frame">
-            <div data-lr-map="evacuation" class="h-[62vh] min-h-[380px] max-h-[640px] w-full" role="region" aria-label="Peta jalur evakuasi Desa {{ $site['village'] }}"></div>
+            <div data-lr-map="evacuation" class="h-[52vh] sm:h-[62vh] min-h-[340px] max-h-[640px] w-full" role="region" aria-label="Peta jalur evakuasi Desa {{ $site['village'] }}"></div>
 
             {{-- Kartu Info Petunjuk Jalur Aktif --}}
             <div data-nav-card class="hidden absolute top-4 inset-x-4 sm:inset-x-auto sm:right-4 z-[500] max-w-sm bg-river-950/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-white/20 transition-all">

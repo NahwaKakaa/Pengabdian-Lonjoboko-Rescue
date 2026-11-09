@@ -458,3 +458,25 @@ initScrollEffects();
 initNavHover();
 initNavClick();
 initMobileMenu();
+
+// Bilah aksi cepat di HP: lembar nomor telepon darurat.
+(() => {
+    const sheet = document.getElementById('call-sheet');
+    const open = document.querySelector('[data-quick-call]');
+    if (!sheet || !open || typeof sheet.showModal !== 'function') {
+        open?.addEventListener('click', () => { window.location.href = '/darurat'; });
+        return;
+    }
+    open.addEventListener('click', () => sheet.showModal());
+    sheet.querySelector('[data-call-close]')?.addEventListener('click', () => sheet.close());
+    sheet.addEventListener('click', (event) => { if (event.target === sheet) sheet.close(); });
+
+    // Sudah di halaman Jalur Evakuasi: tombol "Titik terdekat" langsung mencari tanpa memuat ulang.
+    document.querySelector('[data-quick-near]')?.addEventListener('click', (event) => {
+        const go = document.querySelector('[data-nearest] [data-locate]');
+        if (!go) return;
+        event.preventDefault();
+        document.getElementById('terdekat')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        go.click();
+    });
+})();

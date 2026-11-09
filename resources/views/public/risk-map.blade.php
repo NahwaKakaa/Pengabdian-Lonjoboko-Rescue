@@ -54,7 +54,7 @@
         </div>
 
         <div class="map-frame">
-            <div data-lr-map="risk" class="h-[62vh] min-h-[380px] max-h-[640px] w-full" role="region" aria-label="Peta risiko bencana Desa {{ $site['village'] }}"></div>
+            <div data-lr-map="risk" class="h-[52vh] sm:h-[62vh] min-h-[340px] max-h-[640px] w-full" role="region" aria-label="Peta risiko bencana Desa {{ $site['village'] }}"></div>
 
             {{-- Kartu Info Petunjuk Jalur Aktif --}}
             <div data-nav-card class="hidden absolute top-4 inset-x-4 sm:inset-x-auto sm:right-4 z-[500] max-w-sm bg-river-950/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-white/20 transition-all">

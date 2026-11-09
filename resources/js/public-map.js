@@ -221,7 +221,7 @@ function initMap(element) {
     // Arahkan peta ke lingkup wilayah desa bila tersedia, atau ke seluruh data yang ada.
     if (boundaryLayer && boundaryLayer.getLayers().length) {
         try {
-            map.fitBounds(boundaryLayer.getBounds(), { padding: [25, 25] });
+            map.fitBounds(boundaryLayer.getBounds(), { padding: [12, 12] });
         } catch {
             /* fallback */
         }
@@ -529,56 +529,99 @@ function initMap(element) {
 
     // Lokasi saya + titik kumpul terdekat.
     let me = null;
-    document.querySelectorAll('[data-locate]').forEach((button) => {
-        button.addEventListener('click', () => {
-            if (!('geolocation' in navigator)) {
-                if (status) status.textContent = 'Perangkat ini tidak mendukung GPS di browser.';
-                return;
-            }
-            if (status) status.textContent = 'Mencari lokasi Anda…';
+    const finder = document.querySelector('[data-nearest]');
+    const finderSet = (state, html = '') => {
+        if (!finder) return;
+        finder.dataset.state = state;
+        const out = finder.querySelector('[data-nearest-result]');
+        if (out) out.innerHTML = html;
+    };
 
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const here = L.latLng(pos.coords.latitude, pos.coords.longitude);
-                    userLocation = here;
-                    if (me) {
-                        map.removeLayer(me);
-                    }
-                    me = L.featureGroup([
-                        L.circle(here, { radius: pos.coords.accuracy, color: '#2563eb', weight: 1, fillOpacity: 0.1 }),
-                        L.circleMarker(here, { radius: 8, color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }).bindTooltip('Anda di sini'),
-                    ]).addTo(map);
+    const locate = (button) => {
+        if (!('geolocation' in navigator)) {
+            const msg = 'HP ini tidak mendukung GPS di browser. Lihat daftar titik kumpul di bawah peta.';
+            if (status) status.textContent = msg;
+            finderSet('error', `<p>${msg}</p>`);
+            return;
+        }
+        if (status) status.textContent = 'Mencari lokasi Anda…';
+        finderSet('loading', '<p>Mencari lokasi Anda… Pastikan GPS menyala.</p>');
+        document.querySelectorAll('[data-locate]').forEach((b) => b.setAttribute('aria-busy', 'true'));
 
-                    let nearest = null;
-                    (data.points ?? []).forEach((p) => {
-                        const d = here.distanceTo([p.lat, p.lng]);
-                        if (!nearest || d < nearest.d) {
-                            nearest = { p, d };
-                        }
-                    });
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                document.querySelectorAll('[data-locate]').forEach((b) => b.removeAttribute('aria-busy'));
+                const here = L.latLng(pos.coords.latitude, pos.coords.longitude);
+                userLocation = here;
+                if (me) {
+                    map.removeLayer(me);
+                }
+                me = L.featureGroup([
+                    L.circle(here, { radius: pos.coords.accuracy, color: '#2563eb', weight: 1, fillOpacity: 0.1, interactive: false }),
+                    L.circleMarker(here, { radius: 8, color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }).bindTooltip('Anda di sini'),
+                ]).addTo(map);
 
-                    if (nearest) {
-                        map.fitBounds(L.latLngBounds([here, [nearest.p.lat, nearest.p.lng]]), { padding: [50, 50], maxZoom: 17 });
-                        if (status) {
-                            status.textContent = `Titik kumpul terdekat: ${nearest.p.name}, sekitar ${formatDistance(nearest.d)} garis lurus dari posisi Anda. Tekan "Petunjuk Jalur" untuk rute terarah.`;
-                        }
-                    } else {
-                        map.setView(here, 16);
-                        if (status) status.textContent = 'Posisi Anda ditampilkan di peta.';
-                    }
-                },
-                (error) => {
-                    if (status) {
-                        status.textContent =
-                            error.code === error.PERMISSION_DENIED
-                                ? 'Izin lokasi ditolak. Izinkan akses lokasi di pengaturan browser untuk memakai fitur ini.'
-                                : 'Lokasi tidak ditemukan. Pastikan GPS menyala, lalu coba lagi.';
-                    }
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 },
-            );
-        });
+                const ranked = (data.points ?? [])
+                    .map((p) => ({ p, d: here.distanceTo([p.lat, p.lng]) }))
+                    .sort((a, b) => a.d - b.d);
+                const nearest = ranked[0];
+
+                if (!nearest) {
+                    map.setView(here, 16);
+                    if (status) status.textContent = 'Posisi Anda ditampilkan di peta.';
+                    finderSet('error', '<p>Belum ada titik kumpul yang tercatat. Ikuti arahan aparat desa.</p>');
+                    return;
+                }
+
+                // Lebih dari 5 km: kemungkinan sedang tidak berada di desa.
+                const far = nearest.d > 5000;
+                const gmaps = (p) => `https://www.google.com/maps/dir/?api=1&origin=${here.lat},${here.lng}&destination=${p.lat},${p.lng}&travelmode=walking`;
+
+                finderSet(
+                    'done',
+                    `<p class="nearest__label">Titik kumpul terdekat</p>
+                    <p class="nearest__name">${escapeHtml(nearest.p.name)}</p>
+                    <p class="nearest__meta">${formatDistance(nearest.d)} garis lurus · ±${walkingMinutes(nearest.d)} menit jalan kaki${nearest.p.capacity ? ` · daya tampung ±${nearest.p.capacity} orang` : ''}</p>
+                    ${far ? '<p class="nearest__warn">Anda tampaknya sedang di luar Desa Lonjoboko, jadi jaraknya jauh.</p>' : ''}
+                    <div class="nearest__actions">
+                        <a class="nearest__btn nearest__btn--primary" href="${gmaps(nearest.p)}" target="_blank" rel="noopener">Buka petunjuk arah</a>
+                        <button type="button" class="nearest__btn" data-nearest-route data-lat="${nearest.p.lat}" data-lng="${nearest.p.lng}" data-name="${escapeHtml(nearest.p.name)}">Lihat rute di peta</button>
+                    </div>
+                    ${ranked.length > 1 ? `<p class="nearest__others">Pilihan lain: ${ranked.slice(1, 3).map((r) => `${escapeHtml(r.p.name)} (${formatDistance(r.d)})`).join(' · ')}</p>` : ''}`,
+                );
+
+                map.fitBounds(L.latLngBounds([here, [nearest.p.lat, nearest.p.lng]]), { padding: [50, 50], maxZoom: 17 });
+                if (status) {
+                    status.textContent = `Titik kumpul terdekat: ${nearest.p.name}, sekitar ${formatDistance(nearest.d)} dari posisi Anda.`;
+                }
+            },
+            (error) => {
+                document.querySelectorAll('[data-locate]').forEach((b) => b.removeAttribute('aria-busy'));
+                const msg =
+                    error.code === error.PERMISSION_DENIED
+                        ? 'Izin lokasi ditolak. Izinkan akses lokasi untuk web ini di pengaturan browser, lalu coba lagi. Atau lihat daftar titik kumpul di bawah.'
+                        : 'Lokasi tidak ditemukan. Nyalakan GPS dan coba di tempat terbuka. Atau lihat daftar titik kumpul di bawah.';
+                if (status) status.textContent = msg;
+                finderSet('error', `<p>${msg}</p>`);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 },
+        );
+    };
+
+    document.querySelectorAll('[data-locate]').forEach((button) => button.addEventListener('click', () => locate(button)));
+
+    finder?.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-nearest-route]');
+        if (!btn) return;
+        routeToTarget(Number(btn.dataset.lat), Number(btn.dataset.lng), btn.dataset.name);
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
+
+    // Dibuka dari tombol "Titik terdekat" di bilah bawah: langsung cari.
+    if (finder && location.hash === '#terdekat') {
+        finder.scrollIntoView({ block: 'start' });
+        locate();
+    }
 
     // Tombol "Lingkup Desa" untuk memusatkan kembali ke batas Desa Lonjoboko.
     document.querySelectorAll('[data-fit-village]').forEach((button) => {

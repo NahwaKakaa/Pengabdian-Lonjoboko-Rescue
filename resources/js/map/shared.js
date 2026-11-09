@@ -19,21 +19,24 @@ export function round6(value) {
     return Math.round(Number(value) * 1e6) / 1e6;
 }
 
-export function createBaseMap(element, { center, zoom, tileUrl, attribution, scrollWheelZoom = true, boundary = null }) {
+export function createBaseMap(element, { center, zoom, tileUrl, attribution, scrollWheelZoom = true, boundaryOverlay = null }) {
     const map = L.map(element, { 
         scrollWheelZoom: true,
         doubleClickZoom: true,
         touchZoom: true,
         boxZoom: true,
         zoomControl: true,
+        // Langkah zoom setengah supaya wilayah desa mengisi peta lebih penuh.
+        zoomSnap: 0.5,
     }).setView([center.lat, center.lng], zoom);
 
     // crossOrigin: ubin bisa disimpan service worker untuk dibuka offline.
     L.tileLayer(tileUrl, { attribution, maxZoom: 19, crossOrigin: true }).addTo(map);
 
     // Lingkup area desa sebagai latar (tidak bisa diklik, tidak ikut tergambar/tersnap).
-    if (boundary) {
-        map.lrBoundary = addBoundaryOverlay(map, boundary);
+    // Hanya peta form admin yang mengirim boundaryOverlay; peta publik menggambar batasnya sendiri.
+    if (boundaryOverlay) {
+        map.lrBoundary = addBoundaryOverlay(map, boundaryOverlay);
     }
 
     // Peta di dalam tab, modal, atau bagian yang dilipat perlu dihitung ulang ukurannya.
