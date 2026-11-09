@@ -37,6 +37,15 @@
                         <li>Pemerintah desa menindaklanjuti dan mengumumkan bila perlu.</li>
                         <li>Tetap jauhi lokasi berbahaya sambil menunggu.</li>
                     </ol>
+                    @if ($whatsappHref)
+                        <div class="rep-wa">
+                            <p><strong>Agar lebih cepat ditanggapi,</strong> kirim juga ringkasan laporan ini ke WhatsApp Posko Desa. Pesannya sudah terisi, tinggal tekan kirim.</p>
+                            <a href="{{ $whatsappHref }}" target="_blank" rel="noopener" class="rep-wa__btn">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 01-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3 1 2.5c.1.2 1.6 2.5 4 3.5 1.5.6 2 .7 2.8.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>
+                                Kirim juga ke WA Posko
+                            </a>
+                        </div>
+                    @endif
                     <a href="{{ route('report') }}" class="action-link mt-2"><span>Kirim laporan lain</span></a>
                 </div>
             </div>

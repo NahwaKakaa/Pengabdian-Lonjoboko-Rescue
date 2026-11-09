@@ -3389,3 +3389,51 @@ html.lr-theme-fade *::after {
 .dark .rep-urgent a { color: #fca5a5; }
 .dark .rep-urgent svg { color: #fca5a5; }
 .dark .rep-errors { color: #fca5a5; }
+
+/* Tombol kirim ringkasan laporan ke WhatsApp Posko */
+.rep-wa {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0 0.5rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid color-mix(in srgb, #16a34a 35%, var(--color-line));
+    border-radius: 1rem;
+    background: color-mix(in srgb, #16a34a 8%, var(--color-card));
+}
+
+.rep-wa p {
+    font-size: 0.92rem;
+    color: var(--color-ink);
+}
+
+.rep-wa__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: fit-content;
+    min-height: 2.9rem;
+    padding: 0 1.25rem;
+    border-radius: 0.85rem;
+    font-weight: 800;
+    color: #ffffff;
+    background: #16a34a;
+    box-shadow: 0 8px 18px -10px rgba(22, 163, 74, 0.8);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.rep-wa__btn:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+}
+
+.rep-wa__btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+@media (max-width: 479.98px) {
+    .rep-wa__btn {
+        width: 100%;
+    }
+}

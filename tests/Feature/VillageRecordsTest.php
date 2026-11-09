@@ -5,14 +5,17 @@ namespace Tests\Feature;
 use App\Enums\HazardType;
 use App\Enums\ReportStatus;
 use App\Enums\VerificationStatus;
+use App\Mail\NewIncidentReport;
 use App\Models\Activity;
 use App\Models\DisasterEvent;
 use App\Models\Facility;
 use App\Models\HamletPopulation;
 use App\Models\IncidentReport;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -166,5 +169,41 @@ class VillageRecordsTest extends TestCase
             ->assertSee('kegiatan/c.jpg');
 
         $this->get(route('activity.show', $draft))->assertNotFound();
+    }
+
+    public function test_laporan_dikirim_ke_email_dan_muncul_tombol_wa_posko(): void
+    {
+        Mail::fake();
+        Storage::fake('public');
+        Setting::putMany(['report_emails' => 'desa@contoh.test, kt@contoh.test, bukan-email', 'whatsapp_number' => '0812 3456 7890']);
+
+        $this->followingRedirects()->post(route('report.store'), [
+            'kind' => 'longsor',
+            'description' => 'Tanah tebing jatuh ke jalan dekat jembatan.',
+            'hamlet' => 'Galesong',
+            'lat' => '-5.2655', 'lng' => '119.7224',
+            'photo' => UploadedFile::fake()->image('tebing.jpg'),
+        ])->assertOk()
+            ->assertSee('Kirim juga ke WA Posko')
+            ->assertSee('https://wa.me/6281234567890?text=', false);
+
+        $report = IncidentReport::firstOrFail();
+        Mail::assertSent(NewIncidentReport::class, function (NewIncidentReport $mail) use ($report) {
+            $mail->assertSeeInHtml($report->code);
+            $mail->assertSeeInHtml('Galesong');
+
+            return $mail->hasTo('desa@contoh.test') && $mail->hasTo('kt@contoh.test')
+                && ! $mail->hasTo('bukan-email') && count($mail->attachments()) === 1;
+        });
+    }
+
+    public function test_tanpa_email_penerima_tidak_ada_email(): void
+    {
+        Mail::fake();
+
+        $this->post(route('report.store'), ['kind' => 'banjir', 'description' => 'Air sungai naik ke jalan dusun.']);
+
+        $this->assertSame(1, IncidentReport::count());
+        Mail::assertNothingSent();
     }
 }

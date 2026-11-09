@@ -7,6 +7,7 @@ use App\Enums\EducationCategory;
 use App\Enums\FacilityCategory;
 use App\Enums\HazardType;
 use App\Enums\ReportKind;
+use App\Mail\NewIncidentReport;
 use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\AssemblyPoint;
@@ -20,11 +21,14 @@ use App\Models\HazardZone;
 use App\Models\IncidentReport;
 use App\Models\Setting;
 use App\Models\Volunteer;
+use App\Support\Phone;
 use App\Support\PosterMap;
 use App\Support\VillageBoundary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -157,7 +161,10 @@ class PublicController extends Controller
     /** Formulir lapor kejadian untuk warga (tanpa akun). */
     public function reportForm(): View
     {
+        $sent = IncidentReport::where('code', session('reported'))->first();
+
         return view('public.report', [
+            'whatsappHref' => $sent ? $this->reportWhatsappHref($sent) : null,
             'kinds' => ReportKind::cases(),
             'hamletNames' => HamletPopulation::orderBy('sort_order')->pluck('name')
                 ->whenEmpty(fn () => collect(['Bontoloe', 'Galesong', 'Tombongi', 'Lantaboko'])),
@@ -202,7 +209,47 @@ class PublicController extends Controller
             'ip_hash' => hash('sha256', (string) $request->ip().config('app.key')),
         ]);
 
+        $this->emailReport($report);
+
         return redirect()->route('report')->with('reported', $report->code);
+    }
+
+    /** Kirim email ke penerima di Profil Desa, setelah halaman sudah dikirim ke warga. */
+    private function emailReport(IncidentReport $report): void
+    {
+        $recipients = Setting::reportEmails();
+
+        if ($recipients === []) {
+            return;
+        }
+
+        dispatch(function () use ($report, $recipients) {
+            try {
+                Mail::to($recipients)->send(new NewIncidentReport($report));
+            } catch (\Throwable $e) {
+                // Laporan tetap tersimpan walau email gagal; cek di menu Laporan Warga.
+                Log::warning('Email laporan warga gagal dikirim', ['code' => $report->code, 'error' => $e->getMessage()]);
+            }
+        })->afterResponse();
+    }
+
+    /** Tautan WhatsApp ke posko dengan ringkasan laporan yang sudah terisi. */
+    private function reportWhatsappHref(IncidentReport $report): ?string
+    {
+        $number = Setting::get('whatsapp_number')
+            ?: EmergencyContact::active()->where('is_whatsapp', true)->orderBy('sort_order')->value('phone');
+
+        $lines = array_filter([
+            'Halo Posko Desa, saya baru mengirim laporan lewat web LONJOBOKO RESCUE.',
+            "Nomor laporan: {$report->code}",
+            'Kejadian: '.$report->kind->getLabel(),
+            $report->hamlet ? "Dusun: {$report->hamlet}" : null,
+            $report->landmark ? "Patokan: {$report->landmark}" : null,
+            $report->location ? "Lokasi: https://www.google.com/maps?q={$report->location['lat']},{$report->location['lng']}" : null,
+            "Cerita: {$report->description}",
+        ]);
+
+        return Phone::whatsappHref($number, implode("\n", $lines));
     }
 
     /** @return Collection<int, HamletPopulation> */

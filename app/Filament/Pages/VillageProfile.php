@@ -6,6 +6,7 @@ use App\Filament\Resources\EmergencyContactResource;
 use App\Models\Setting;
 use App\Support\SafetyGuide;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -18,6 +19,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -57,6 +59,7 @@ class VillageProfile extends Page implements HasForms
         'maps_url',
         'landscape_note',
         'population_source',
+        'report_emails',
         'safety_first_steps',
         'safety_flood_steps',
         'safety_landslide_steps',
@@ -121,50 +124,72 @@ class VillageProfile extends Page implements HasForms
                                             ->helperText('Tampil di bar atas dan bagian paling bawah web. Tulis yang benar-benar sesuai keadaan desa.')
                                             ->columnSpanFull(),
                                     ]),
-                                    Section::make('Kontak & lokasi di footer web')
-                                        ->description(new HtmlString(
-                                            'Tampil di bagian bawah setiap halaman publik. Daftar nomor darurat di footer diatur di menu '
-                                            .'<a href="'.EmergencyContactResource::getUrl().'" class="font-semibold text-primary-600 underline dark:text-primary-400">Kontak Darurat</a>.'
-                                        ))
-                                        ->columns(2)
-                                        ->schema([
-                                            TextInput::make('whatsapp_number')
-                                                ->label('Nomor WhatsApp desa')
-                                                ->tel()
-                                                ->maxLength(30)
-                                                ->placeholder('0812xxxxxxxx')
-                                                ->helperText('Untuk warga melapor atau bertanya. Kalau kosong, dipakai kontak darurat pertama yang punya WhatsApp.'),
-                                            TextInput::make('whatsapp_label')
-                                                ->label('Nama pemegang nomor')
-                                                ->maxLength(80)
-                                                ->placeholder('Posko Desa Lonjoboko'),
-                                            TextInput::make('maps_url')
-                                                ->label('Tautan Google Maps kantor desa (opsional)')
-                                                ->url()
-                                                ->maxLength(500)
-                                                ->placeholder('https://maps.app.goo.gl/...')
-                                                ->helperText('Buka lokasi kantor desa di Google Maps, tekan Bagikan, lalu salin tautannya ke sini.')
-                                                ->columnSpan(2),
-                                        ]),
+                                Section::make('Kontak & lokasi di footer web')
+                                    ->description(new HtmlString(
+                                        'Tampil di bagian bawah setiap halaman publik. Daftar nomor darurat di footer diatur di menu '
+                                        .'<a href="'.EmergencyContactResource::getUrl().'" class="font-semibold text-primary-600 underline dark:text-primary-400">Kontak Darurat</a>.'
+                                    ))
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('whatsapp_number')
+                                            ->label('Nomor WhatsApp desa')
+                                            ->tel()
+                                            ->maxLength(30)
+                                            ->placeholder('0812xxxxxxxx')
+                                            ->helperText('Untuk warga melapor atau bertanya. Kalau kosong, dipakai kontak darurat pertama yang punya WhatsApp.'),
+                                        TextInput::make('whatsapp_label')
+                                            ->label('Nama pemegang nomor')
+                                            ->maxLength(80)
+                                            ->placeholder('Posko Desa Lonjoboko'),
+                                        TextInput::make('maps_url')
+                                            ->label('Tautan Google Maps kantor desa (opsional)')
+                                            ->url()
+                                            ->maxLength(500)
+                                            ->placeholder('https://maps.app.goo.gl/...')
+                                            ->helperText('Buka lokasi kantor desa di Google Maps, tekan Bagikan, lalu salin tautannya ke sini.')
+                                            ->columnSpan(2),
+                                    ]),
+                                Section::make('Pemberitahuan laporan warga')
+                                    ->description('Setiap ada laporan baru dari tombol Lapor, isinya (dan fotonya) dikirim ke email ini.')
+                                    ->schema([
+                                        TextInput::make('report_emails')
+                                            ->label('Email penerima laporan')
+                                            ->maxLength(500)
+                                            ->placeholder('desa@contoh.id, ketua.kt@gmail.com')
+                                            ->helperText('Boleh lebih dari satu, pisahkan dengan koma. Kosongkan bila tidak ingin dikirimi email.')
+                                            ->rule(fn () => function (string $attribute, $value, \Closure $fail) {
+                                                foreach (preg_split('/[\s,;]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) as $email) {
+                                                    if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                                        $fail("Alamat email \"{$email}\" tidak valid.");
+                                                    }
+                                                }
+                                            })
+                                            ->hintAction(
+                                                FormAction::make('testEmail')
+                                                    ->label('Kirim email uji')
+                                                    ->icon('heroicon-m-paper-airplane')
+                                                    ->action(fn () => $this->sendTestEmail()),
+                                            ),
+                                    ]),
                             ]),
 
                         Tab::make('Teks Beranda')
                             ->icon('heroicon-m-document-text')
                             ->schema([
-                                    Section::make('Teks di Beranda')
-                                        ->schema([
-                                            Textarea::make('village_profile')
-                                                ->label('Profil singkat desa')
-                                                ->rows(4)
-                                                ->helperText('Gambaran wilayah: letak, jumlah dusun, sungai atau lereng di sekitar desa.'),
-                                            Textarea::make('program_description')
-                                                ->label('Tentang program LONJOBOKO RESCUE')
-                                                ->rows(4),
-                                            Textarea::make('population_note')
-                                                ->label('Catatan kelompok rentan')
-                                                ->rows(3)
-                                                ->helperText('Tulis secara umum per wilayah, misalnya "banyak lansia di Dusun A". Jangan menulis nama atau alamat perorangan.'),
-                                        ]),
+                                Section::make('Teks di Beranda')
+                                    ->schema([
+                                        Textarea::make('village_profile')
+                                            ->label('Profil singkat desa')
+                                            ->rows(4)
+                                            ->helperText('Gambaran wilayah: letak, jumlah dusun, sungai atau lereng di sekitar desa.'),
+                                        Textarea::make('program_description')
+                                            ->label('Tentang program LONJOBOKO RESCUE')
+                                            ->rows(4),
+                                        Textarea::make('population_note')
+                                            ->label('Catatan kelompok rentan')
+                                            ->rows(3)
+                                            ->helperText('Tulis secara umum per wilayah, misalnya "banyak lansia di Dusun A". Jangan menulis nama atau alamat perorangan.'),
+                                    ]),
                             ]),
 
                         Tab::make('Panduan keselamatan')
@@ -231,13 +256,13 @@ class VillageProfile extends Page implements HasForms
                         Tab::make('Info darurat')
                             ->icon('heroicon-m-exclamation-triangle')
                             ->schema([
-                                    Section::make('Menu Informasi Darurat')
-                                        ->schema([
-                                            Textarea::make('report_instructions')
-                                                ->label('Cara melaporkan kejadian bencana')
-                                                ->rows(5)
-                                                ->helperText('Satu langkah per baris. Akan ditampilkan sebagai daftar bernomor.'),
-                                        ]),
+                                Section::make('Menu Informasi Darurat')
+                                    ->schema([
+                                        Textarea::make('report_instructions')
+                                            ->label('Cara melaporkan kejadian bencana')
+                                            ->rows(5)
+                                            ->helperText('Satu langkah per baris. Akan ditampilkan sebagai daftar bernomor.'),
+                                    ]),
                             ]),
                     ]),
             ]);
@@ -272,5 +297,34 @@ class VillageProfile extends Page implements HasForms
         Setting::putMany($state);
 
         Notification::make()->title('Profil desa disimpan')->success()->send();
+    }
+
+    /** Uji pengaturan email hosting dengan alamat yang sedang diisi (sebelum disimpan). */
+    public function sendTestEmail(): void
+    {
+        $emails = collect(preg_split('/[\s,;]+/', (string) ($this->data['report_emails'] ?? ''), -1, PREG_SPLIT_NO_EMPTY))
+            ->filter(fn ($e) => filter_var($e, FILTER_VALIDATE_EMAIL))->values()->all();
+
+        if ($emails === []) {
+            Notification::make()->title('Isi dulu alamat email penerima')->warning()->send();
+
+            return;
+        }
+
+        try {
+            Mail::raw(
+                "Email uji dari web LONJOBOKO RESCUE.\n\nBila email ini sampai, laporan warga dari tombol Lapor juga akan dikirim ke alamat ini. Jangan lupa tekan Simpan di halaman Profil Desa.",
+                fn ($message) => $message->to($emails)->subject('Uji email laporan warga - LONJOBOKO RESCUE'),
+            );
+        } catch (\Throwable $e) {
+            Notification::make()->title('Email gagal dikirim')
+                ->body('Periksa pengaturan MAIL di file .env server. Pesan: '.str($e->getMessage())->limit(160))
+                ->danger()->persistent()->send();
+
+            return;
+        }
+
+        Notification::make()->title('Email uji dikirim ke '.implode(', ', $emails))
+            ->body('Cek kotak masuk dan folder Spam.')->success()->send();
     }
 }

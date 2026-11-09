@@ -34,4 +34,16 @@ class Setting extends Model
 
         Cache::forget(self::CACHE_KEY);
     }
+
+    /**
+     * Alamat email penerima laporan warga (Profil Desa), dipisah koma.
+     *
+     * @return list<string>
+     */
+    public static function reportEmails(): array
+    {
+        return collect(preg_split('/[\s,;]+/', (string) static::get('report_emails')))
+            ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
+            ->unique()->values()->all();
+    }
 }
