@@ -45,9 +45,14 @@ class ActivityResource extends Resource
                 TextInput::make('place')->label('Tempat')->maxLength(150)->placeholder('Contoh: Halaman Kantor Desa'),
                 Textarea::make('description')->label('Cerita singkat kegiatan')->rows(4)->columnSpanFull()
                     ->helperText('Apa yang dilakukan, siapa saja yang ikut, dan hasilnya.'),
-                FileUpload::make('photo')->label('Foto kegiatan')->image()->directory('kegiatan')->maxSize(6144)
-                    ->imageResizeMode('contain')->imageResizeTargetWidth('1600')->imageResizeUpscale(false),
-                Toggle::make('is_published')->label('Tampilkan di web')->default(true)->inline(false),
+                FileUpload::make('photo')->label('Foto utama')->image()->directory('kegiatan')->maxSize(6144)
+                    ->imageResizeMode('contain')->imageResizeTargetWidth('1600')->imageResizeUpscale(false)
+                    ->helperText('Tampil di kartu kegiatan halaman Relawan.'),
+                FileUpload::make('gallery')->label('Foto lainnya')->image()->multiple()->reorderable()->maxFiles(8)
+                    ->directory('kegiatan')->maxSize(6144)->panelLayout('grid')
+                    ->imageResizeMode('contain')->imageResizeTargetWidth('1600')->imageResizeUpscale(false)
+                    ->helperText('Paling banyak 8 foto. Tampil di halaman detail kegiatan.'),
+                Toggle::make('is_published')->label('Tampilkan di web')->default(true)->inline(false)->columnSpanFull(),
             ]);
     }
 
@@ -64,6 +69,9 @@ class ActivityResource extends Resource
             ])
             ->defaultSort('held_on', 'desc')
             ->actions([
+                Tables\Actions\Action::make('lihat')->label('Lihat di web')->icon('heroicon-o-arrow-top-right-on-square')
+                    ->url(fn (Activity $record) => route('activity.show', $record), shouldOpenInNewTab: true)
+                    ->visible(fn (Activity $record) => $record->is_published),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

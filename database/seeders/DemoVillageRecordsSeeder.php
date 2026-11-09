@@ -13,6 +13,7 @@ use App\Models\HamletPopulation;
 use App\Models\IncidentReport;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Data DUMMY untuk melihat tampilan fitur data penduduk, riwayat kejadian,
@@ -79,10 +80,30 @@ class DemoVillageRecordsSeeder extends Seeder
             ['Sosialisasi web LONJOBOKO RESCUE', '2026-09-27', 'Kantor Desa Lonjoboko', 'Kader mengajari warga membuka web, melihat peta rawan, dan mengirim laporan lewat tombol Lapor.'],
             ['Pendataan warga rentan per dusun', '2026-09-13', 'Semua dusun', 'Kader mendata lansia, balita, ibu hamil, dan penyandang disabilitas supaya diprioritaskan saat evakuasi.'],
         ];
-        foreach ($activities as [$title, $date, $place, $desc]) {
-            Activity::firstOrCreate(['title' => $title], [
+        // Foto contoh (pemandangan desa), disalin ke storage supaya tampil di web.
+        $photos = collect(range(1, 8))->map(function (int $i) {
+            $path = "kegiatan/contoh-{$i}.jpg";
+            if (! Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->put($path, file_get_contents(__DIR__."/demo-foto/kegiatan-{$i}.jpg"));
+            }
+
+            return $path;
+        });
+        $sets = [[1, 2, 7, 8], [3, 4, 5], [5, 6, 1], [7, 8, 3, 4, 2]];
+
+        foreach ($activities as $n => [$title, $date, $place, $desc]) {
+            $activity = Activity::firstOrCreate(['title' => $title], [
                 'held_on' => $date, 'place' => $place, 'description' => $desc, 'is_published' => true,
             ]);
+
+            if (! $activity->photo) {
+                $set = collect($sets[$n])->map(fn ($i) => $photos[$i - 1]);
+                $activity->update(['photo' => $set->first(), 'gallery' => $set->slice(1)->values()->all()]);
+            }
+        }
+
+        if (! file_exists(public_path('storage'))) {
+            $this->command?->call('storage:link');
         }
 
         Facility::where('category', FacilityCategory::Kesehatan->value)->whereNull('opening_hours')
@@ -93,6 +114,6 @@ class DemoVillageRecordsSeeder extends Seeder
                 'phone' => $f->phone ?: '0812 0000 3333',
             ]));
 
-        $this->command?->info('Data dummy ditambahkan: penduduk 4 dusun, 1 kejadian, 4 laporan warga, 4 kegiatan, jam layanan faskes.');
+        $this->command?->info('Data dummy ditambahkan: penduduk 4 dusun, 1 kejadian, 4 laporan warga, 4 kegiatan dengan foto, jam layanan faskes.');
     }
 }

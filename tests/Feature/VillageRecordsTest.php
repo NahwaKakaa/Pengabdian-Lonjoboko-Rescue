@@ -145,4 +145,26 @@ class VillageRecordsTest extends TestCase
         $this->get(route('emergency'))->assertSee('Fasilitas kesehatan')->assertSee('Senin–Sabtu 08.00–14.00');
         $this->actingAs($kader)->get('/admin/activities')->assertOk();
     }
+
+    public function test_detail_kegiatan_menampilkan_foto_dan_bisa_dibuka_dari_kartu(): void
+    {
+        $activity = Activity::create([
+            'title' => 'Simulasi evakuasi longsor', 'held_on' => '2026-11-01', 'place' => 'Kantor Desa',
+            'description' => 'Warga berlatih menuju titik kumpul.',
+            'photo' => 'kegiatan/a.jpg', 'gallery' => ['kegiatan/b.jpg', 'kegiatan/c.jpg'],
+        ]);
+        $draft = Activity::create(['title' => 'Draf', 'held_on' => '2026-11-02', 'is_published' => false]);
+
+        $this->get(route('volunteers'))
+            ->assertSee(route('activity.show', $activity))
+            ->assertSee('3 foto');
+
+        $this->get(route('activity.show', $activity))
+            ->assertOk()
+            ->assertSee('Simulasi evakuasi longsor')
+            ->assertSee('Warga berlatih menuju titik kumpul.')
+            ->assertSee('kegiatan/c.jpg');
+
+        $this->get(route('activity.show', $draft))->assertNotFound();
+    }
 }

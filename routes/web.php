@@ -12,6 +12,7 @@ Route::controller(PublicController::class)->group(function () {
     Route::get('/darurat', 'emergency')->name('emergency');
     Route::get('/informasi/{announcement:slug}', 'announcementShow')->name('announcement.show');
     Route::get('/relawan', 'volunteers')->name('volunteers');
+    Route::get('/kegiatan/{activity}', 'activityShow')->name('activity.show');
     Route::get('/poster', 'poster')->name('poster');
     Route::get('/riwayat-kejadian', 'history')->name('history');
     Route::get('/lapor', 'reportForm')->name('report');

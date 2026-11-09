@@ -5,17 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 /** Kegiatan kesiapsiagaan Karang Taruna (sosialisasi, simulasi, cek jalur). */
 class Activity extends Model
 {
-    protected $fillable = ['title', 'held_on', 'place', 'description', 'photo', 'is_published'];
+    protected $fillable = ['title', 'held_on', 'place', 'description', 'photo', 'gallery', 'is_published'];
 
     protected function casts(): array
     {
         return [
             'held_on' => 'date',
             'is_published' => 'boolean',
+            'gallery' => 'array',
         ];
     }
 
@@ -29,6 +31,23 @@ class Activity extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);
+    }
+
+    /** Foto utama, atau foto pertama galeri bila foto utama kosong. */
+    public function coverUrl(): ?string
+    {
+        $path = $this->photo ?: ($this->gallery[0] ?? null);
+
+        return $path ? Storage::disk('public')->url($path) : null;
+    }
+
+    /** Semua foto kegiatan (foto utama lalu galeri), tanpa duplikat. */
+    public function photoUrls(): array
+    {
+        return collect([$this->photo, ...($this->gallery ?? [])])
+            ->filter()->unique()->values()
+            ->map(fn (string $path) => Storage::disk('public')->url($path))
+            ->all();
     }
 
     public function creator(): BelongsTo

@@ -132,6 +132,17 @@ class PublicController extends Controller
         ]);
     }
 
+    /** Detail satu kegiatan Karang Taruna beserta fotonya. */
+    public function activityShow(Activity $activity): View
+    {
+        abort_unless($activity->is_published, 404);
+
+        return view('public.activity-show', [
+            'activity' => $activity,
+            'others' => Activity::published()->whereKeyNot($activity->getKey())->latest('held_on')->take(3)->get(),
+        ]);
+    }
+
     /** Riwayat kejadian bencana yang sudah diverifikasi, beserta jumlah korban. */
     public function history(): View
     {

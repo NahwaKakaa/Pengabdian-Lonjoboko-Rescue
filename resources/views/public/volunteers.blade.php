@@ -165,18 +165,7 @@
         @else
             <ul class="act-grid">
                 @foreach ($activities as $activity)
-                    <li class="act-card">
-                        @if ($activity->photo)
-                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($activity->photo) }}" alt="" loading="lazy" class="act-card__img">
-                        @endif
-                        <div class="act-card__body">
-                            <p class="act-card__date">{{ $activity->held_on->translatedFormat('j F Y') }}@if ($activity->place) · {{ $activity->place }}@endif</p>
-                            <h3 class="act-card__title">{{ $activity->title }}</h3>
-                            @if ($activity->description)
-                                <p class="act-card__text">{{ \Illuminate\Support\Str::limit($activity->description, 220) }}</p>
-                            @endif
-                        </div>
-                    </li>
+                    @include('public.partials.activity-card', ['activity' => $activity])
                 @endforeach
             </ul>
         @endif

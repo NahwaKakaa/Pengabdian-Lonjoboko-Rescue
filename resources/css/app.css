@@ -2532,23 +2532,90 @@ html.lr-theme-fade *::after {
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
 }
 
+.act-grid > li {
+    display: flex;
+}
+
 .act-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     overflow: hidden;
     border: 1px solid var(--color-line);
     border-radius: 1.2rem;
     background: var(--color-card);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.act-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--color-river-600) 45%, var(--color-line));
+    box-shadow: 0 14px 30px -18px rgba(6, 43, 41, 0.45);
+}
+
+.act-card:focus-visible {
+    outline: 3px solid #5fd0b7;
+    outline-offset: 3px;
+}
+
+.act-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-river-600) 12%, var(--color-card));
 }
 
 .act-card__img {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.act-card:hover .act-card__img {
+    transform: scale(1.04);
+}
+
+.act-card__placeholder {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: color-mix(in srgb, var(--color-river-600) 55%, transparent);
+}
+
+.act-card__placeholder svg {
+    width: 2.75rem;
+    height: 2.75rem;
+}
+
+.act-card__count {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(4, 24, 23, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.act-card__count svg {
+    width: 0.85rem;
+    height: 0.85rem;
 }
 
 .act-card__body {
-    display: grid;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     gap: 0.35rem;
-    padding: 1rem 1.15rem 1.2rem;
+    padding: 1rem 1.15rem 1.15rem;
 }
 
 .act-card__date {
@@ -2568,7 +2635,233 @@ html.lr-theme-fade *::after {
     color: var(--color-ink-soft);
 }
 
-.dark .act-card__date { color: #5fd0b7; }
+.act-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-river-600);
+}
+
+.act-card__more svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    transition: transform 0.2s ease;
+}
+
+.act-card:hover .act-card__more svg {
+    transform: translateX(3px);
+}
+
+.dark .act-card__date,
+.dark .act-card__more { color: #5fd0b7; }
+
+/* Detail kegiatan */
+.act-detail {
+    display: grid;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.5rem;
+    background: var(--color-card);
+}
+
+@media (min-width: 640px) {
+    .act-detail {
+        padding: 2.25rem;
+    }
+}
+
+.act-detail__head {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.act-detail__eyebrow {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-river-600);
+}
+
+.act-detail__title {
+    font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--color-ink);
+}
+
+.act-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+}
+
+.act-detail__meta li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.act-detail__meta svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-river-600);
+}
+
+.act-detail__cover {
+    display: block;
+    overflow: hidden;
+    border-radius: 1rem;
+    cursor: zoom-in;
+}
+
+.act-detail__cover img {
+    width: 100%;
+    max-height: 32rem;
+    object-fit: cover;
+}
+
+.act-detail__text {
+    max-width: 68ch;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    white-space: pre-line;
+    color: var(--color-ink);
+}
+
+.act-detail__gallery-wrap h2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    font-weight: 800;
+    color: var(--color-ink);
+}
+
+.act-detail__gallery-wrap h2 span {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+}
+
+.act-detail__gallery {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 0.85rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+}
+
+.act-detail__gallery button {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 0.8rem;
+    cursor: zoom-in;
+}
+
+.act-detail__gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.act-detail__gallery button:hover img {
+    transform: scale(1.06);
+}
+
+.dark .act-detail__eyebrow,
+.dark .act-detail__meta svg { color: #5fd0b7; }
+
+/* Penampil foto layar penuh */
+.act-viewer {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(2, 12, 11, 0.97);
+    color: #ffffff;
+}
+
+.act-viewer[open] {
+    display: grid;
+    place-items: center;
+}
+
+.act-viewer::backdrop {
+    background: rgba(2, 12, 11, 0.6);
+    backdrop-filter: blur(6px);
+}
+
+.act-viewer img {
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100dvh - 7rem);
+    border-radius: 0.6rem;
+    object-fit: contain;
+}
+
+.act-viewer__count {
+    position: absolute;
+    left: 50%;
+    bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.act-viewer__btn {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.14);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.act-viewer__btn:hover {
+    background: rgba(255, 255, 255, 0.26);
+}
+
+.act-viewer__btn svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.act-viewer__close {
+    top: max(1rem, env(safe-area-inset-top, 0px));
+    right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+.act-viewer__prev {
+    left: max(1rem, env(safe-area-inset-left, 0px));
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.act-viewer__next {
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 /* ==================================================================
    Riwayat kejadian
