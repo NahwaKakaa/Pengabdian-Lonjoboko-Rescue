@@ -132,8 +132,53 @@ class VillageContent
         ];
     }
 
+    /**
+     * Video dari kanal YouTube resmi BNPB Indonesia (@bnpb_indonesia).
+     * Semua sudah dicek boleh diputar di web lain (embed).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function videos(): array
+    {
+        $video = fn (string $title, EducationTopic $topic, string $id, string $summary, string $body) => [
+            'title' => $title,
+            'category' => EducationCategory::Video,
+            'topic' => $topic,
+            'video_url' => 'https://www.youtube.com/watch?v='.$id,
+            'summary' => $summary,
+            'body' => $body."\n\nSumber: kanal YouTube resmi BNPB Indonesia.",
+        ];
+
+        return [
+            $video('SiAGA Tanah Longsor', EducationTopic::Longsor, 'JFK7A1n6JJI',
+                'Animasi BNPB tentang tanah longsor: penyebab, tanda-tanda, dan cara menyelamatkan diri. Durasi ±5 menit.',
+                'Cocok ditonton bersama keluarga dan anak-anak, terutama warga yang tinggal di bawah tebing atau di lereng.'),
+            $video('Edukasi Bencana Tanah Longsor', EducationTopic::Longsor, 'UAPce7ywdeI',
+                'Video edukasi BNPB tentang tanah longsor, juga dibuat untuk teman-teman Tuli. Durasi ±3,5 menit.',
+                'Bisa diputar saat penyuluhan di balai desa atau sekolah.'),
+            $video('SiAGA Banjir', EducationTopic::Banjir, 'nJeNMDZvcrQ',
+                'Animasi BNPB tentang banjir: apa yang perlu disiapkan dan dilakukan. Durasi ±4,5 menit.',
+                'Tonton sebelum musim hujan, lalu cocokkan dengan jalur evakuasi dan titik kumpul di desa.'),
+            $video('Edukasi Bencana Banjir', EducationTopic::Banjir, 'sJsC6zQCfNI',
+                'Penyebab banjir yang sering melanda Indonesia dan hal yang harus dilakukan saat banjir tiba. Durasi ±2 menit.',
+                'Video ini juga dibuat untuk teman-teman Tuli.'),
+            $video('SiAGA Perlengkapan Bencana', EducationTopic::Umum, '73_zCmA5yWg',
+                'Animasi BNPB tentang perlengkapan yang perlu disiapkan keluarga sebelum bencana. Durasi ±4 menit.',
+                'Lengkapi dengan infografis "Isi tas siaga bencana" di halaman ini.'),
+            $video('Tas Siaga Bencana Saat Banjir', EducationTopic::Banjir, 'KPbmlF0ODg0',
+                'Video pendek nominator Tangguh Awards 2024 yang dipublikasikan BNPB, tentang tas siaga saat banjir. Durasi ±4 menit.',
+                'Karya Siti Kurnia Indah Safitri untuk kompetisi Tangguh Awards 2024.'),
+        ];
+    }
+
     /** @return list<array<string, mixed>> */
     private static function education(): array
+    {
+        return [...self::infoAndGuides(), ...self::videos()];
+    }
+
+    /** @return list<array<string, mixed>> */
+    private static function infoAndGuides(): array
     {
         return [
             [

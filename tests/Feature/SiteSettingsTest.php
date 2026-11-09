@@ -154,7 +154,8 @@ class SiteSettingsTest extends TestCase
         $this->artisan('lonjoboko:lengkapi-data')->assertSuccessful();
         $this->assertSame($count, \App\Models\EducationContent::count());
 
-        $this->get('/edukasi')->assertOk()->assertSee('Aman melintas di Jalan Poros Malino');
+        $this->get('/edukasi')->assertOk()->assertSee('Aman melintas di Jalan Poros Malino')->assertSee('SiAGA Tanah Longsor');
+        $this->assertSame('JFK7A1n6JJI', \App\Models\EducationContent::where('title', 'SiAGA Tanah Longsor')->firstOrFail()->youtubeId());
         $this->get('/relawan')->assertOk()->assertSee('Lima tim siaga dan tugasnya');
 
         $this->artisan('lonjoboko:hapus-data-desa')->assertSuccessful();
