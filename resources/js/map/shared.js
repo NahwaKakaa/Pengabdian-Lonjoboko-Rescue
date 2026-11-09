@@ -19,7 +19,7 @@ export function round6(value) {
     return Math.round(Number(value) * 1e6) / 1e6;
 }
 
-export function createBaseMap(element, { center, zoom, tileUrl, attribution, scrollWheelZoom = true }) {
+export function createBaseMap(element, { center, zoom, tileUrl, attribution, scrollWheelZoom = true, boundary = null }) {
     const map = L.map(element, { 
         scrollWheelZoom: true,
         doubleClickZoom: true,
@@ -30,6 +30,11 @@ export function createBaseMap(element, { center, zoom, tileUrl, attribution, scr
 
     // crossOrigin: ubin bisa disimpan service worker untuk dibuka offline.
     L.tileLayer(tileUrl, { attribution, maxZoom: 19, crossOrigin: true }).addTo(map);
+
+    // Lingkup area desa sebagai latar (tidak bisa diklik, tidak ikut tergambar/tersnap).
+    if (boundary) {
+        map.lrBoundary = addBoundaryOverlay(map, boundary);
+    }
 
     // Peta di dalam tab, modal, atau bagian yang dilipat perlu dihitung ulang ukurannya.
     if ('ResizeObserver' in window) {
@@ -79,4 +84,62 @@ export function formatDistance(meters) {
 /** Perkiraan waktu jalan kaki (±4 km/jam, kondisi darurat). */
 export function walkingMinutes(meters) {
     return Math.max(1, Math.round(meters / (4000 / 60)));
+}
+
+/**
+ * Garis batas desa putus-putus + arsiran tipis, untuk peta form di admin.
+ * interactive:false supaya ketukan tetap sampai ke peta (memilih titik / menggambar).
+ */
+export function addBoundaryOverlay(map, geojson) {
+    const layer = L.geoJSON(geojson, {
+        interactive: false,
+        pmIgnore: true,
+        snapIgnore: true,
+        style: {
+            color: '#0e6b66',
+            weight: 2.5,
+            opacity: 0.9,
+            dashArray: '6, 6',
+            fillColor: '#10b981',
+            fillOpacity: 0.1,
+        },
+    }).addTo(map);
+
+    if (!layer.getLayers().length) {
+        map.removeLayer(layer);
+        return null;
+    }
+
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = () => {
+        const el = L.DomUtil.create('div', 'lr-boundary-legend');
+        el.innerHTML = '<span class="lr-boundary-legend__swatch"></span>Lingkup Area Lonjoboko';
+        return el;
+    };
+    legend.addTo(map);
+
+    return layer;
+}
+
+/** Arahkan peta ke seluruh wilayah desa (dipakai saat form masih kosong). */
+export function fitBoundary(map, padding = 20) {
+    if (!map.lrBoundary) {
+        return false;
+    }
+
+    const fit = () => map.fitBounds(map.lrBoundary.getBounds(), { padding: [padding, padding] });
+    fit();
+
+    // Di form Filament ukuran peta baru final setelah halaman selesai ditata.
+    // Ulangi sekali, kecuali pengguna sudah menggeser atau memilih titik.
+    let touched = false;
+    map.once('dragstart zoomstart click', () => { touched = true; });
+    setTimeout(() => {
+        if (!touched) {
+            map.invalidateSize();
+            fit();
+        }
+    }, 350);
+
+    return true;
 }

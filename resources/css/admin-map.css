@@ -102,3 +102,25 @@
 .lr-dot--hazard {
     background: #b4580e;
 }
+
+/* Keterangan garis batas desa di pojok kiri bawah peta form */
+.lr-boundary-legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #0b3f3b;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.lr-boundary-legend__swatch {
+    width: 1.1rem;
+    height: 0.7rem;
+    border: 2px dashed #0e6b66;
+    border-radius: 0.2rem;
+    background: rgba(16, 185, 129, 0.15);
+}

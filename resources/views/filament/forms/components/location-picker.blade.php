@@ -12,6 +12,7 @@
             zoom: @js($getZoom()),
             tileUrl: @js(config('lonjoboko.map.tile_url')),
             attribution: @js(config('lonjoboko.map.attribution')),
+            boundary: @js(\App\Support\VillageBoundary::geojson()),
             disabled: @js($isDisabled),
         })"
         class="lr-field"

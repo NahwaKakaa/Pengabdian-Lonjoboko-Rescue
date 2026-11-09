@@ -18,6 +18,7 @@ import {
     COLORS,
     createBaseMap,
     escapeHtml,
+    fitBoundary,
     formatDistance,
     pinIcon,
     polylineLength,
@@ -44,6 +45,8 @@ function locationPicker(config) {
             if (this.hasPoint()) {
                 map.setView([this.lat, this.lng], 17);
                 this.renderMarker();
+            } else {
+                fitBoundary(map);
             }
 
             this.message = config.disabled
@@ -179,6 +182,9 @@ function routePicker(config) {
             map = createBaseMap(this.$refs.map, config);
             this.renderReferences();
             this.renderRoute(true);
+            if (!this.hasRoute()) {
+                fitBoundary(map);
+            }
 
             if (!config.disabled) {
                 map.pm.setLang('id');
