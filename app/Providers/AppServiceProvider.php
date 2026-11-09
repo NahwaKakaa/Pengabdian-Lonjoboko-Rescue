@@ -7,7 +7,10 @@ use App\Models\EmergencyContact;
 use App\Models\Setting;
 use App\Support\Phone;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
@@ -22,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Carbon::setLocale(config('app.locale'));
+
+        if (! $this->app->runningInConsole()) {
+            self::useRequestScheme(request());
+        }
 
         // Pengaturan peta & sumber resmi dari admin (menu Pengaturan Peta & Sumber)
         // menimpa nilai bawaan di config/lonjoboko.php.
@@ -42,6 +49,25 @@ class AppServiceProvider extends ServiceProvider
         View::composer('public.*', function ($view) {
             $view->with('site', self::siteInfo());
         });
+    }
+
+    /**
+     * Semua alamat (termasuk foto yang diunggah) mengikuti protokol halaman.
+     * Tanpa ini, foto di disk "public" memakai APP_URL; kalau APP_URL masih
+     * http://, halaman https memuat gambar lewat http dan browser menandai
+     * web "Not Secure".
+     */
+    public static function useRequestScheme(Request $request): void
+    {
+        $https = $request->isSecure() || str_starts_with((string) config('app.url'), 'https://');
+
+        if ($https) {
+            URL::forceScheme('https');
+        }
+
+        $root = ($https ? 'https://' : $request->getScheme().'://').$request->getHttpHost();
+        config(['filesystems.disks.public.url' => $root.'/storage']);
+        Storage::forgetDisk('public');
     }
 
     public static function applyMapSettings(): void

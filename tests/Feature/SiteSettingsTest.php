@@ -160,4 +160,17 @@ class SiteSettingsTest extends TestCase
         $this->artisan('lonjoboko:hapus-data-desa')->assertSuccessful();
         $this->assertSame(0, \App\Models\EducationContent::count());
     }
+
+    public function test_foto_unggahan_memakai_https_walau_app_url_masih_http(): void
+    {
+        config(['app.url' => 'http://lonjoboko-rescue.web.id']);
+
+        AppServiceProvider::useRequestScheme(\Illuminate\Http\Request::create('https://lonjoboko-rescue.web.id/'));
+        $this->assertSame('https://lonjoboko-rescue.web.id/storage/desa/foto.jpg', \Illuminate\Support\Facades\Storage::disk('public')->url('desa/foto.jpg'));
+
+        // Di laptop (http) tetap http.
+        \Illuminate\Support\Facades\URL::forceScheme(null);
+        AppServiceProvider::useRequestScheme(\Illuminate\Http\Request::create('http://127.0.0.1:8000/'));
+        $this->assertSame('http://127.0.0.1:8000/storage/desa/foto.jpg', \Illuminate\Support\Facades\Storage::disk('public')->url('desa/foto.jpg'));
+    }
 }
