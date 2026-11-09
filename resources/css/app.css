@@ -553,7 +553,8 @@
     animation: site-menu-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.site-menu[open] .site-menu__panel li {
+.site-menu[open] .site-menu__panel li,
+.site-menu[open] .site-menu__theme-wrap {
     animation: site-item-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: calc(var(--i, 0) * 35ms + 60ms);
 }
@@ -776,6 +777,7 @@
     .site-logo__mountain,
     .site-menu[open] .site-menu__panel,
     .site-menu[open] .site-menu__panel li,
+    .site-menu[open] .site-menu__theme-wrap,
     .site-nav__alert-dot::after {
         animation: none;
     }
@@ -881,11 +883,99 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
+/* Tombol siang/malam di dalam Menu HP */
+.site-menu__theme-wrap {
+    margin-top: 0.4rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.site-menu__theme {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d5ece8;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.site-menu__theme:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.site-menu__theme:focus-visible {
+    outline: 3px solid #5fd0b7;
+    outline-offset: 2px;
+}
+
+.site-menu__theme-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.site-menu__theme-icon svg {
+    position: absolute;
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.site-menu__theme-sun,
+.dark .site-menu__theme-moon {
+    display: none;
+}
+
+.dark .site-menu__theme-sun {
+    display: block;
+    color: #fcd34d;
+}
+
+.site-menu__theme-label {
+    flex: 1;
+}
+
+/* Indikator kecil: geser ke kanan saat malam aktif */
+.site-menu__theme-track {
+    position: relative;
+    width: 2.25rem;
+    height: 1.3rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: background-color 0.25s ease;
+}
+
+.site-menu__theme-track span {
+    position: absolute;
+    top: 0.15rem;
+    left: 0.15rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    background: #ffffff;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark .site-menu__theme-track {
+    background: #10b981;
+}
+
+.dark .site-menu__theme-track span {
+    transform: translateX(0.95rem);
+}
+
 /* Tombol siang/malam: kotak ikon sederhana, sama seperti tombol Menu.
    Siang menampilkan bulan (tekan untuk malam), malam menampilkan matahari. */
 .site-theme-switch {
     position: relative;
-    display: grid;
     place-items: center;
     flex-shrink: 0;
     width: 2.4rem;
@@ -2181,6 +2271,27 @@ html.lr-theme-fade *::after {
 @media (max-width: 380px) {
     .site-report-btn span {
         display: none;
+    }
+}
+
+/* HP: rapatkan navbar supaya nama web tidak terpotong */
+@media (max-width: 479.98px) {
+    .site-header__bar {
+        gap: 0.625rem;
+    }
+
+    .site-logo {
+        gap: 0.6rem;
+    }
+
+    .site-logo__mark {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .site-report-btn {
+        padding: 0 0.7rem;
+        gap: 0.3rem;
     }
 }
 

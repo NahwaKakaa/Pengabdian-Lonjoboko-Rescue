@@ -288,17 +288,20 @@ function initMobileMenu() {
  * Tampilan siang / malam
  * ------------------------------------------------------------------ */
 function initThemeToggle() {
-    const button = document.getElementById('theme-toggle');
+    // Satu tombol di navbar laptop, satu lagi di dalam Menu HP.
+    const buttons = document.querySelectorAll('[data-theme-toggle]');
     const root = document.documentElement;
 
-    if (!button) {
+    if (!buttons.length) {
         return;
     }
 
     const label = () => {
         const dark = root.classList.contains('dark');
-        button.setAttribute('aria-checked', dark ? 'true' : 'false');
-        button.setAttribute('title', dark ? 'Ganti ke tampilan siang' : 'Ganti ke tampilan malam');
+        buttons.forEach((button) => {
+            button.setAttribute('aria-checked', dark ? 'true' : 'false');
+            button.setAttribute('title', dark ? 'Ganti ke tampilan siang' : 'Ganti ke tampilan malam');
+        });
     };
 
     const apply = (dark) => {
@@ -313,7 +316,7 @@ function initThemeToggle() {
 
     label();
 
-    button.addEventListener('click', () => {
+    const toggle = () => {
         const dark = !root.classList.contains('dark');
 
         // Browser tanpa View Transitions: warna dan gambar memudar lewat CSS.
@@ -331,7 +334,9 @@ function initThemeToggle() {
         const transition = document.startViewTransition(() => apply(dark));
 
         transition.finished.finally(() => root.classList.remove('lr-theme-switching'));
-    });
+    };
+
+    buttons.forEach((button) => button.addEventListener('click', toggle));
 
     // Ikuti pengaturan HP/laptop kalau warga belum pernah memilih sendiri.
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', (event) => {

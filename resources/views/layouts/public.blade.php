@@ -161,8 +161,8 @@
                 <span>Lapor</span>
             </a>
 
-            {{-- Tombol tampilan siang / malam --}}
-            <button type="button" id="theme-toggle" class="site-theme-switch" role="switch" aria-checked="false" aria-label="Tampilan malam" title="Ganti ke tampilan malam">
+            {{-- Tombol tampilan siang / malam (laptop). Di HP tombolnya ada di dalam Menu. --}}
+            <button type="button" id="theme-toggle" data-theme-toggle class="site-theme-switch hidden lg:grid" role="switch" aria-checked="false" aria-label="Tampilan malam" title="Ganti ke tampilan malam">
                 <span class="site-theme-switch__knob" aria-hidden="true">
                     <svg class="site-theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>
                     <svg class="site-theme-switch__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 019.7 3.5a8.5 8.5 0 1010.8 10.8z"/></svg>
@@ -198,6 +198,16 @@
                             </li>
                         @endforeach
                     </ul>
+                    <div class="site-menu__theme-wrap" style="--i: {{ count($menu) }}">
+                        <button type="button" data-theme-toggle class="site-menu__theme" role="switch" aria-checked="false">
+                            <span class="site-menu__theme-icon" aria-hidden="true">
+                                <svg class="site-menu__theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 019.7 3.5a8.5 8.5 0 1010.8 10.8z"/></svg>
+                                <svg class="site-menu__theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>
+                            </span>
+                            <span class="site-menu__theme-label">Tampilan malam</span>
+                            <span class="site-menu__theme-track" aria-hidden="true"><span></span></span>
+                        </button>
+                    </div>
                 </nav>
             </details>
             </div>
