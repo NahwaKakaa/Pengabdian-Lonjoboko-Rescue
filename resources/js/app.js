@@ -480,3 +480,122 @@ initMobileMenu();
         go.click();
     });
 })();
+
+// Menu "Lapisan peta": terbuka di laptop, dilipat di HP. Jumlah lapisan aktif ditampilkan.
+(() => {
+    const menu = document.querySelector('[data-layer-menu]');
+    if (!menu) return;
+    if (window.matchMedia('(min-width: 1024px)').matches) menu.open = true;
+
+    const count = menu.querySelector('[data-layer-count]');
+    const boxes = menu.querySelectorAll('[data-layer-toggle]');
+    const update = () => {
+        const on = [...boxes].filter((b) => b.checked).length;
+        if (count) count.textContent = `${on} dari ${boxes.length} tampil`;
+    };
+    boxes.forEach((b) => b.addEventListener('change', update));
+    // Tunggu peta mengatur status awal kotak centang.
+    setTimeout(update, 0);
+    window.addEventListener('load', update);
+})();
+
+// Saring daftar kartu (mis. lokasi rawan: Semua / Banjir / Longsor).
+document.querySelectorAll('[data-list-filter]').forEach((group) => {
+    const name = group.dataset.listFilter;
+    const buttons = group.querySelectorAll('[data-filter-value]');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const value = button.dataset.filterValue;
+            buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+            document.querySelectorAll(`[data-filter-item="${name}"]`).forEach((item) => {
+                const tags = (item.dataset.filterTags || '').split(' ');
+                item.hidden = value !== 'all' && !tags.includes(value);
+            });
+        });
+    });
+});
+
+// "Selengkapnya" untuk paragraf yang dipotong.
+(() => {
+    const blocks = document.querySelectorAll('[data-read-more]');
+    if (!blocks.length) return;
+    const check = () => blocks.forEach((block) => {
+        const text = block.querySelector('.read-more__text');
+        const btn = block.querySelector('[data-read-more-btn]');
+        if (!text || !btn || block.classList.contains('is-open')) return;
+        btn.hidden = text.scrollHeight <= text.clientHeight + 2;
+    });
+    blocks.forEach((block) => {
+        const btn = block.querySelector('[data-read-more-btn]');
+        btn?.addEventListener('click', () => {
+            const open = block.classList.toggle('is-open');
+            btn.textContent = open ? 'Tutup' : 'Selengkapnya';
+            btn.setAttribute('aria-expanded', String(open));
+        });
+    });
+    check();
+    window.addEventListener('load', check);
+    window.addEventListener('resize', check);
+})();
+
+// Ukuran tulisan: 0 normal, 1 besar, 2 sangat besar. Disimpan di HP masing-masing.
+(() => {
+    const root = document.documentElement;
+    const current = () => Number(root.dataset.textSize || 0);
+    const apply = (size) => {
+        if (size > 0) root.dataset.textSize = String(size);
+        else delete root.dataset.textSize;
+        try { localStorage.setItem('lr-text-size', String(size)); } catch (e) {}
+        document.querySelectorAll('[data-text-size-set]').forEach((b) => {
+            b.setAttribute('aria-pressed', String(Number(b.dataset.textSizeSet) === size));
+        });
+        document.querySelectorAll('[data-text-size-cycle]').forEach((b) => {
+            b.title = ['Perbesar tulisan', 'Perbesar lagi', 'Kembalikan ukuran tulisan'][size];
+            b.dataset.level = String(size);
+        });
+    };
+    document.querySelectorAll('[data-text-size-set]').forEach((b) => {
+        b.addEventListener('click', () => apply(Number(b.dataset.textSizeSet)));
+    });
+    document.querySelectorAll('[data-text-size-cycle]').forEach((b) => {
+        b.addEventListener('click', () => apply((current() + 1) % 3));
+    });
+    apply(current());
+})();
+
+// Petunjuk singkat 3 layar.
+(() => {
+    const dialog = document.getElementById('guide');
+    if (!dialog || typeof dialog.showModal !== 'function') return;
+    const slides = dialog.querySelectorAll('[data-guide-slide]');
+    const dots = dialog.querySelectorAll('.guide__dots span');
+    const next = dialog.querySelector('[data-guide-next]');
+    let index = 0;
+
+    const show = (i) => {
+        index = i;
+        slides.forEach((s, n) => s.classList.toggle('is-active', n === i));
+        dots.forEach((d, n) => d.classList.toggle('is-active', n === i));
+        next.textContent = i === slides.length - 1 ? 'Mulai' : 'Lanjut';
+    };
+    const close = () => {
+        try { localStorage.setItem('lr-guide-seen', '1'); } catch (e) {}
+        dialog.close();
+    };
+    const open = () => { show(0); dialog.showModal(); };
+
+    next.addEventListener('click', () => (index < slides.length - 1 ? show(index + 1) : close()));
+    dialog.querySelector('[data-guide-close]').addEventListener('click', close);
+    dialog.addEventListener('cancel', () => { try { localStorage.setItem('lr-guide-seen', '1'); } catch (e) {} });
+    document.querySelectorAll('[data-open-guide]').forEach((b) => b.addEventListener('click', () => {
+        b.closest('details')?.removeAttribute('open');
+        open();
+    }));
+
+    let seen = false;
+    try { seen = localStorage.getItem('lr-guide-seen') === '1'; } catch (e) { seen = true; }
+    // Muncul otomatis hanya di HP, karena petunjuknya menyebut tombol di bawah layar.
+    if (dialog.hasAttribute('data-guide-auto') && !seen && !navigator.webdriver && window.matchMedia('(max-width: 1023.98px)').matches) {
+        setTimeout(open, 1200);
+    }
+})();

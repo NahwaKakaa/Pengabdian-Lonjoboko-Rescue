@@ -43,6 +43,12 @@
             }
         } catch (e) {}
         try {
+            var size = localStorage.getItem('lr-text-size');
+            if (size === '1' || size === '2') {
+                document.documentElement.dataset.textSize = size;
+            }
+        } catch (e) {}
+        try {
             if (sessionStorage.getItem('lr-visited')) {
                 document.documentElement.classList.add('lr-returning');
             }
@@ -161,6 +167,11 @@
                 <span>Lapor</span>
             </a>
 
+            {{-- Ukuran tulisan (laptop): tekan untuk berganti A → A+ → A++ --}}
+            <button type="button" data-text-size-cycle class="site-text-size hidden lg:grid" aria-label="Ukuran tulisan" title="Perbesar tulisan">
+                <span aria-hidden="true">A<sup>+</sup></span>
+            </button>
+
             {{-- Tombol tampilan siang / malam (laptop). Di HP tombolnya ada di dalam Menu. --}}
             <button type="button" id="theme-toggle" data-theme-toggle class="site-theme-switch hidden lg:grid" role="switch" aria-checked="false" aria-label="Tampilan malam" title="Ganti ke tampilan malam">
                 <span class="site-theme-switch__knob" aria-hidden="true">
@@ -207,6 +218,18 @@
                             <span class="site-menu__theme-label">Tampilan malam</span>
                             <span class="site-menu__theme-track" aria-hidden="true"><span></span></span>
                         </button>
+                        <div class="site-menu__size" role="group" aria-label="Ukuran tulisan">
+                            <span class="site-menu__size-label">Ukuran tulisan</span>
+                            <div class="site-menu__size-options">
+                                <button type="button" data-text-size-set="0" aria-pressed="true" aria-label="Tulisan normal">A</button>
+                                <button type="button" data-text-size-set="1" aria-pressed="false" aria-label="Tulisan besar">A+</button>
+                                <button type="button" data-text-size-set="2" aria-pressed="false" aria-label="Tulisan sangat besar">A++</button>
+                            </div>
+                        </div>
+                        <button type="button" class="site-menu__guide" data-open-guide>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 1.5-2.5 2-2.5 3.5M12 17h.01"/></svg>
+                            Cara memakai web ini
+                        </button>
                     </div>
                 </nav>
             </details>
@@ -246,7 +269,7 @@
                         <p class="text-xs font-semibold text-river-200">Desa {{ $site['village'] }} Tangguh Bencana</p>
                     </div>
                 </div>
-                <p class="text-river-100 leading-relaxed max-w-sm">Sistem informasi dan edukasi mitigasi banjir & tanah longsor untuk warga Desa {{ $site['village'] }}, Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}.</p>
+                <p class="text-river-100 leading-relaxed max-w-sm">Informasi dan edukasi banjir &amp; tanah longsor untuk warga Desa {{ $site['village'] }}, Kecamatan {{ $site['district'] }}, Kabupaten {{ $site['regency'] }}.</p>
 
                 @if ($footer['whatsapp'])
                     <a href="{{ $footer['whatsapp']['href'] }}" target="_blank" rel="noopener"
@@ -255,7 +278,7 @@
                             <svg viewBox="0 0 24 24" class="size-6" fill="currentColor">{!! $waIcon !!}</svg>
                         </span>
                         <span class="min-w-0 flex-1 leading-tight">
-                            <span class="block text-xs font-semibold text-white/80">Lapor / tanya via WhatsApp</span>
+                            <span class="block text-sm font-semibold text-white/80">Lapor / tanya via WhatsApp</span>
                             <span class="block font-black text-base num tracking-wide">{{ $footer['whatsapp']['number'] }}</span>
                             <span class="block truncate text-xs text-white/80">{{ $footer['whatsapp']['label'] }}</span>
                         </span>
@@ -276,7 +299,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M11 18h2"/></svg>
                         Pasang di HP, bisa dibuka tanpa internet
                     </button>
-                    <p id="install-ios-hint" class="text-xs text-river-200 leading-relaxed" hidden>Di iPhone: ketuk tombol <strong class="text-white">Bagikan</strong>, lalu pilih <strong class="text-white">Tambahkan ke Layar Utama</strong>.</p>
+                    <p id="install-ios-hint" class="text-sm text-river-200 leading-relaxed" hidden>Di iPhone: ketuk tombol <strong class="text-white">Bagikan</strong>, lalu pilih <strong class="text-white">Tambahkan ke Layar Utama</strong>.</p>
                 </div>
             </section>
 
@@ -338,7 +361,7 @@
                         allowfullscreen
                     ></iframe>
                 </div>
-                <p class="text-river-100 text-xs leading-relaxed">{{ $site['office_address'] ? $site['office_address'].' · ' : '' }}{{ $footer['place'] }} {{ config('lonjoboko.postal_code') }}</p>
+                <p class="text-river-100 text-sm leading-relaxed">{{ $site['office_address'] ? $site['office_address'].' · ' : '' }}{{ $footer['place'] }} {{ config('lonjoboko.postal_code') }}</p>
                 <div class="flex flex-wrap gap-2">
                     <a href="{{ $footer['map_directions'] }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-500 transition-colors">
                         <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
@@ -373,6 +396,38 @@
             </div>
         </div>
     </footer>
+
+    {{-- Petunjuk singkat untuk pengunjung baru (muncul sekali di Beranda) --}}
+    <dialog class="guide" id="guide" aria-labelledby="guide-title" @if (request()->routeIs('home') && $activeAlerts->isEmpty()) data-guide-auto @endif>
+        <div class="guide__slides">
+            <section class="guide__slide is-active" data-guide-slide>
+                <span class="guide__art guide__art--map" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4z"/><path d="M9 4v13.5M15 6.5V20"/></svg>
+                </span>
+                <h2 id="guide-title">Kenali bahaya di sekitar rumah</h2>
+                <p>Buka <strong>Peta Risiko</strong>. Lingkaran <strong class="t-flood">biru</strong> berarti rawan banjir, <strong class="t-slide">jingga</strong> rawan longsor. Tekan lingkaran untuk membaca penjelasannya.</p>
+            </section>
+            <section class="guide__slide" data-guide-slide>
+                <span class="guide__art guide__art--safe" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                </span>
+                <h2>Tahu ke mana harus pergi</h2>
+                <p>Tekan <strong>Titik terdekat</strong> di bawah layar. Web mencari titik kumpul paling dekat dari posisi Anda dan menunjukkan jalannya.</p>
+            </section>
+            <section class="guide__slide" data-guide-slide>
+                <span class="guide__art guide__art--alert" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>
+                </span>
+                <h2>Telepon dan lapor dengan cepat</h2>
+                <p>Tombol merah <strong>Telepon</strong> berisi nomor darurat. Tombol <strong>Lapor</strong> untuk mengirim kejadian atau tanda bahaya ke kader Karang Taruna.</p>
+            </section>
+        </div>
+        <div class="guide__dots" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div>
+        <div class="guide__actions">
+            <button type="button" class="guide__skip" data-guide-close>Lewati</button>
+            <button type="button" class="guide__next" data-guide-next>Lanjut</button>
+        </div>
+    </dialog>
 
     {{-- Bilah aksi cepat di HP: selalu terlihat di bawah layar --}}
     @php

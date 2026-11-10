@@ -107,7 +107,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>
                 </span>Titik kumpul</h2>
                 @if ($points->isEmpty())
-                    <p class="p-empty">Belum ada titik kumpul terverifikasi.</p>
+                    <p class="p-empty">Belum ada titik kumpul yang dicek desa.</p>
                 @else
                     <ol class="p-points">
                         @foreach ($points->take(8) as $point)
@@ -176,7 +176,7 @@
         </div>
 
         <footer class="p-foot">
-            <p><strong>{{ $host }}</strong> · Diperbarui {{ $updated }} dari data terverifikasi pemerintah desa.</p>
+            <p><strong>{{ $host }}</strong> · Diperbarui {{ $updated }} dari data yang sudah dicek pemerintah desa.</p>
             <p>Bukan pengganti arahan resmi. Saat bencana, ikuti aparat desa, BPBD, dan BMKG.</p>
         </footer>
     </main>

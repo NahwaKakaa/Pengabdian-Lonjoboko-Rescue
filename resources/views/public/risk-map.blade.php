@@ -10,12 +10,19 @@
     <x-page-header
         eyebrow="Peta risiko bencana"
         title="Lokasi rawan banjir dan longsor"
-        intro="Lokasi di peta ini dihimpun bersama kader dan pemerintah desa, lalu diverifikasi sebelum ditampilkan. Lingkaran menunjukkan perkiraan luas area rawan."
+        intro="Lokasi di peta ini dikumpulkan kader dan sudah dicek pemerintah desa. Lingkaran menunjukkan perkiraan luas area yang berbahaya."
     />
 
     <section class="wrap py-8 grid gap-4">
-        {{-- Tombol lapisan peta: warna mengikuti warna lapisannya di peta --}}
-        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Tampilkan lapisan peta">
+        {{-- Tombol lapisan peta: di HP dilipat dalam satu tombol "Lapisan peta" --}}
+        <details class="layer-menu" data-layer-menu>
+            <summary class="layer-menu__toggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+                <span>Lapisan peta</span>
+                <span class="layer-menu__count" data-layer-count></span>
+                <svg class="layer-menu__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+        <div class="layer-menu__list flex flex-wrap items-center gap-2" role="group" aria-label="Tampilkan lapisan peta">
             <label class="layer-chip layer-chip--boundary">
                 <input type="checkbox" class="sr-only" data-layer-toggle="boundary" checked>
                 <span class="layer-chip__box" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>
@@ -52,6 +59,7 @@
                 Warga rentan
             </label>
         </div>
+        </details>
 
         <div class="map-frame">
             <div data-lr-map="risk" class="h-[52vh] sm:h-[62vh] min-h-[340px] max-h-[640px] w-full" role="region" aria-label="Peta risiko bencana Desa {{ $site['village'] }}"></div>
@@ -65,7 +73,7 @@
                             Petunjuk Jalur Aktif
                         </span>
                         <p data-nav-title class="font-bold text-sm text-white truncate"></p>
-                        <p data-nav-meta class="text-xs text-river-100"></p>
+                        <p data-nav-meta class="text-sm text-river-100"></p>
                     </div>
                     <button type="button" data-nav-close class="rounded-lg p-1 text-river-300 hover:text-white hover:bg-white/10 transition-colors" title="Tutup Rute">
                         <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -83,11 +91,11 @@
             </div>
 
             <div class="absolute bottom-4 left-4 z-[500] flex flex-wrap items-center gap-2">
-                <button type="button" data-locate class="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
+                <button type="button" data-locate class="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
                     <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
                     Lokasi saya
                 </button>
-                <button type="button" data-fit-village class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-emerald-50 text-emerald-900">
+                <button type="button" data-fit-village class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-emerald-50 text-emerald-900">
                     <svg viewBox="0 0 24 24" class="size-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M3 18l7-10 4 5 3-4 4 9H3z"/></svg>
                     Lingkup Desa
                 </button>
@@ -100,17 +108,26 @@
 
     <section class="wrap grid gap-8 lg:grid-cols-[1.5fr_1fr]">
         <div class="grid gap-4 content-start">
-            <h2 class="text-2xl font-extrabold tracking-tight">Daftar lokasi rawan</h2>
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <h2 class="text-2xl font-extrabold tracking-tight">Daftar lokasi rawan</h2>
+                @if ($hazards->isNotEmpty())
+                    <div class="flex flex-wrap gap-2" role="group" aria-label="Saring daftar lokasi rawan" data-list-filter="hazard">
+                        <button type="button" data-filter-value="all" aria-pressed="true" class="filter-chip filter-chip--all">Semua <span class="num">{{ $hazards->count() }}</span></button>
+                        <button type="button" data-filter-value="banjir" aria-pressed="false" class="filter-chip filter-chip--flood">Banjir</button>
+                        <button type="button" data-filter-value="longsor" aria-pressed="false" class="filter-chip filter-chip--slide">Longsor</button>
+                    </div>
+                @endif
+            </div>
             @forelse ($hazards as $zone)
-                <article class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+                <article class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3 sm:grid-cols-[1fr_auto]" data-filter-item="hazard" data-filter-tags="{{ $zone->hazard_type->value }}">
                     <div class="grid gap-2 min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <x-hazard-badge :type="$zone->hazard_type" />
-                            <x-hazard-badge :type="$zone->risk_level">Kerawanan {{ $zone->risk_level->getLabel() }}</x-hazard-badge>
+                            <x-hazard-badge :type="$zone->risk_level">Bahaya {{ strtolower($zone->risk_level->getLabel()) }}</x-hazard-badge>
                         </div>
                         <h3 class="font-bold text-lg leading-snug">{{ $zone->name }}</h3>
                         @if ($zone->description)
-                            <p class="text-sm text-ink-soft leading-relaxed">{{ $zone->description }}</p>
+                            <x-read-more :text="$zone->description" />
                         @endif
                         <button type="button" data-focus-hazard="{{ $zone->id }}" class="action-link">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
@@ -137,7 +154,7 @@
                     <li class="flex items-center gap-3"><span class="size-4 rounded bg-ink-soft ring-2 ring-white shadow" aria-hidden="true"></span>Fasilitas umum dan kesehatan</li>
                     <li class="flex items-center gap-3"><span class="size-4 rounded-full bg-vulnerable/30 ring-2 ring-vulnerable" aria-hidden="true"></span>Warga rentan per dusun (makin besar, makin banyak)</li>
                 </ul>
-                <p class="text-xs text-ink-soft">Warna lingkaran makin pekat berarti tingkat kerawanan makin tinggi.</p>
+                <p class="text-sm text-ink-soft">Warna lingkaran makin pekat berarti makin berbahaya.</p>
             </div>
 
             <div class="elevation-card rounded-2xl p-5 sm:p-6 grid gap-3">
@@ -150,7 +167,7 @@
                             <a href="tel:{{ preg_replace('/[^0-9+]/', '', $facility->phone) }}" class="text-sm font-semibold text-river-700 num">{{ $facility->phone }}</a>
                         @endif
                         @if ($facility->opening_hours)
-                            <p class="text-xs text-ink-soft">Jam layanan: {{ $facility->opening_hours }}</p>
+                            <p class="text-sm text-ink-soft">Jam layanan: {{ $facility->opening_hours }}</p>
                         @endif
                     </div>
                 @empty

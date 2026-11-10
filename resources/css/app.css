@@ -3805,3 +3805,375 @@ html.lr-theme-fade *::after {
         display: none;
     }
 }
+
+/* Menu lapisan peta (Peta Risiko) */
+.layer-menu__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.9rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.9rem;
+    font-weight: 800;
+    color: var(--color-ink);
+    background: var(--color-card);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.layer-menu__toggle::-webkit-details-marker {
+    display: none;
+}
+
+.layer-menu__toggle svg {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.layer-menu__count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+}
+
+.layer-menu__chev {
+    transition: transform 0.2s ease;
+}
+
+.layer-menu[open] .layer-menu__chev {
+    transform: rotate(180deg);
+}
+
+.layer-menu__list {
+    margin-top: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+    .layer-menu__toggle {
+        display: none;
+    }
+
+    .layer-menu__list {
+        margin-top: 0;
+    }
+}
+
+/* Paragraf dengan tombol Selengkapnya */
+.read-more__text {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--lines, 3);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+}
+
+.read-more.is-open .read-more__text {
+    display: block;
+    -webkit-line-clamp: unset;
+}
+
+.read-more__btn {
+    margin-top: 0.2rem;
+    padding: 0.2rem 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-river-600);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.dark .read-more__btn { color: #5fd0b7; }
+
+/* Data penduduk: kartu per dusun di HP, tabel di layar lebar */
+.pop__cards {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.pop__card {
+    padding: 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+    background: var(--color-card);
+}
+
+.pop__card-head h3 {
+    font-weight: 800;
+    color: var(--color-ink);
+}
+
+.pop__card-head p {
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+}
+
+.pop__card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.pop__card-grid div {
+    padding: 0.5rem 0.65rem;
+    border-radius: 0.7rem;
+    background: var(--color-vulnerable-soft);
+}
+
+.pop__card-grid dt {
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+}
+
+.pop__card-grid dd {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-vulnerable);
+}
+
+.pop__card-note {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--color-ink-soft);
+}
+
+@media (min-width: 640px) {
+    .pop__cards {
+        display: none;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .pop__table-wrap {
+        display: none;
+    }
+}
+
+/* ==================================================================
+   Ukuran tulisan (A / A+ / A++) untuk warga lansia
+   ================================================================== */
+html[data-text-size='1'] {
+    font-size: 112.5%;
+}
+
+html[data-text-size='2'] {
+    font-size: 125%;
+}
+
+.site-text-size {
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 0.75rem;
+    font-weight: 800;
+    color: #e6f4f1;
+    background: var(--color-river-800, #0b4a45);
+    cursor: pointer;
+}
+
+.site-text-size sup {
+    font-size: 0.7em;
+}
+
+.site-text-size[data-level='1'],
+.site-text-size[data-level='2'] {
+    color: #062b29;
+    background: #6ee7b7;
+}
+
+.site-menu__size {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.875rem;
+}
+
+.site-menu__size-label {
+    font-weight: 600;
+    color: #d5ece8;
+}
+
+.site-menu__size-options {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.2rem;
+    border-radius: 0.7rem;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.site-menu__size-options button {
+    min-width: 2.4rem;
+    min-height: 2.1rem;
+    padding: 0 0.45rem;
+    border-radius: 0.55rem;
+    font-weight: 800;
+    color: #d5ece8;
+    cursor: pointer;
+}
+
+.site-menu__size-options button:nth-child(2) { font-size: 1.05em; }
+.site-menu__size-options button:nth-child(3) { font-size: 1.15em; }
+
+.site-menu__size-options button[aria-pressed='true'] {
+    color: #062b29;
+    background: #6ee7b7;
+}
+
+.site-menu__guide {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    color: #d5ece8;
+    text-align: left;
+    cursor: pointer;
+}
+
+.site-menu__guide:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.site-menu__guide svg {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+/* ==================================================================
+   Petunjuk singkat untuk pengunjung baru
+   ================================================================== */
+.guide {
+    width: min(100vw - 2rem, 25rem);
+    margin: auto;
+    padding: 1.6rem 1.4rem 1.2rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.5rem;
+    color: var(--color-ink);
+    background: var(--color-card);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.55);
+}
+
+.guide::backdrop {
+    background: rgba(2, 12, 11, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.guide__slide {
+    display: none;
+    text-align: center;
+}
+
+.guide__slide.is-active {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    animation: guide-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes guide-in {
+    from { opacity: 0; transform: translateX(14px); }
+    to { opacity: 1; transform: none; }
+}
+
+.guide__art {
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 1.4rem;
+    color: #ffffff;
+}
+
+.guide__art svg {
+    width: 2.3rem;
+    height: 2.3rem;
+}
+
+.guide__art--map { background: #0e6b66; }
+.guide__art--safe { background: var(--color-safe); }
+.guide__art--alert { background: #dc2626; }
+
+.guide__slide h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.25;
+    text-wrap: balance;
+}
+
+.guide__slide p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+}
+
+.guide__slide strong { color: var(--color-ink); }
+.guide__slide .t-flood { color: var(--color-flood, #2563eb); }
+.guide__slide .t-slide { color: var(--color-slide, #ea580c); }
+
+.guide__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 1.1rem;
+}
+
+.guide__dots span {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-line);
+    transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.guide__dots span.is-active {
+    width: 1.4rem;
+    background: var(--color-safe);
+}
+
+.guide__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1.1rem;
+}
+
+.guide__skip,
+.guide__next {
+    min-height: 2.9rem;
+    padding: 0 1.25rem;
+    border-radius: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.guide__skip {
+    color: var(--color-ink-soft);
+}
+
+.guide__next {
+    flex: 1;
+    color: #ffffff;
+    background: var(--color-safe);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .guide__slide.is-active { animation: none; }
+}
+
+/* Menu HP bisa digulir bila tulisan diperbesar, tidak tertutup bilah aksi bawah */
+.site-menu__panel {
+    max-height: calc(100dvh - 10rem - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}

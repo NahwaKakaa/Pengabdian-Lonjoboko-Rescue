@@ -32,7 +32,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Saring jalur menurut jenis bencana">
-            <span class="text-xs sm:text-sm font-bold text-ink-soft mr-1">Tampilkan jalur untuk:</span>
+            <span class="text-sm font-bold text-ink-soft mr-1">Tampilkan jalur untuk:</span>
             <button type="button" data-route-filter="all" aria-pressed="true" class="filter-chip filter-chip--all">Semua</button>
             <button type="button" data-route-filter="banjir" aria-pressed="false" class="filter-chip filter-chip--flood">Banjir</button>
             <button type="button" data-route-filter="longsor" aria-pressed="false" class="filter-chip filter-chip--slide">Tanah longsor</button>
@@ -56,7 +56,7 @@
                             Petunjuk Jalur Aktif
                         </span>
                         <p data-nav-title class="font-bold text-sm text-white truncate"></p>
-                        <p data-nav-meta class="text-xs text-river-100"></p>
+                        <p data-nav-meta class="text-sm text-river-100"></p>
                     </div>
                     <button type="button" data-nav-close class="rounded-lg p-1 text-river-300 hover:text-white hover:bg-white/10 transition-colors" title="Tutup Rute">
                         <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -74,11 +74,11 @@
             </div>
 
             <div class="absolute bottom-4 left-4 z-[500] flex flex-wrap items-center gap-2">
-                <button type="button" data-locate class="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
+                <button type="button" data-locate class="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-river-50">
                     <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
                     Lokasi saya
                 </button>
-                <button type="button" data-fit-village class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-xs sm:text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-emerald-50 text-emerald-900">
+                <button type="button" data-fit-village class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-sm font-bold shadow-lg ring-1 ring-black/10 hover:bg-emerald-50 text-emerald-900">
                     <svg viewBox="0 0 24 24" class="size-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M3 18l7-10 4 5 3-4 4 9H3z"/></svg>
                     Lingkup Desa
                 </button>
@@ -107,7 +107,7 @@
                         <p class="text-sm"><span class="text-ink-soft">Tujuan:</span> <span class="font-semibold text-safe">{{ $route->assemblyPoint->name }}</span></p>
                     @endif
                     @if ($route->description)
-                        <p class="text-sm text-ink-soft leading-relaxed">{{ $route->description }}</p>
+                        <x-read-more :text="$route->description" :lines="2" />
                     @endif
                     <button type="button" data-focus-route="{{ $route->id }}" class="action-link">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2.5a7 7 0 017 7C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>

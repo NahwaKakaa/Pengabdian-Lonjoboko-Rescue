@@ -44,7 +44,7 @@
                         <h3 class="mt-2 font-bold text-lg">{{ $alert->title }}</h3>
                         <p class="mt-1 text-sm text-ink-soft line-clamp-3">{{ $alert->body }}</p>
                         @if ($alert->expires_at)
-                            <p class="mt-2 text-xs font-semibold text-ink-soft">Berlaku sampai {{ $alert->expires_at->translatedFormat('d F Y, H:i') }} WITA</p>
+                            <p class="mt-2 text-sm font-semibold text-ink-soft">Berlaku sampai {{ $alert->expires_at->translatedFormat('d F Y, H:i') }} WITA</p>
                         @endif
                     </a>
                 @empty
@@ -140,7 +140,7 @@
 
             <section class="elevation-card rounded-3xl p-6 sm:p-7 grid gap-4" aria-labelledby="sumber">
                 <h2 id="sumber" class="text-lg font-extrabold text-ink">Sumber Peringatan Dini Resmi</h2>
-                <p class="text-xs text-ink-soft leading-relaxed">Web desa ini meneruskan informasi dan panduan lapangan bagi warga. Untuk data meteorologi dan hidrometeorologi resmi, rujuk instansi berikut:</p>
+                <p class="text-sm text-ink-soft leading-relaxed">Web desa ini meneruskan informasi dan panduan lapangan bagi warga. Untuk prakiraan cuaca dan peringatan resmi, rujuk instansi berikut:</p>
                 <ul class="grid gap-3">
                     @foreach ($sources as $source)
                         <li class="border-t border-line/60 pt-3 first:border-0 first:pt-0">
@@ -148,7 +148,7 @@
                                 <span>{{ $source['name'] }}</span>
                                 <svg class="action-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
                             </a>
-                            <p class="text-xs text-ink-soft mt-1.5 leading-relaxed">{{ $source['description'] }}</p>
+                            <p class="text-sm text-ink-soft mt-1.5 leading-relaxed">{{ $source['description'] }}</p>
                         </li>
                     @endforeach
                 </ul>

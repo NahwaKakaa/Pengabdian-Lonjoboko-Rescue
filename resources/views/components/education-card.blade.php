@@ -32,7 +32,7 @@
     </div>
     
     <div class="flex flex-1 flex-col gap-2 p-5 bg-card">
-        <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-ink-soft">
+        <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink-soft">
             <span class="text-river-600 font-bold uppercase tracking-wider text-[0.7rem]">{{ $item->topic->getLabel() }}</span>
         </div>
         <h3 class="font-bold text-lg leading-snug text-ink group-hover:text-river-700 transition-colors">{{ $item->title }}</h3>

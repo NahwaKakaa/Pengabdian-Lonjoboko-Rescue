@@ -8,7 +8,7 @@
         <div class="min-w-0">
             <p class="font-bold text-ink leading-snug">{{ $contact->name }}</p>
             @if ($contact->description)
-                <p class="text-xs text-ink-soft">{{ $contact->description }}</p>
+                <p class="text-sm text-ink-soft">{{ $contact->description }}</p>
             @endif
         </div>
     </div>

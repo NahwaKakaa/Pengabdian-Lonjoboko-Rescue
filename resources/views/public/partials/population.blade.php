@@ -39,6 +39,29 @@
         @endif
 
         @if ($detailed ?? false)
+            {{-- HP: satu kartu per dusun, tanpa geser ke samping --}}
+            <ul class="pop__cards">
+                @foreach ($hamlets as $h)
+                    <li class="pop__card">
+                        <div class="pop__card-head">
+                            <h3>Dusun {{ $h->name }}</h3>
+                            <p class="num">{{ $fmt($h->population) }} jiwa · {{ $fmt($h->households) }} KK</p>
+                        </div>
+                        <dl class="pop__card-grid">
+                            @foreach (\App\Models\HamletPopulation::VULNERABLE as $col => $label)
+                                <div>
+                                    <dt>{{ $label }}</dt>
+                                    <dd class="num">{{ $fmt($h->{$col}) }}</dd>
+                                </div>
+                            @endforeach
+                        </dl>
+                        @if ($h->note)
+                            <p class="pop__card-note">{{ $h->note }}</p>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+
             <div class="pop__table-wrap">
                 <table class="pop__table">
                     <thead>

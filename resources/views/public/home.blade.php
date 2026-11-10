@@ -155,7 +155,7 @@
                 <a href="{{ route('announcement.show', $item) }}" class="elevation-card block rounded-2xl p-5 hover:border-river-600">
                     <div class="flex flex-wrap items-center gap-2 text-sm text-ink-soft">
                         <x-hazard-badge :type="$item->level" />
-                        <time datetime="{{ $item->published_at?->toIso8601String() }}" class="text-xs font-medium text-ink-soft/80">{{ $item->published_at?->translatedFormat('l, d F Y · H:i') }} WITA</time>
+                        <time datetime="{{ $item->published_at?->toIso8601String() }}" class="text-sm font-medium text-ink-soft/80">{{ $item->published_at?->translatedFormat('l, d F Y · H:i') }} WITA</time>
                     </div>
                     <h3 class="mt-2.5 font-bold text-lg leading-snug text-ink">{{ $item->title }}</h3>
                     <p class="mt-1 text-sm text-ink-soft line-clamp-2 leading-relaxed">{{ $item->body }}</p>
@@ -236,9 +236,9 @@
             <div class="flex flex-wrap items-end justify-between gap-4">
                 <div class="grid gap-1">
                     <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-river-600 bg-river-50 border border-river-100 px-3 py-0.5 rounded-full w-fit">
-                        Belajar Bersiap
+                        Edukasi
                     </span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Edukasi Mitigasi Bencana</h2>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Belajar siaga bencana</h2>
                 </div>
                 <a href="{{ route('education') }}" class="action-link">
                     <span>Lihat semua modul & panduan</span>
